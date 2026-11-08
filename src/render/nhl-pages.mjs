@@ -80,10 +80,12 @@ const reporter = (r) => `<a href="${attr(r.url)}" target="_blank" rel="nofollow 
 export function linesSource(ctx, t, rep) {
   if (t?.live) return `Source: NHL shift chart for this game, as of the last update (about 10 game minutes behind). <a href="/game/${t.live.gameId}/">Gamecenter</a>`;
   const L = rep?.lines;
+  const STAT = { dtd: "day-to-day", ir: "injured reserve", out: "out" };
+  const outNote = L?.out?.length ? ` Not in the lineup (hurt): ${L.out.map((o) => `${o.id ? `<a href="/players/${o.id}/">${esc(o.name)}</a>` : esc(o.name)} (${esc(STAT[o.status] ?? o.status)})`).join(", ")}.` : "";
   const when = (r) => (r.createdAt ? ` Updated ${ago(r.createdAt)}.` : "");
-  if (L?.kind === "lastgame") return `Source: the <a href="${attr(L.url)}" target="_blank" rel="nofollow noopener">last game's lineup (${esc(fmtDate(L.lastGame, { month: "short", day: "numeric" }))})</a>. Projected: no reporter has posted lines since.${when(L)}`;
-  if (L?.kind === "projection") return `Source: <a href="${attr(L.url)}" target="_blank" rel="nofollow noopener">Daily Faceoff projection</a> (no reporter post). Projected.${when(L)}`;
-  if (L) return `Source: ${reporter(L)}${L.stale ? ". Projected: their latest lines, posted before the last game." : ""}`;
+  if (L?.kind === "lastgame") return `Source: the <a href="${attr(L.url)}" target="_blank" rel="nofollow noopener">last game's lineup (${esc(fmtDate(L.lastGame, { month: "short", day: "numeric" }))})</a>. Projected: no reporter has posted lines since.${when(L)}${outNote}`;
+  if (L?.kind === "projection") return `Source: <a href="${attr(L.url)}" target="_blank" rel="nofollow noopener">Daily Faceoff projection</a> (no reporter post). Projected.${when(L)}${outNote}`;
+  if (L) return `Source: ${reporter(L)}${L.stale ? ". Projected: their latest lines, posted before the last game." : ""}${outNote}`;
   if (t?.last) return `Source: NHL shift chart, ${gameRef(t.last)}. Projected: same lines as that game.`;
   return "Source: none yet. The NHL posts shift charts a few hours after each game.";
 }

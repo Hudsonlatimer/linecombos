@@ -48,8 +48,13 @@ export async function dfoLines(teams, people) {
     const c = nextData(await get(viaUrl, { ttl: 1800, text: true }).catch(() => null))?.props?.pageProps?.combinations;
     if (!c?.players?.length) return;
     const unmatched = [];
+    // Daily Faceoff keeps a player in the lines AND lists him on injured reserve when he's hurt after the lineup was set
+    // (a "Last Game" copy still has him in). Anyone on its IR list, or marked out, is taken out of the projected lines.
+    const hurt = new Map();
+    for (const p of c.players) if (p.groupIdentifier === "ir" || (p.injuryStatus && p.injuryStatus !== "dtd")) hurt.set(p.playerId, p);
+    for (const p of c.players) if (p.groupIdentifier === "ir" && p.injuryStatus === "dtd") hurt.set(p.playerId, p);
     const group = (g, order) => {
-      const ps = c.players.filter((p) => p.groupIdentifier === g).sort((a, b) => order.indexOf(a.positionIdentifier) - order.indexOf(b.positionIdentifier));
+      const ps = c.players.filter((p) => p.groupIdentifier === g && (g === "ir" || !hurt.has(p.playerId))).sort((a, b) => order.indexOf(a.positionIdentifier) - order.indexOf(b.positionIdentifier));
       // Players we can't match (not on an NHL roster in our data) stay in the line as a name-only card.
       return ps.map((p) => { const id = idOf(p.name, t.abbrev, /^g/.test(p.positionIdentifier)); if (!id) unmatched.push(p.name); return id ?? `name:${p.name}|${p.jerseyNumber ?? ""}`; });
     };
@@ -60,6 +65,9 @@ export async function dfoLines(teams, people) {
       pp: ["pp1", "pp2"].map((g) => group(g, SK)).filter((l) => l.length),
       pk: ["pk1", "pk2"].map((g) => group(g, SK)).filter((l) => l.length),
       goalies: group("g", ["g1", "g2"]),
+      // Players pulled from the lines for injury (they were in the lines DFO published).
+      out: [...hurt.values()].filter((p) => c.players.some((q) => q.playerId === p.playerId && ["f1", "f2", "f3", "f4", "d1", "d2", "d3", "g"].includes(q.groupIdentifier)))
+        .map((p) => ({ id: idOf(p.name, t.abbrev, /^g/.test(p.positionIdentifier)), name: p.name, status: p.injuryStatus ?? "out", news: String(p.latestNews?.details ?? "").trim() })),
       ...source(c, viaUrl), createdAt: c.updatedAt ?? null,
       via: "Daily Faceoff", viaUrl, unmatched: [...new Set(unmatched)],
     };

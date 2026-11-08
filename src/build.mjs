@@ -118,6 +118,7 @@ for (const [abbr, d] of Object.entries(dfo)) {
   const lastNight = T[abbr]?.last ? Date.parse(`${T[abbr].last.date}T12:00:00Z`) + 18 * 3600e3 : 0;
   reported[abbr].lines = {
     parsed: { type: "lines", team: abbr, lines: d.lines, pairs: d.pairs, pp: d.pp, pk: d.pk, goalies: d.goalies },
+    out: d.out,
     url: d.url, author: d.author, createdAt: d.createdAt, via: d.via, viaUrl: d.viaUrl, kind: d.kind, lastGame: d.lastGame,
     // Only a reporter's post made after the last game is "Reported"; last-game copies and DFO's own guesses are Projected.
     stale: d.kind !== "report" || (!!d.createdAt && Date.parse(d.createdAt) < lastNight),
