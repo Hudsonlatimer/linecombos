@@ -53,5 +53,6 @@ jobs:
           VERCEL_PROJECT_ID: prj_ndI8BCCXzsyuUstFGApKdcPaSZLP
           NODE_OPTIONS: --max-old-space-size=8192
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then echo "::error::The VERCEL_TOKEN secret is empty. Add it under Settings > Secrets and variables > Actions > Repository secrets, named exactly VERCEL_TOKEN."; exit 1; fi
           printf '.env*\n.gitignore\n_headers\n' > .vercelignore
           npx --yes vercel@62 deploy --prod --yes --archive=tgz --token "$VERCEL_TOKEN"
