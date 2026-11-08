@@ -96,6 +96,7 @@ ${body}
 </footer>
 ${json ? `<script type="application/json" id="page-data">${JSON.stringify(json).replace(/</g, "\\u003c")}</script>` : ""}
 <script src="/assets/app.js?v=${V(site)}" defer></script>
+<script src="/assets/live.js?v=${V(site)}" defer></script>
 ${scripts.map((s) => s.endsWith("#module") ? `<script type="module" src="${s.slice(0, -7)}?v=${V(site)}"></script>` : `<script src="${s}?v=${V(site)}" defer></script>`).join("")}
 </body>
 </html>`;

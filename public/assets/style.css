@@ -1023,3 +1023,16 @@ ul.plain { padding-left: 18px; } ul.plain li { margin: 6px 0; }
 .wp-tbl td.n { white-space: nowrap; }
 .tbl.wp-tbl { min-width: 0; }
 .wp-tbl td { white-space: normal; }
+
+/* ---------- Live score bar (every page but home) ---------- */
+.live-bar { border-bottom: 1px solid var(--line); background: var(--panel); }
+.lb-in { display: flex; align-items: center; gap: 12px; padding-top: 8px; padding-bottom: 8px; }
+.lb-lbl { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; text-transform: uppercase; letter-spacing: .04em; }
+.lb-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.lb-scroll::-webkit-scrollbar { display: none; }
+.lb-game { display: grid; grid-template-columns: auto auto; gap: 1px 10px; align-items: center; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); color: var(--ink); text-decoration: none; white-space: nowrap; font-size: 13px; }
+.lb-game.is-live { border-color: color-mix(in srgb, var(--live) 40%, var(--line)); }
+.lb-game:hover { border-color: var(--line-2); }
+.lb-t { display: flex; justify-content: space-between; gap: 8px; grid-column: 1; }
+.lb-t em { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lb-st { grid-column: 2; grid-row: 1 / span 2; font-size: 12px; color: var(--muted); align-self: center; }

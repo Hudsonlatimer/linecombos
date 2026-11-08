@@ -195,7 +195,20 @@
     }
   });
 
+  // Without a worker, build the game JSON in the browser from the NHL feeds (proxied at /live/), with the same code the build uses.
+  let core = null;
+  async function liveFromNhl() {
+    core ??= await import("/assets/core/game.mjs");
+    const j = (u) => fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 10000), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const [box, pbp, sh] = await Promise.all([j(`/live/box/${id}/`), j(`/live/pbp/${id}/`), j(`/live/shifts/${id}/`)]);
+    if (!box || ["FUT", "PRE"].includes(box.gameState)) return null;
+    return core.gameJson({ box, pbp, shifts: sh?.data ?? [] });
+  }
+
   async function refresh() {
+    if (!liveApi) {
+      try { const n = await liveFromNhl(); if (n) { if (G?.updated && n.updated === G.updated) return; G = n; render(); return; } } catch (e) { console.warn("live build failed", e); }
+    }
     const url = liveApi ? `${liveApi}/game/${id}` : `/data/game/${id}.json?t=${Date.now()}`;
     try {
       const r = await fetch(url, { cache: "no-store" });
@@ -207,7 +220,9 @@
   const state = G?.state ?? root.dataset.state;
   if (!FINAL.has(state)) {
     // Live: poll the worker every 20s, or the rebuilt snapshot every 60s. Pre-game: check every 2 min.
-    const every = LIVE.has(state) ? (liveApi ? 20000 : 60000) : 120000;
-    if (LIVE.has(state) || liveApi) setInterval(() => { if (!document.hidden) refresh(); }, every);
+    // Live: every 15s. Not started yet: every 45s, so the page flips to live on its own at puck drop.
+    const every = LIVE.has(state) ? 15000 : 45000;
+    setInterval(() => { if (!document.hidden) refresh(); }, every);
+    if (LIVE.has(state)) refresh();
   }
 })();
