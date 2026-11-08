@@ -1,0 +1,57 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Every 30 min from 15:00 to 06:59 UTC (morning skates through late West games), hourly otherwise.
+    # About 40 deploys a day; Vercel's free plan allows 100.
+    - cron: "*/30 15-23,0-6 * * *"
+    - cron: "0 7-14 * * *"
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Restore API cache
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: nhl-cache-${{ github.run_id }}
+          restore-keys: nhl-cache-
+      - run: npm test
+      - name: Build site
+        run: npm run build
+        env:
+          LIVE_API: ${{ secrets.LIVE_API }}
+          X_FEED_URL: ${{ secrets.X_FEED_URL }}
+      - name: Save collected posts
+        run: |
+          git config user.name "linecombos-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/posts.json
+          git diff --cached --quiet || git commit -m "Update posts [skip ci]"
+          git push || true
+      - name: Deploy to Vercel
+        working-directory: dist
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_YqqrcqI3ENUOa7xZ5hwRiaJv
+          VERCEL_PROJECT_ID: prj_ndI8BCCXzsyuUstFGApKdcPaSZLP
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: |
+          printf '.env*\n.gitignore\n_headers\n' > .vercelignore
+          npx --yes vercel@62 deploy --prod --yes --archive=tgz --token "$VERCEL_TOKEN"

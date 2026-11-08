@@ -1,0 +1,14 @@
+{
+  "name": "linecombos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hockey lineups from first rumour to final ice time. NHL lines from real shift data, goalie starts, news, stats and World Juniors projections.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "node src/build.mjs",
+    "build:fresh": "node src/build.mjs --fresh",
+    "dev": "node scripts/dev.mjs dist 5180",
+    "test": "node --test"
+  }
+}

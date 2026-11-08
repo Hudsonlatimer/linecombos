@@ -1,0 +1,1347 @@
+{
+  "source": "The Hockey News, 2026 World Junior Championship full roster list (Dec. 24, 2025)",
+  "url": "https://thehockeynews.com/news/latest-news/2026-world-junior-championship-full-roster-list",
+  "note": "Players born in 2007 or later on these rosters are eligible to return in 2027.",
+  "teams": {
+    "CAN": [
+      {
+        "name": "Michael Misa",
+        "pos": "F",
+        "club": "San Jose (NHL)"
+      },
+      {
+        "name": "Braeden Cootes",
+        "pos": "F",
+        "club": "Seattle (WHL)"
+      },
+      {
+        "name": "Gavin McKenna",
+        "pos": "F",
+        "club": "Penn State (NCAA)"
+      },
+      {
+        "name": "Tij Iginla",
+        "pos": "F",
+        "club": "Lethbridge (WHL)"
+      },
+      {
+        "name": "Carter Bear",
+        "pos": "F",
+        "club": "Everett (WHL)"
+      },
+      {
+        "name": "Jett Luchanko",
+        "pos": "F",
+        "club": "Brantford (OHL)"
+      },
+      {
+        "name": "Cole Reschny",
+        "pos": "F",
+        "club": "North Dakota (NCAA)"
+      },
+      {
+        "name": "Porter Martone",
+        "pos": "F",
+        "club": "Michigan State (NCAA)"
+      },
+      {
+        "name": "Sam O'Reilly",
+        "pos": "F",
+        "club": "London (OHL)"
+      },
+      {
+        "name": "Liam Greentree",
+        "pos": "F",
+        "club": "Windsor (OHL)"
+      },
+      {
+        "name": "Caleb Desnoyers",
+        "pos": "F",
+        "club": "Moncton (QMJHL)"
+      },
+      {
+        "name": "Cole Beaudoin",
+        "pos": "F",
+        "club": "Barrie (OHL)"
+      },
+      {
+        "name": "Brady Martin",
+        "pos": "F",
+        "club": "Sault Ste. Marie (OHL)"
+      },
+      {
+        "name": "Michael Hage",
+        "pos": "F",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "Kashawn Aitcheson",
+        "pos": "D",
+        "club": "Barrie (OHL)"
+      },
+      {
+        "name": "Harrison Brunicke",
+        "pos": "D",
+        "club": "Pittsburgh (NHL)"
+      },
+      {
+        "name": "Carson Carels",
+        "pos": "D",
+        "club": "Prince George (WHL)"
+      },
+      {
+        "name": "Cameron Reid",
+        "pos": "D",
+        "club": "Kitchener (OHL)"
+      },
+      {
+        "name": "Ethan MacKenzie",
+        "pos": "D",
+        "club": "Edmonton (WHL)"
+      },
+      {
+        "name": "Ben Danford",
+        "pos": "D",
+        "club": "Brantford (OHL)"
+      },
+      {
+        "name": "Zayne Parekh",
+        "pos": "D",
+        "club": "Calgary (NHL)"
+      },
+      {
+        "name": "Keaton Verhoeff",
+        "pos": "D",
+        "club": "North Dakota (NCAA)"
+      },
+      {
+        "name": "Jack Ivankovic",
+        "pos": "G",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "Carter George",
+        "pos": "G",
+        "club": "Owen Sound (OHL)"
+      },
+      {
+        "name": "Joshua Ravensbergen",
+        "pos": "G",
+        "club": "Prince George (WHL)"
+      }
+    ],
+    "USA": [
+      {
+        "name": "Teddy Stiga",
+        "pos": "F",
+        "club": "Boston College (NCAA)"
+      },
+      {
+        "name": "AJ Spellacy",
+        "pos": "F",
+        "club": "Windsor (OHL)"
+      },
+      {
+        "name": "James Hagens",
+        "pos": "F",
+        "club": "Boston College (NCAA)"
+      },
+      {
+        "name": "Cole McKinney",
+        "pos": "F",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "Will Zellers",
+        "pos": "F",
+        "club": "North Dakota (NCAA)"
+      },
+      {
+        "name": "Ryker Lee",
+        "pos": "F",
+        "club": "Michigan State (NCAA)"
+      },
+      {
+        "name": "LJ Mooney",
+        "pos": "F",
+        "club": "Minnesota (NCAA)"
+      },
+      {
+        "name": "Brendan McMorrow",
+        "pos": "F",
+        "club": "Denver (NCAA)"
+      },
+      {
+        "name": "Shane Vansaghi",
+        "pos": "F",
+        "club": "Michigan State Univ. (NCAA)"
+      },
+      {
+        "name": "Will Horcoff",
+        "pos": "F",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "Max Plante",
+        "pos": "F",
+        "club": "Minnesota-Duluth (NCAA)"
+      },
+      {
+        "name": "Cole Eiserman",
+        "pos": "F",
+        "club": "Boston Univ. (NCAA)"
+      },
+      {
+        "name": "Kamil Bednarik",
+        "pos": "F",
+        "club": "Boston Univ. (NCAA)"
+      },
+      {
+        "name": "Brodie Ziemer",
+        "pos": "F",
+        "club": "Minnesota (NCAA)"
+      },
+      {
+        "name": "Luke Osburn",
+        "pos": "D",
+        "club": "Wisconsin (NCAA)"
+      },
+      {
+        "name": "Logan Hensler",
+        "pos": "D",
+        "club": "Wisconsin (NCAA)"
+      },
+      {
+        "name": "Adam Kleber",
+        "pos": "D",
+        "club": "Minnesota-Duluth (NCAA)"
+      },
+      {
+        "name": "Dakoda Rheaume-Mullen",
+        "pos": "D",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "Asher Barnett",
+        "pos": "D",
+        "club": "Univ. of Michigan (NCAA)"
+      },
+      {
+        "name": "EJ Emery",
+        "pos": "D",
+        "club": "Univ. of North Dakota (NCAA)"
+      },
+      {
+        "name": "Chase Reid",
+        "pos": "D",
+        "club": "Soo Greyhounds (OHL)"
+      },
+      {
+        "name": "Cole Hutson",
+        "pos": "D",
+        "club": "Boston Univ. (NCAA)"
+      },
+      {
+        "name": "Caleb Heil",
+        "pos": "G",
+        "club": "Madison (USHL)"
+      },
+      {
+        "name": "Nick Kempf",
+        "pos": "G",
+        "club": "Notre Dame (NCAA)"
+      },
+      {
+        "name": "Brady Knowling",
+        "pos": "G",
+        "club": "U.S. NTDP (USHL)"
+      }
+    ],
+    "SWE": [
+      {
+        "name": "Lucas Pettersson",
+        "pos": "F",
+        "club": "Brynas (Swe.)"
+      },
+      {
+        "name": "Milton Gastrin",
+        "pos": "F",
+        "club": "MoDo (Swe.2)"
+      },
+      {
+        "name": "Linus Eriksson",
+        "pos": "F",
+        "club": "Timra (Swe.)"
+      },
+      {
+        "name": "Ivar Stenberg",
+        "pos": "F",
+        "club": "Frolunda (Swe.)"
+      },
+      {
+        "name": "Anton Frondell",
+        "pos": "F",
+        "club": "Djurgarden (Swe.)"
+      },
+      {
+        "name": "Valter Lindberg",
+        "pos": "F",
+        "club": "Skelleftea (Swe.)"
+      },
+      {
+        "name": "Victor Eklund",
+        "pos": "F",
+        "club": "Djurgarden (Swe.)"
+      },
+      {
+        "name": "Viggo Bjorck",
+        "pos": "F",
+        "club": "Djurgarden (Swe.)"
+      },
+      {
+        "name": "Loke Krantz",
+        "pos": "F",
+        "club": "Linkoping (Swe.)"
+      },
+      {
+        "name": "Liam Danielsson",
+        "pos": "F",
+        "club": "Orebro (Swe.)"
+      },
+      {
+        "name": "Eddie Genborg",
+        "pos": "F",
+        "club": "Timra (Swe.)"
+      },
+      {
+        "name": "Jack Berglund",
+        "pos": "F",
+        "club": "Farjestad (Swe.)"
+      },
+      {
+        "name": "Wilson Bjorck",
+        "pos": "F",
+        "club": "Colorado College (NCAA)"
+      },
+      {
+        "name": "Eric Nilson",
+        "pos": "F",
+        "club": "Michigan State (NCAA)"
+      },
+      {
+        "name": "Casper Juustovaara Karlsson",
+        "pos": "F",
+        "club": "Lulea (Swe.)"
+      },
+      {
+        "name": "Felix Ohrqvist",
+        "pos": "D",
+        "club": "Sodertalje (Swe.)"
+      },
+      {
+        "name": "Leo Sahlin Wallenius",
+        "pos": "D",
+        "club": "Vaxjo (Swe.)"
+      },
+      {
+        "name": "Sascha Boumedienne",
+        "pos": "D",
+        "club": "Boston Univ. (NCAA)"
+      },
+      {
+        "name": "Viggo Gustafsson",
+        "pos": "D",
+        "club": "AIK (Swe.2)"
+      },
+      {
+        "name": "Felix Carell",
+        "pos": "D",
+        "club": "Malmo (Swe.)"
+      },
+      {
+        "name": "Victor Johansson",
+        "pos": "D",
+        "club": "Oskarshamn (Swe.2)"
+      },
+      {
+        "name": "William Hakansson",
+        "pos": "D",
+        "club": "Lulea (Swe.)"
+      },
+      {
+        "name": "Alfons Freij",
+        "pos": "D",
+        "club": "Timra (Swe.)"
+      },
+      {
+        "name": "Herman Liv",
+        "pos": "G",
+        "club": "Almtuna (Swe.2)"
+      },
+      {
+        "name": "Love Harenstam",
+        "pos": "G",
+        "club": "Sodertalje (Swe.2)"
+      },
+      {
+        "name": "Mans Goos",
+        "pos": "G",
+        "club": "Farjestad Jr. (Swe.)"
+      }
+    ],
+    "CZE": [
+      {
+        "name": "Adam Jecho",
+        "pos": "F",
+        "club": "Edmonton (WHL)"
+      },
+      {
+        "name": "Matej Kubiesa",
+        "pos": "F",
+        "club": "Frydek-Mistek (Cze.2)"
+      },
+      {
+        "name": "Max Curran",
+        "pos": "F",
+        "club": "Edmonton (WHL)"
+      },
+      {
+        "name": "Vaclav Nestrasil",
+        "pos": "F",
+        "club": "UMass (NCAA)"
+      },
+      {
+        "name": "Vojtech Cihar",
+        "pos": "F",
+        "club": "Karlovy Vary (Cze.)"
+      },
+      {
+        "name": "Richard Zemlicka",
+        "pos": "F",
+        "club": "SaiPa Jr. (Fin.)"
+      },
+      {
+        "name": "Petr Sikora",
+        "pos": "F",
+        "club": "Trinec (Cze.)"
+      },
+      {
+        "name": "Tomas Poletin",
+        "pos": "F",
+        "club": "Kelowna (WHL)"
+      },
+      {
+        "name": "Danny Chludil",
+        "pos": "F",
+        "club": "Brno (Cze.)"
+      },
+      {
+        "name": "Adam Benak",
+        "pos": "F",
+        "club": "Brantford (OHL)"
+      },
+      {
+        "name": "Jiri Klima",
+        "pos": "F",
+        "club": "Shawinigan (QMJHL)"
+      },
+      {
+        "name": "Adam Titlbach",
+        "pos": "F",
+        "club": "Vancouver (WHL)"
+      },
+      {
+        "name": "Adam Novotny",
+        "pos": "F",
+        "club": "Peterborough (OHL)"
+      },
+      {
+        "name": "Stepan Hoch",
+        "pos": "F",
+        "club": "Ceske Budejovice (Cze.)"
+      },
+      {
+        "name": "Samuel Drancak",
+        "pos": "F",
+        "club": "Red Deer (WHL)"
+      },
+      {
+        "name": "Max Psenicka",
+        "pos": "D",
+        "club": "Portland (WHL)"
+      },
+      {
+        "name": "Jakub Vanecek",
+        "pos": "D",
+        "club": "Tri-City (WHL)"
+      },
+      {
+        "name": "Adam Jiricek",
+        "pos": "D",
+        "club": "Brantford (OHL)"
+      },
+      {
+        "name": "Radim Mrtka",
+        "pos": "D",
+        "club": "Seattle (WHL)"
+      },
+      {
+        "name": "Jakub Fibigr",
+        "pos": "D",
+        "club": "Brampton (OHL)"
+      },
+      {
+        "name": "Matyas Man",
+        "pos": "D",
+        "club": "Prince Albert (WHL)"
+      },
+      {
+        "name": "Vladimir Dravecky",
+        "pos": "D",
+        "club": "Brantford (WHL)"
+      },
+      {
+        "name": "Tomas Galvas",
+        "pos": "D",
+        "club": "Liberec (Cze.)"
+      },
+      {
+        "name": "Vashek Blanar",
+        "pos": "D",
+        "club": "HV71 Jr. (Swe.)"
+      },
+      {
+        "name": "Matyas Marik",
+        "pos": "G",
+        "club": "Ceske Budejovice Jr. (Cze.)"
+      },
+      {
+        "name": "Ondrej Stebetak",
+        "pos": "G",
+        "club": "Portland (WHL)"
+      },
+      {
+        "name": "Michal Orsulak",
+        "pos": "G",
+        "club": "Prince Albert (WHL)"
+      }
+    ],
+    "FIN": [
+      {
+        "name": "Roope Vesterinen",
+        "pos": "F",
+        "club": "HPK (Fin.)"
+      },
+      {
+        "name": "Joona Saarelainen",
+        "pos": "F",
+        "club": "KalPa (Fin.)"
+      },
+      {
+        "name": "Aatos Koivu",
+        "pos": "F",
+        "club": "TPS (Fin.)"
+      },
+      {
+        "name": "Atte Joki",
+        "pos": "F",
+        "club": "Lukko (Fin.)"
+      },
+      {
+        "name": "Matias Vanhanen",
+        "pos": "F",
+        "club": "Everett (WHL)"
+      },
+      {
+        "name": "Onni Kalto",
+        "pos": "F",
+        "club": "Oshawa (OHL)"
+      },
+      {
+        "name": "Kasper Pikkarainen",
+        "pos": "F",
+        "club": "TPS (Fin.)"
+      },
+      {
+        "name": "Max Westergard",
+        "pos": "F",
+        "club": "Frolunda (Swe.)"
+      },
+      {
+        "name": "Emil Hemming",
+        "pos": "F",
+        "club": "Barrie (OHL)"
+      },
+      {
+        "name": "Leo Tuuva",
+        "pos": "F",
+        "club": "Lukko (Fin.)"
+      },
+      {
+        "name": "Oliver Suvanto",
+        "pos": "F",
+        "club": "Tappara (Fin.)"
+      },
+      {
+        "name": "Julius Miettinen",
+        "pos": "F",
+        "club": "Everett (WHL)"
+      },
+      {
+        "name": "Heikki Ruohonen",
+        "pos": "F",
+        "club": "Harvard (NCAA)"
+      },
+      {
+        "name": "Jasper Kuhta",
+        "pos": "F",
+        "club": "Ottawa (OHL)"
+      },
+      {
+        "name": "Mitja Jokinen",
+        "pos": "D",
+        "club": "TPS (Fin.)"
+      },
+      {
+        "name": "Aron Kiviharju",
+        "pos": "D",
+        "club": "HIFK (Fin.)"
+      },
+      {
+        "name": "Niklas Nykyri",
+        "pos": "D",
+        "club": "HIFK (Fin.)"
+      },
+      {
+        "name": "Arttu Valila",
+        "pos": "D",
+        "club": "Lukko (Fin.)"
+      },
+      {
+        "name": "Juho Piiparinen",
+        "pos": "D",
+        "club": "Tappara (Fin.)"
+      },
+      {
+        "name": "Daniel Nieminen",
+        "pos": "D",
+        "club": "Pelicans (Fin.)"
+      },
+      {
+        "name": "Veeti Vaisanen",
+        "pos": "D",
+        "club": "Medicine Hat (WHL)"
+      },
+      {
+        "name": "Lasse Boelius",
+        "pos": "D",
+        "club": "Assat (Fin.)"
+      },
+      {
+        "name": "Kim Saarinen",
+        "pos": "G",
+        "club": "HPK (Fin.)"
+      },
+      {
+        "name": "Petteri Rimpinen",
+        "pos": "G",
+        "club": "Kiekko-Espoo (Fin.)"
+      },
+      {
+        "name": "Patrik Kerkola",
+        "pos": "G",
+        "club": "KalPa (Fin.)"
+      }
+    ],
+    "SVK": [
+      {
+        "name": "Michal Liscinsky",
+        "pos": "F",
+        "club": "Kosice (Svk.)"
+      },
+      {
+        "name": "Tomas Pobezal",
+        "pos": "F",
+        "club": "Kingston (OHL)"
+      },
+      {
+        "name": "Michal Svrcek",
+        "pos": "F",
+        "club": "Brynas (Swe.)"
+      },
+      {
+        "name": "Jan Chovan",
+        "pos": "F",
+        "club": "Sudbury (OHL)"
+      },
+      {
+        "name": "Tobias Tomik",
+        "pos": "F",
+        "club": "Vancouver (WHL)"
+      },
+      {
+        "name": "Alex Misiak",
+        "pos": "F",
+        "club": "Erie (OHL)"
+      },
+      {
+        "name": "Andreas Straka",
+        "pos": "F",
+        "club": "Quebec (QMJHL)"
+      },
+      {
+        "name": "Ondrej Maruna",
+        "pos": "F",
+        "club": "Dubnica (Svk.2)"
+      },
+      {
+        "name": "Samuel Murin",
+        "pos": "F",
+        "club": "Tri-City (USHL)"
+      },
+      {
+        "name": "Alex Gaso",
+        "pos": "F",
+        "club": "Mountfield Jr. (Cze.)"
+      },
+      {
+        "name": "Alex Zalesak",
+        "pos": "F",
+        "club": "MoDo Jr. (Sweden-Jr)"
+      },
+      {
+        "name": "Adam Nemec",
+        "pos": "F",
+        "club": "Nitra (Svk.)"
+      },
+      {
+        "name": "Jakub Dubravik",
+        "pos": "F",
+        "club": "Zilina (Svk.)"
+      },
+      {
+        "name": "Lukas Tomka",
+        "pos": "F",
+        "club": "Banska Bystrica (Svk.)"
+      },
+      {
+        "name": "Tobias Pitka",
+        "pos": "F",
+        "club": "Northern Michigan (NCAA)"
+      },
+      {
+        "name": "Tomas Chrenko",
+        "pos": "F",
+        "club": "Nitra (Svk.)"
+      },
+      {
+        "name": "Filip Kovalcik",
+        "pos": "D",
+        "club": "Drummondville (QMJHL)"
+      },
+      {
+        "name": "Michal Capos",
+        "pos": "D",
+        "club": "Wenatchee (WHL)"
+      },
+      {
+        "name": "Adam Kalman",
+        "pos": "D",
+        "club": "Nitra (Svk.)"
+      },
+      {
+        "name": "Patrik Rusznyak",
+        "pos": "D",
+        "club": "Lulea Jr. (Swe.)"
+      },
+      {
+        "name": "Matus Lisy",
+        "pos": "D",
+        "club": "Red Deer (WHL)"
+      },
+      {
+        "name": "Adam Goljer",
+        "pos": "D",
+        "club": "Trencin (Svk.)"
+      },
+      {
+        "name": "Andrej Fabus",
+        "pos": "D",
+        "club": "Bratislava (Svk.)"
+      },
+      {
+        "name": "Luka Radivojevic",
+        "pos": "D",
+        "club": "Boston College (NCAA)"
+      },
+      {
+        "name": "Adam Belusko",
+        "pos": "D",
+        "club": "Muskegon (USHL)"
+      },
+      {
+        "name": "Michal Pradel",
+        "pos": "G",
+        "club": "Tri-City (USHL)"
+      },
+      {
+        "name": "Roberto Leonardo Henriquez",
+        "pos": "G",
+        "club": "Green Bay (USHL)"
+      },
+      {
+        "name": "Alan Lendak",
+        "pos": "G",
+        "club": "Fargo (USHL)"
+      }
+    ],
+    "LAT": [
+      {
+        "name": "Rudolfs Berzkalns",
+        "pos": "F",
+        "club": "Muskegon (USHL)"
+      },
+      {
+        "name": "Dmitrijs Dilevka",
+        "pos": "F",
+        "club": "Brooks (BCHL)"
+      },
+      {
+        "name": "Maksims Pumpins",
+        "pos": "F",
+        "club": "Poruba Jr. (Cze.)"
+      },
+      {
+        "name": "Martins Klaucans",
+        "pos": "F",
+        "club": "Sherbrooke (QMJHL)"
+      },
+      {
+        "name": "Olivers Murnieks",
+        "pos": "F",
+        "club": "Saint John (QMJHL)"
+      },
+      {
+        "name": "Roberts Janis Polis",
+        "pos": "F",
+        "club": "Riga (Lat.)"
+      },
+      {
+        "name": "Kristers Ansons",
+        "pos": "F",
+        "club": "Mogo (Lat.)"
+      },
+      {
+        "name": "Roberts Naudins",
+        "pos": "F",
+        "club": "Shattuck St. Mary's (USHS)"
+      },
+      {
+        "name": "Bruno Osmanis",
+        "pos": "F",
+        "club": "Bjorkloven (Swe.2)"
+      },
+      {
+        "name": "Kristians Utnans",
+        "pos": "F",
+        "club": "Kenai River (NAHL)"
+      },
+      {
+        "name": "Toms Trockis",
+        "pos": "F",
+        "club": "Vernon (BCHL)"
+      },
+      {
+        "name": "Antons Macijevskis",
+        "pos": "F",
+        "club": "Watertown (NAHL)"
+      },
+      {
+        "name": "Daniels Serkins",
+        "pos": "F",
+        "club": "Bern Jr. (Sui.)"
+      },
+      {
+        "name": "Markuss Sieradzkis",
+        "pos": "F",
+        "club": "Plzen Jr. (Cze.)"
+      },
+      {
+        "name": "Karlis Flugins",
+        "pos": "F",
+        "club": "KooKoo Jr. (Fin.)"
+      },
+      {
+        "name": "Krisjanis Sarts",
+        "pos": "D",
+        "club": "Blackfalds (BCHL)"
+      },
+      {
+        "name": "Reinis Auzins",
+        "pos": "D",
+        "club": "Sherbrooke (QMJHL)"
+      },
+      {
+        "name": "Matiss Osans",
+        "pos": "D",
+        "club": "New Jersey (NCDC)"
+      },
+      {
+        "name": "Martins Vitols",
+        "pos": "D",
+        "club": "Zemgale (Lat.)"
+      },
+      {
+        "name": "Rolands Naglis",
+        "pos": "D",
+        "club": "Bern Jr. (Sui.)"
+      },
+      {
+        "name": "Harijs Cjunskis",
+        "pos": "D",
+        "club": "Brooks (BCHL)"
+      },
+      {
+        "name": "Darels Uljanskis",
+        "pos": "D",
+        "club": "Flint (OHL)"
+      },
+      {
+        "name": "Alberts Smits",
+        "pos": "D",
+        "club": "Jukurit (Fin.)"
+      },
+      {
+        "name": "Krists Retenais",
+        "pos": "D",
+        "club": "Brooks (BCHL)"
+      },
+      {
+        "name": "Oskars Nils Briedis",
+        "pos": "D",
+        "club": "Lulea Jr. (Swe.)"
+      },
+      {
+        "name": "Mikus Vecvanags",
+        "pos": "G",
+        "club": "Newfoundland (QMJHL)"
+      },
+      {
+        "name": "Ivans Kufterins",
+        "pos": "G",
+        "club": "Kamloops (WHL)"
+      },
+      {
+        "name": "Nils Roberts Maurins",
+        "pos": "G",
+        "club": "Omaha (USHL)"
+      }
+    ],
+    "SUI": [
+      {
+        "name": "Paul Mottard",
+        "pos": "F",
+        "club": "Ilves (Fin.)"
+      },
+      {
+        "name": "Nolan Cattin",
+        "pos": "F",
+        "club": "Biel-Bienne (Sui.)"
+      },
+      {
+        "name": "Mike Aeschlimann",
+        "pos": "F",
+        "club": "Young Tigers Jr. (Sui.)"
+      },
+      {
+        "name": "Nathan Borradori",
+        "pos": "F",
+        "club": "Bellinzona (Sui.2)"
+      },
+      {
+        "name": "Kimi Korbler",
+        "pos": "F",
+        "club": "Thurgau (Sui.2)"
+      },
+      {
+        "name": "Joel Grossniklaus",
+        "pos": "F",
+        "club": "Malmo Jr. (Swe.)"
+      },
+      {
+        "name": "Lars Steiner",
+        "pos": "F",
+        "club": "Rouyn-Noranda (QMJHL)"
+      },
+      {
+        "name": "Loris Wey",
+        "pos": "F",
+        "club": "EV Zug (Sui.)"
+      },
+      {
+        "name": "Robin Nico Antenen",
+        "pos": "F",
+        "club": "Zug (Sui.)"
+      },
+      {
+        "name": "Jonah Neuenschwander",
+        "pos": "F",
+        "club": "Biel-Bienne (Sui.)"
+      },
+      {
+        "name": "Jamiro Reber",
+        "pos": "F",
+        "club": "HV71 (Swe.)"
+      },
+      {
+        "name": "David Bosson",
+        "pos": "F",
+        "club": "Drummondville (QMJHL)"
+      },
+      {
+        "name": "Kevin Haas",
+        "pos": "F",
+        "club": "Thurgau (Sui.2)"
+      },
+      {
+        "name": "Beni Waidacher",
+        "pos": "F",
+        "club": "Davos (Sui.)"
+      },
+      {
+        "name": "Lenny Giger",
+        "pos": "F",
+        "club": "Sioux City (USHL)"
+      },
+      {
+        "name": "Cyrill Henry",
+        "pos": "F",
+        "club": "Lugano Jr. (Sui.)"
+      },
+      {
+        "name": "Nik Lehmann",
+        "pos": "D",
+        "club": "SCL Tigers (Sui.)"
+      },
+      {
+        "name": "Mischa Geisser",
+        "pos": "D",
+        "club": "Thurgau (Sui.2)"
+      },
+      {
+        "name": "Basile Sansonnens",
+        "pos": "D",
+        "club": "Lausanne (Sui.)"
+      },
+      {
+        "name": "Gian Meier",
+        "pos": "D",
+        "club": "Frolunda Jr. (Swe.)"
+      },
+      {
+        "name": "Simon Muller",
+        "pos": "D",
+        "club": "Arosa (Sui.2)"
+      },
+      {
+        "name": "Guus Van der Kaaij",
+        "pos": "D",
+        "club": "Rouyn-Noranda (QMJHL)"
+      },
+      {
+        "name": "Leon Muggli",
+        "pos": "D",
+        "club": "Hershey (AHL)"
+      },
+      {
+        "name": "Niklas Blessing",
+        "pos": "D",
+        "club": "Biel-Bienne (Sui.)"
+      },
+      {
+        "name": "Ludvig Johnson",
+        "pos": "D",
+        "club": "Fribourg-Gotteron (Sui.)"
+      },
+      {
+        "name": "Daniil Ustinkov",
+        "pos": "D",
+        "club": "Kusnacht (Sui.2)"
+      },
+      {
+        "name": "Christian Kirsch",
+        "pos": "G",
+        "club": "Kitchener (OHL)"
+      },
+      {
+        "name": "Phileas Lachat",
+        "pos": "G",
+        "club": "Waterloo (USHL)"
+      },
+      {
+        "name": "Elijah Neuenschwander",
+        "pos": "G",
+        "club": "Chur (Sui.2)"
+      }
+    ],
+    "GER": [
+      {
+        "name": "Elias Pul",
+        "pos": "F",
+        "club": "Saskatoon (WHL)"
+      },
+      {
+        "name": "Maxim Schafer",
+        "pos": "F",
+        "club": "Chicoutimi (QMJHL)"
+      },
+      {
+        "name": "David Lewandowski",
+        "pos": "F",
+        "club": "Saskatoon (WHL)"
+      },
+      {
+        "name": "Tim Schutz",
+        "pos": "F",
+        "club": "Krefeld (Ger.2)"
+      },
+      {
+        "name": "Nick Maul",
+        "pos": "F",
+        "club": "RB Hockey Juniors (AlpsHL)"
+      },
+      {
+        "name": "Mateu Spath Mariscal",
+        "pos": "F",
+        "club": "Salmon Arm (BCHL)"
+      },
+      {
+        "name": "Lenny Boos",
+        "pos": "F",
+        "club": "Dusseldorf (Ger.2)"
+      },
+      {
+        "name": "Dustin Willhoft",
+        "pos": "F",
+        "club": "Saskatoon (WHL)"
+      },
+      {
+        "name": "Maximilian Brunner",
+        "pos": "F",
+        "club": "Chilliwack (BCHL)"
+      },
+      {
+        "name": "Clemens Sager",
+        "pos": "F",
+        "club": "Kassel (Ger.2)"
+      },
+      {
+        "name": "Timo Kose",
+        "pos": "F",
+        "club": "Frankfurt (Ger.)"
+      },
+      {
+        "name": "Elias Schneider",
+        "pos": "F",
+        "club": "Shawinigan (QMJHL)"
+      },
+      {
+        "name": "Tobias Schwarz",
+        "pos": "F",
+        "club": "Landshut (Ger.2)"
+      },
+      {
+        "name": "Simon Seidl",
+        "pos": "F",
+        "club": "Landshut (Ger.2)"
+      },
+      {
+        "name": "Gustavs Griva",
+        "pos": "F",
+        "club": "Madison (USHL)"
+      },
+      {
+        "name": "Finn Serikow",
+        "pos": "D",
+        "club": "Landshut (Ger.2)"
+      },
+      {
+        "name": "Max Bleicher",
+        "pos": "D",
+        "club": "Powell (BCHL)"
+      },
+      {
+        "name": "Fabio Kose",
+        "pos": "D",
+        "club": "Frankfurt (Ger.)"
+      },
+      {
+        "name": "Manuel Schams",
+        "pos": "D",
+        "club": "Kassel (Ger.2)"
+      },
+      {
+        "name": "Carlos Handel",
+        "pos": "D",
+        "club": "Halifax (QMJHL)"
+      },
+      {
+        "name": "Max Hense",
+        "pos": "D",
+        "club": "Trail Smoke (BCHL)"
+      },
+      {
+        "name": "Nick Mahler",
+        "pos": "D",
+        "club": "Regensburg (Ger.2)"
+      },
+      {
+        "name": "Moritz Kretzschmar",
+        "pos": "D",
+        "club": "Lausitzer Fuchse (Ger.2)"
+      },
+      {
+        "name": "Matthias Pape",
+        "pos": "D",
+        "club": "Trail (BCHL)"
+      },
+      {
+        "name": "Linus Vieillard",
+        "pos": "G",
+        "club": "Spokane (WHL)"
+      },
+      {
+        "name": "Lennart Neiße",
+        "pos": "G",
+        "club": "Lausitzer Fuchse (Ger.2)"
+      },
+      {
+        "name": "Lukas Stuhrmann",
+        "pos": "G",
+        "club": "RoKi Jr. (Fin.)"
+      }
+    ],
+    "DEN": [
+      {
+        "name": "Tristan Petersen",
+        "pos": "F",
+        "club": "Penticton (WHL)"
+      },
+      {
+        "name": "Sebastian Stromstad",
+        "pos": "F",
+        "club": "Rodovre (Den.)"
+      },
+      {
+        "name": "Albert Grossmann",
+        "pos": "F",
+        "club": "Sonderjyske (Den.)"
+      },
+      {
+        "name": "Oliver Dejbjerg Larsen",
+        "pos": "F",
+        "club": "Rogle Jr. (Swe.)"
+      },
+      {
+        "name": "Oliver Green",
+        "pos": "F",
+        "club": "Malmo Jr. (Swe.)"
+      },
+      {
+        "name": "Andrew Bjergstad",
+        "pos": "F",
+        "club": "Lone Star (NAHL)"
+      },
+      {
+        "name": "Lucas Cilan Hjorth Jensen",
+        "pos": "F",
+        "club": "Aalborg (Den.)"
+      },
+      {
+        "name": "William Bundgaard",
+        "pos": "F",
+        "club": "HV71 Jr. (Swe.)"
+      },
+      {
+        "name": "Elias Borup Olsen",
+        "pos": "F",
+        "club": "Sonderjyske (Den.)"
+      },
+      {
+        "name": "Anton Linde",
+        "pos": "F",
+        "club": "Chicoutimi (QMJHL)"
+      },
+      {
+        "name": "Lasse Bærentsen",
+        "pos": "F",
+        "club": "Herning (Den.)"
+      },
+      {
+        "name": "Mads Kongsbak Klyvo",
+        "pos": "F",
+        "club": "Frolunda Jr. (Swe.)"
+      },
+      {
+        "name": "Martinus Uggerhoj Schioldan",
+        "pos": "F",
+        "club": "HV71 Jr (Swe.)"
+      },
+      {
+        "name": "Jeppe Kramer",
+        "pos": "D",
+        "club": "Herlev (Den.)"
+      },
+      {
+        "name": "Markus Jakobsen",
+        "pos": "D",
+        "club": "Sioux Falls (USHL)"
+      },
+      {
+        "name": "Emil Saaby Jakobsen",
+        "pos": "D",
+        "club": "Karlskrona Jr. (Swe.)"
+      },
+      {
+        "name": "Frederik Rundh",
+        "pos": "D",
+        "club": "Olofstroms Jr. (Swe.)"
+      },
+      {
+        "name": "Jesper Bank Olesen",
+        "pos": "D",
+        "club": "Herning (Den.)"
+      },
+      {
+        "name": "Frederick Amondsen",
+        "pos": "D",
+        "club": "Rodovre (Den.)"
+      },
+      {
+        "name": "Jeppe Bertram",
+        "pos": "D",
+        "club": "Esbjerg (Den.)"
+      },
+      {
+        "name": "Viggo Damgaard",
+        "pos": "D",
+        "club": "Herning (Den.)"
+      },
+      {
+        "name": "Anton Emil Wilde Larsen",
+        "pos": "G",
+        "club": "Frederikshavn (Den.)"
+      },
+      {
+        "name": "Tobias Renner Christensen",
+        "pos": "G",
+        "club": "Herning (Den.2)"
+      },
+      {
+        "name": "Patrick Tiedjen",
+        "pos": "G",
+        "club": "Rodovre (Den.2)"
+      }
+    ]
+  }
+}

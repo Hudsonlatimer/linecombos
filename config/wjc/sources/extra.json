@@ -1,0 +1,15 @@
+{
+  "source": "IIHF: Norway U20s earn promotion (Dec. 13, 2025). Returning Norwegians named in the recap; nine of 23 are eligible for 2027.",
+  "url": "https://canada-central.iihf.com/en/news/71228/norway_u20s_earn_promotion",
+  "teams": {
+    "NOR": [
+      { "name": "Niklas Aaram-Olsen", "pos": "F" },
+      { "name": "Mikkel Eriksen", "pos": "F" },
+      { "name": "Tinus Luc Koblar", "pos": "F" },
+      { "name": "Ludvig Lafton", "pos": "D" },
+      { "name": "Jorgen Myhre", "pos": "F" },
+      { "name": "Elias Vatne", "pos": "F" },
+      { "name": "Albert Englund", "pos": "G" }
+    ]
+  }
+}

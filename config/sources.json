@@ -1,0 +1,22 @@
+{
+  "_help": "Accounts the site reads. Bluesky is free and needs no key. For X, point your scraper at x.inbox (see README). rank: 1 = most trusted (official) ... 5 = least. kind: official | lineups | beat | insider | prospects | media.",
+  "bluesky": [
+    { "handle": "puckpedia-lineups.bsky.social", "name": "PuckPedia Lineups", "kind": "lineups", "rank": 3 },
+    { "handle": "puckpedia.com", "name": "PuckPedia", "kind": "media", "rank": 4 },
+    { "handle": "dailyfaceoff.bsky.social", "name": "Daily Faceoff", "kind": "media", "rank": 4 },
+    { "handle": "dfoedmonton.bsky.social", "name": "Daily Faceoff Edmonton", "kind": "beat", "rank": 3, "teams": ["EDM"] },
+    { "handle": "dfovancouver.bsky.social", "name": "Daily Faceoff Vancouver", "kind": "beat", "rank": 3, "teams": ["VAN"] },
+    { "handle": "thehockeynews.bsky.social", "name": "The Hockey News", "kind": "media", "rank": 4 },
+    { "handle": "stevenpellis.ca", "name": "Steven Ellis", "kind": "prospects", "rank": 3 },
+    { "handle": "scottcwheeler.bsky.social", "name": "Scott Wheeler", "kind": "prospects", "rank": 3 },
+    { "handle": "chrismpeters.bsky.social", "name": "Chris Peters", "kind": "prospects", "rank": 3 },
+    { "handle": "ryankennedyhockey.bsky.social", "name": "Ryan Kennedy", "kind": "prospects", "rank": 3 },
+    { "handle": "dobberhockey.bsky.social", "name": "Dobber Hockey", "kind": "media", "rank": 4 }
+  ],
+  "x": {
+    "_help": "Your scraper writes JSON files here: an array of { id, handle, author, text, url, createdAt }. Or set the X_FEED_URL environment variable to a URL returning that array.",
+    "inbox": "data/x-inbox",
+    "accounts": []
+  },
+  "keepDays": 14
+}

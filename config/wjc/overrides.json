@@ -1,0 +1,6 @@
+{
+  "_help": "add: players missing from the NHL-drafted pool, e.g. undrafted draft-eligibles: { id?, first, last, pos (C/L/R/D/G), shoots, birthDate, code (CAN/USA/...) }. remove: NHL player ids to drop. nationality: { \"<id>\": \"CAN\" } when a player represents a different country than his birth country.",
+  "add": [],
+  "remove": [],
+  "nationality": {}
+}

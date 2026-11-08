@@ -1,0 +1,622 @@
+{
+  "source": "2026 World Junior Summer Showcase rosters (Windsor, July 26-Aug. 1, 2026)",
+  "urls": {
+    "CAN": "https://www.nhl.com/news/canada-2026-world-junior-summer-showcase-roster",
+    "FIN": "https://www.nhl.com/news/canada-2026-world-junior-summer-showcase-roster",
+    "USA": "https://www.dailyfaceoff.com/news/2026-usa-world-junior-summer-showcase-roster-announced",
+    "SWE": "https://chl.ca/ohl/?p=298999"
+  },
+  "note": "Sweden's full list wasn't found; only the two CHL invitees are included.",
+  "teams": {
+    "CAN": [
+      {
+        "name": "Lucas Beckman",
+        "pos": "G",
+        "club": "Chicoutimi, QMJHL",
+        "rights": "Ottawa Senators",
+        "declined": false
+      },
+      {
+        "name": "Jack Ivankovic",
+        "pos": "G",
+        "club": "Michigan, NCAA",
+        "rights": "Nashville Predators",
+        "declined": false
+      },
+      {
+        "name": "William Lacelle",
+        "pos": "G",
+        "club": "Nebraska-Omaha, NCAA",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Samuel Meloche",
+        "pos": "G",
+        "club": "Rouyn-Noranda, QMJHL",
+        "rights": "Buffalo Sabres",
+        "declined": false
+      },
+      {
+        "name": "Carson Carels",
+        "pos": "D",
+        "club": "North Dakota, NCAA",
+        "rights": "Calgary Flames",
+        "declined": false
+      },
+      {
+        "name": "Alex Huang",
+        "pos": "D",
+        "club": "Harvard, NCAA",
+        "rights": "Nashville Predators",
+        "declined": false
+      },
+      {
+        "name": "Ryan Lin",
+        "pos": "D",
+        "club": "Denver, NCAA",
+        "rights": "San Jose Sharks",
+        "declined": false
+      },
+      {
+        "name": "Brek Liske",
+        "pos": "D",
+        "club": "Everett, WHL",
+        "rights": "Philadelphia Flyers",
+        "declined": false
+      },
+      {
+        "name": "Charlie Morrison",
+        "pos": "D",
+        "club": "Quebec, QMJHL",
+        "rights": "New York Rangers",
+        "declined": false
+      },
+      {
+        "name": "Cameron Reid",
+        "pos": "D",
+        "club": "Michigan, NCAA",
+        "rights": "Nashville Predators",
+        "declined": false
+      },
+      {
+        "name": "Daxon Rudolph",
+        "pos": "D",
+        "club": "Denver, NCAA",
+        "rights": "Buffalo Sabres",
+        "declined": false
+      },
+      {
+        "name": "Jackson Smith",
+        "pos": "D",
+        "club": "Penn State, NCAA",
+        "rights": "Columbus Blue Jackets",
+        "declined": false
+      },
+      {
+        "name": "Keaton Verhoeff",
+        "pos": "D",
+        "club": "North Dakota, NCAA",
+        "rights": "San Jose Sharks",
+        "declined": false
+      },
+      {
+        "name": "Xavier Villeneuve",
+        "pos": "D",
+        "club": "Boston University, NCAA",
+        "rights": "Chicago Blackhawks",
+        "declined": false
+      },
+      {
+        "name": "Ethan Belchetz",
+        "pos": "F",
+        "club": "Michigan State, NCAA",
+        "rights": "Utah Mammoth",
+        "declined": false
+      },
+      {
+        "name": "Shea Busch",
+        "pos": "F",
+        "club": "Penn State, NCAA",
+        "rights": "Florida Panthers",
+        "declined": false
+      },
+      {
+        "name": "Braeden Cootes",
+        "pos": "F",
+        "club": "Seattle, WHL",
+        "rights": "Vancouver Canucks",
+        "declined": false
+      },
+      {
+        "name": "Ethan Czata",
+        "pos": "F",
+        "club": "Niagara, OHL",
+        "rights": "Tampa Bay Lightning",
+        "declined": false
+      },
+      {
+        "name": "Caleb Desnoyers",
+        "pos": "F",
+        "club": "Moncton, QMJHL",
+        "rights": "Utah Mammoth",
+        "declined": false
+      },
+      {
+        "name": "Chase Harrington",
+        "pos": "F",
+        "club": "Spokane, WHL",
+        "rights": "Calgary Flames",
+        "declined": false
+      },
+      {
+        "name": "Tyler Hopkins",
+        "pos": "F",
+        "club": "Guelph, OHL",
+        "rights": "Toronto Maple Leafs",
+        "declined": false
+      },
+      {
+        "name": "Tommy Lafreniere",
+        "pos": "F",
+        "club": "Western Michigan, NCAA",
+        "rights": "Edmonton Oilers",
+        "declined": false
+      },
+      {
+        "name": "Tynan Lawrence",
+        "pos": "F",
+        "club": "Boston University, NCAA",
+        "rights": "St. Louis Blues",
+        "declined": false
+      },
+      {
+        "name": "Jimmy Lombardi",
+        "pos": "F",
+        "club": "Flint, OHL",
+        "rights": "Los Angeles Kings",
+        "declined": false
+      },
+      {
+        "name": "Caleb Malhotra",
+        "pos": "F",
+        "club": "Boston University, NCAA",
+        "rights": "Vancouver Canucks",
+        "declined": false
+      },
+      {
+        "name": "Brady Martin",
+        "pos": "F",
+        "club": "Sault Ste. Marie, OHL",
+        "rights": "Nashville Predators",
+        "declined": false
+      },
+      {
+        "name": "Jack Nesbitt",
+        "pos": "F",
+        "club": "Michigan, NCAA",
+        "rights": "Philadelphia Flyers",
+        "declined": false
+      },
+      {
+        "name": "Jake O'Brien",
+        "pos": "F",
+        "club": "Brantford, OHL",
+        "rights": "Seattle Kraken",
+        "declined": true
+      },
+      {
+        "name": "Cole Reschny",
+        "pos": "F",
+        "club": "North Dakota, NCAA",
+        "rights": "Calgary Flames",
+        "declined": false
+      },
+      {
+        "name": "Ryan Roobroeck",
+        "pos": "F",
+        "club": "Niagara, OHL",
+        "rights": "Chicago Blackhawks",
+        "declined": false
+      },
+      {
+        "name": "Cameron Schmidt",
+        "pos": "F",
+        "club": "Seattle, WHL",
+        "rights": "Dallas Stars",
+        "declined": false
+      },
+      {
+        "name": "Philippe Veilleux",
+        "pos": "F",
+        "club": "Val-d'Or, QMJHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Dimian Zhilkin",
+        "pos": "F",
+        "club": "Saginaw, OHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      }
+    ],
+    "FIN": [
+      {
+        "name": "Juuso Ainasto",
+        "pos": "G",
+        "club": "Jokerit Jr., FIN-JR",
+        "rights": "Toronto Maple Leafs",
+        "declined": false
+      },
+      {
+        "name": "Patrik Kerkola",
+        "pos": "G",
+        "club": "KalPa, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Jester Rossi",
+        "pos": "G",
+        "club": "Jokipojat, FIN-2",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Samu Alalauri",
+        "pos": "D",
+        "club": "Massachusetts, NCAA",
+        "rights": "Chicago Blackhawks",
+        "declined": false
+      },
+      {
+        "name": "Ilari Kapanen",
+        "pos": "D",
+        "club": "Brandon, WHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Jesper Kotajarvi",
+        "pos": "D",
+        "club": "KalPa, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Max Laatikainen",
+        "pos": "D",
+        "club": "Sport, FIN",
+        "rights": "Philadelphia Flyers",
+        "declined": false
+      },
+      {
+        "name": "Veeti Ruotsalainen",
+        "pos": "D",
+        "club": "Karpat, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Julius Saari",
+        "pos": "D",
+        "club": "Erie, OHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Ossi Sippola",
+        "pos": "D",
+        "club": "HIFK Jr., FIN-JR",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Vertti Svensk",
+        "pos": "D",
+        "club": "SaiPa, FIN",
+        "rights": "Los Angeles Kings",
+        "declined": false
+      },
+      {
+        "name": "Taavi Aarvala",
+        "pos": "F",
+        "club": "Jokerit Jr., FIN-JR",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Rasmus Kamarainen",
+        "pos": "F",
+        "club": "Moose Jaw, WHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Aapo Katavisto",
+        "pos": "F",
+        "club": "Northern Michigan, NCAA",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Juho Kuisma",
+        "pos": "F",
+        "club": "Sioux City, USHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Jiko Laitinen",
+        "pos": "F",
+        "club": "Ilves, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Ilari Makinen",
+        "pos": "F",
+        "club": "HPK, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Eetu Orpana",
+        "pos": "F",
+        "club": "Dubuque, USHL",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Noel Pakarinen",
+        "pos": "F",
+        "club": "Penticton, WHL",
+        "rights": "Vegas Golden Knights",
+        "declined": false
+      },
+      {
+        "name": "Jesse Parssinen",
+        "pos": "F",
+        "club": "TPS, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Jere Somervuori",
+        "pos": "F",
+        "club": "HIFK, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Anttoni Uronen",
+        "pos": "F",
+        "club": "HIFK, FIN",
+        "rights": "Columbus Blue Jackets",
+        "declined": false
+      },
+      {
+        "name": "Vilho Vanhatalo",
+        "pos": "F",
+        "club": "Tappara, FIN",
+        "rights": "Florida Panthers",
+        "declined": false
+      },
+      {
+        "name": "Aapo Vanninen",
+        "pos": "F",
+        "club": "Lukko, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      },
+      {
+        "name": "Jeremi Virtanen",
+        "pos": "F",
+        "club": "TPS, FIN",
+        "rights": "2027 draft eligible",
+        "declined": false
+      }
+    ],
+    "USA": [
+      {
+        "name": "Mikey Berchild",
+        "pos": "F"
+      },
+      {
+        "name": "Wyatt Cullen",
+        "pos": "F"
+      },
+      {
+        "name": "Jamie Glance",
+        "pos": "F"
+      },
+      {
+        "name": "Shaeffer Gordon-Carroll",
+        "pos": "F"
+      },
+      {
+        "name": "Jack Hextall",
+        "pos": "F"
+      },
+      {
+        "name": "Will Horcoff",
+        "pos": "F"
+      },
+      {
+        "name": "JP Hurlbert",
+        "pos": "F"
+      },
+      {
+        "name": "Jacob Kvasnicka",
+        "pos": "F"
+      },
+      {
+        "name": "Matthew Lansing",
+        "pos": "F"
+      },
+      {
+        "name": "Cole McKinney",
+        "pos": "F"
+      },
+      {
+        "name": "Mason Moe",
+        "pos": "F"
+      },
+      {
+        "name": "LJ Mooney",
+        "pos": "F"
+      },
+      {
+        "name": "Will Moore",
+        "pos": "F"
+      },
+      {
+        "name": "Jack Murtagh",
+        "pos": "F"
+      },
+      {
+        "name": "Casey Mutryn",
+        "pos": "F"
+      },
+      {
+        "name": "Teddy Mutryn",
+        "pos": "F"
+      },
+      {
+        "name": "Sammy Nelson",
+        "pos": "F"
+      },
+      {
+        "name": "Victor Plante",
+        "pos": "F"
+      },
+      {
+        "name": "Cullen Potter",
+        "pos": "F"
+      },
+      {
+        "name": "Brooks Rogowski",
+        "pos": "F"
+      },
+      {
+        "name": "Carter Sanderson",
+        "pos": "F"
+      },
+      {
+        "name": "Cooper Simpson",
+        "pos": "F"
+      },
+      {
+        "name": "Brent Solomon",
+        "pos": "F"
+      },
+      {
+        "name": "Logan Stuart",
+        "pos": "F"
+      },
+      {
+        "name": "Mason West",
+        "pos": "F"
+      },
+      {
+        "name": "Ethan Wyttenbach",
+        "pos": "F"
+      },
+      {
+        "name": "Carter Amico",
+        "pos": "D"
+      },
+      {
+        "name": "Asher Barnett",
+        "pos": "D"
+      },
+      {
+        "name": "Sean Barnhill",
+        "pos": "D"
+      },
+      {
+        "name": "Tommy Bleyl",
+        "pos": "D"
+      },
+      {
+        "name": "Nick Bogas",
+        "pos": "D"
+      },
+      {
+        "name": "Henry Brzustewicz",
+        "pos": "D"
+      },
+      {
+        "name": "Blake Fiddler",
+        "pos": "D"
+      },
+      {
+        "name": "Landon Nycz",
+        "pos": "D"
+      },
+      {
+        "name": "Mace'o Phillips",
+        "pos": "D"
+      },
+      {
+        "name": "Chase Reid",
+        "pos": "D"
+      },
+      {
+        "name": "Jacob Rombach",
+        "pos": "D"
+      },
+      {
+        "name": "Timofei Runtso",
+        "pos": "D"
+      },
+      {
+        "name": "Luke Schairer",
+        "pos": "D"
+      },
+      {
+        "name": "Drew Schock",
+        "pos": "D"
+      },
+      {
+        "name": "Charlie Trethewey",
+        "pos": "D"
+      },
+      {
+        "name": "Odin Vauhkonen",
+        "pos": "D"
+      },
+      {
+        "name": "Harrison Boettiger",
+        "pos": "G"
+      },
+      {
+        "name": "Ryan Cameron",
+        "pos": "G"
+      },
+      {
+        "name": "Ryder Fetterolf",
+        "pos": "G"
+      },
+      {
+        "name": "Brady Knowling",
+        "pos": "G"
+      },
+      {
+        "name": "Xavier Wendt",
+        "pos": "G"
+      }
+    ],
+    "SWE": [
+      {
+        "name": "Filip Ekberg",
+        "pos": "F"
+      },
+      {
+        "name": "Linus Funck",
+        "pos": "D"
+      }
+    ]
+  }
+}

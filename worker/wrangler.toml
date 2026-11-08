@@ -1,0 +1,5 @@
+name = "linecombos-live"
+main = "index.mjs"
+compatibility_date = "2025-09-01"
+# Deploy: cd worker && npx wrangler deploy
+# Then put the workers.dev URL in config/site.json "liveApi" (or the LIVE_API secret in GitHub).

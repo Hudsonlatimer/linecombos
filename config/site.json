@@ -1,0 +1,7 @@
+{
+  "name": "LineCombos",
+  "tagline": "Hockey lineups from first rumour to final ice time",
+  "url": "https://nhllinecombos.com",
+  "liveApi": "",
+  "_liveApi": "URL of the deployed Cloudflare Worker (worker/), e.g. https://linecombos-live.yourname.workers.dev. Leave empty to show build-time snapshots only."
+}

@@ -1,0 +1,6 @@
+.cache/
+dist/
+node_modules/
+.wrangler/
+data/x-inbox/*.json
+.vercel/
