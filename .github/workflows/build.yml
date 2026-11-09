@@ -5,9 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Every 30 min from 15:00 to 06:59 UTC (morning skates through late West games), hourly otherwise.
-    # About 40 deploys a day; Vercel's free plan allows 100.
-    - cron: "*/30 15-23,0-6 * * *"
+    # Every 15 min from 15:00 to 06:59 UTC (morning skates through late West games), hourly otherwise.
+    # About 72 deploys a day; Vercel's free plan allows 100.
+    - cron: "*/15 15-23,0-6 * * *"
     - cron: "0 7-14 * * *"
 
 concurrency:

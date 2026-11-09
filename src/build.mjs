@@ -302,6 +302,7 @@ const search = [
   { n: "Injuries & scratches", s: "", u: "/injuries/", k: "Team" },
 ];
 await write("search.json", JSON.stringify(search));
+await write("version.json", JSON.stringify({ builtAt: site.builtAt }));
 // Every player in NHL history, compact: [id, name, years, position, games]. Most-played first so ties rank sensibly.
 await write("search-all.json", JSON.stringify(Object.values(profiles).filter((p) => p.status === "alumni").map((p) => [p.id, `${p.first} ${p.last}`, p.yrs ?? "", p.pos, p.car?.regular?.gamesPlayed ?? 0]).sort((a, b) => b[4] - a[4])));
 await write("404.html", page({ site, title: "Not found", path: "/404", body: `<section class="hero"><div><h1>Off the ice</h1><p class="lede">That page doesn't exist. Try <a href="/">tonight's games</a> or search above.</p></div></section>` }));
@@ -326,6 +327,7 @@ await write("vercel.json", JSON.stringify({
     { source: "/(.*)", headers: [...cc(120), { key: "X-Content-Type-Options", value: "nosniff" }, { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" }] },
     { source: "/assets/(.*)", headers: cc(3600) },
     { source: "/data/(.*)", headers: cc(30) },
+    { source: "/version.json", headers: cc(0) },
     { source: "/live/(.*)", headers: cc(10) },
   ],
 }, null, 2));
