@@ -1038,3 +1038,34 @@ ul.plain { padding-left: 18px; } ul.plain li { margin: 6px 0; }
 .lb-st { grid-column: 2; grid-row: 1 / span 2; font-size: 12px; color: var(--muted); align-self: center; }
 
 .fresh-toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 60; padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--ink); color: var(--bg, #fff); font: 600 13px/1 var(--sans, Inter, system-ui); box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,.3)); cursor: pointer; }
+
+/* ---------- World Juniors forecast ---------- */
+.hero-cta { margin-top: 14px; }
+.wb { display: grid; grid-template-columns: 3.4ch 1fr 3.4ch; align-items: center; gap: 8px; min-width: 190px; }
+.wb-p { font-variant-numeric: tabular-nums; font-size: 13px; } .wb-p:last-child { text-align: right; }
+.wb-t { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--line); }
+.wb-t i { display: block; height: 100%; } .wb-t i + i { border-left: 2px solid var(--panel); }
+.wjc-games td { vertical-align: middle; } .wjc-games .wg { white-space: normal; } .wjc-games .wp-cell { min-width: 230px; }
+.wjc-games .wp-cell small, .wjc-games .wp-cell .small { display: block; margin-top: 3px; }
+.wjc-games tr.tbd td { opacity: .85; } .wscore { font-size: 16px; font-variant-numeric: tabular-nums; }
+.wjc-odds .gold-cell { white-space: nowrap; } .gold-bar { display: inline-block; width: 70px; height: 6px; border-radius: 99px; background: var(--line); margin-right: 8px; vertical-align: middle; overflow: hidden; }
+.gold-bar i { display: block; height: 100%; background: var(--accent); }
+.heat { background: color-mix(in srgb, var(--accent) calc(var(--h) * 55%), transparent); }
+.bk { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; align-items: center; margin-top: 8px; }
+.bk-col { display: grid; gap: 10px; align-content: center; } .bk-col h3 { margin: 0 0 2px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); } .bk-col h3.sub { margin-top: 12px; }
+.bk-m { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); overflow: hidden; }
+.bk-h { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.bk-t { display: grid; grid-template-columns: 2.6ch auto 1fr auto; align-items: center; gap: 8px; padding: 8px 10px; font-size: 14px; } .bk-t + .bk-t { border-top: 1px solid var(--line); }
+.bk-t .bk-s { font-size: 11px; color: var(--muted); } .bk-t em { font-style: normal; font-variant-numeric: tabular-nums; color: var(--muted); } .bk-t.win { background: color-mix(in srgb, var(--accent) 10%, transparent); } .bk-t.win b, .bk-t.win em { color: var(--ink); font-weight: 700; }
+.slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; } .slot h4 { margin: 0 0 6px; font-size: 13px; } .slot-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 13px; } .slot-row em { font-style: normal; font-variant-numeric: tabular-nums; font-weight: 600; }
+.finish { display: flex; gap: 10px; align-items: flex-end; height: 110px; } .fin { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; font-size: 11px; color: var(--muted); } .fin i { width: 100%; border-radius: 6px 6px 0 0; background: var(--accent); opacity: .8; } .fin em { font-style: normal; color: var(--ink); }
+@media (max-width: 860px) { .bk { grid-template-columns: 1fr; } .wjc-games .wp-cell { min-width: 0; } .wb { min-width: 150px; } }
+
+/* ---------- NHL prospect pools ---------- */
+.pr-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.pr-filters input, .pr-filters select { padding: 8px 12px; border: 1px solid var(--line-2); border-radius: var(--radius-sm); background: var(--panel); color: var(--ink); font: inherit; font-size: 14px; }
+.pr-filters input { min-width: 200px; flex: 1; }
+.pr-who a { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; } .pr-who small { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; } .pr-who b { display: block; }
+.pr-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--panel-2); }
+.pr-tbl tr[hidden] { display: none; }
+.dc-who .flag { vertical-align: -2px; margin-right: 4px; }

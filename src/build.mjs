@@ -10,6 +10,8 @@ import { ingest, reportedFor } from "./lib/posts.mjs";
 import { goalieReports, goalieId } from "./lib/goalies.mjs";
 import { dfoLines } from "./lib/dailyfaceoff.mjs";
 import { buildWjc } from "./lib/wjc.mjs";
+import { forecast as wjcForecast } from "./lib/wjcpredict.mjs";
+import { bracketPage } from "./render/wjc-forecast.mjs";
 import { gameJson } from "./core/game.mjs";
 import * as P from "./render/nhl-pages.mjs";
 import { wjcHub, wjcTeam } from "./render/wjc-pages.mjs";
@@ -21,6 +23,7 @@ import { predictionsPage } from "./render/predict-pages.mjs";
 import * as X from "./render/more-pages.mjs";
 import * as C from "./lib/contracts.mjs";
 import { draftClass } from "./lib/draft.mjs";
+import { nhlProspectsPage } from "./render/prospect-pages.mjs";
 
 const t0 = Date.now();
 const log = (m) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${m}`);
@@ -76,6 +79,9 @@ const [rosters, stats, leaders, draft, prospects] = await Promise.all([
 ]);
 log("World Juniors: pool + projections");
 const wjc = await buildWjc({ prospectsByTeam: prospects, rostersByTeam: rosters });
+log("World Juniors: simulating the tournament");
+wjc.forecast = await wjcForecast(wjc);
+log(`World Juniors forecast: ${Object.values(wjc.forecast.odds).sort((a, b) => b.gold - a.gold).slice(0, 3).map((o) => `${o.code} ${(o.gold * 100).toFixed(0)}%`).join(", ")} lead for gold`);
 
 // People: NHL roster players (each gets a page).
 const people = {};
@@ -199,6 +205,7 @@ await pool([...base.values()], 10, async (b) => {
     headshot: l.headshot ?? b.headshot, hero: l.heroImage ?? null, birthDate: l.birthDate, birthCity: l.birthCity?.default,
     birthCountry: l.birthCountry, birthState: l.birthStateProvince?.default ?? null, nations: nationsOf(l), height: l.heightInInches, weight: l.weightInPounds, shoots: l.shootsCatches, draft: l.draftDetails ?? null,
     club: club ? `${club.teamName?.default} (${club.leagueAbbrev})` : null,
+    clubStat: club ? { season: club.season, gp: club.gamesPlayed ?? 0, g: club.goals ?? 0, a: club.assists ?? 0, p: club.points ?? 0, sv: club.savePctg ?? null, gaa: club.goalsAgainstAvg ?? null } : null,
     active: !!l.isActive, ...nhlSpan(l),
     car: M.career(l, { tx: txBy[b.id] ?? [], injury: injById[b.id] ?? null, posts: posts.filter((x) => x.parsed.players.includes(b.id) && ["injury", "roster"].includes(x.parsed.type)).slice(0, 4), teams: teamsByAbbr }),
   };
@@ -269,9 +276,12 @@ await put("/stats/", P.statsPage(ctx));
 await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));
 await put("/prospects/", P.prospectsPage(ctx));
+await put("/prospects/nhl/", nhlProspectsPage(ctx));
 await put("/about/", P.aboutPage(ctx));
 for (const p of Object.values(profiles)) await put(`/players/${p.id}/`, X.profilePage(ctx, p));
 await put("/wjc/", wjcHub(ctx));
+await put("/wjc/bracket/", bracketPage(ctx));
+await write("data/wjc-forecast.json", JSON.stringify({ built: wjc.forecast.built, sims: wjc.forecast.sims, odds: wjc.forecast.odds, games: wjc.forecast.games, bracket: wjc.forecast.bracket }));
 for (const t of Object.values(wjc.teams)) await put(`/wjc/${t.code.toLowerCase()}/`, wjcTeam(ctx, t));
 
 // Gamecenters for every game played this season plus this week's schedule; snapshots for started games.
@@ -298,7 +308,9 @@ const search = [
   ...wjc.cfg.teams.map((c) => ({ n: `${c.name} (World Juniors)`, s: c.code, u: `/wjc/${c.code.toLowerCase()}/`, k: "WJC" })),
   ...Object.values(profiles).filter((p) => p.status !== "alumni").map((p) => ({ n: `${p.first} ${p.last}`, s: p.team ?? p.nhlTeam ?? "", u: `/players/${p.id}/`, k: p.team ? p.pos : "Prospect", h: p.headshot ?? "" })),
   { n: "Stanley Cup predictor", s: "", u: "/cup/", k: "Team" },
+  { n: "NHL prospect pools", s: "", u: "/prospects/nhl/", k: "Team" },
   { n: "Game predictions", s: "", u: "/predictions/", k: "Team" },
+  { n: "World Juniors mock bracket and predictions", s: "WJC", u: "/wjc/bracket/", k: "WJC" },
   { n: "Injuries & scratches", s: "", u: "/injuries/", k: "Team" },
 ];
 await write("search.json", JSON.stringify(search));

@@ -17,6 +17,7 @@ export const ago = (iso) => `<time datetime="${attr(iso)}" data-fmt="ago">${esc(
 export const STAGES = {
   actual: { label: "Actual", tip: "From real ice time (NHL shift data)" },
   live: { label: "Live", tip: "From shift data during the game, about 10 minutes behind" },
+  public: { label: "Public projection", tip: "Lines published by a reporter's roster projection (linked at the source)" },
   reported: { label: "Reported", tip: "Reported by a reporter or team account today" },
   confirmed: { label: "Confirmed", tip: "Official lineup or confirmed by the team" },
   projected: { label: "Projected", tip: "Our projection; not reported yet" },

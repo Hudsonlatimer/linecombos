@@ -349,7 +349,7 @@ export function homePage2(ctx) {
     ["/injuries/", "Injuries", `${ctx.injuries.length} players out`, "i"],
     ["/predictions/", "Predictions", "Win chances for every game, live", "c"],
     ["/cup/", "Cup odds", fav ? `${fav.common} lead at ${P100(odds[0][1].cup, 1)}` : "10,000 sims", "c"],
-    ["/wjc/", "World Juniors", wjcDays > 0 ? `${wjcDays} days · projected lines` : "Live now", "w"],
+    ["/wjc/", "World Juniors", wjcDays > 0 ? `${wjcDays} days · odds, bracket, lines` : "Live now", "w"],
     ["/moves/", "Trades & signings", `${ctx.tx.filter((m) => m.date >= ctx.site.builtAt.slice(0, 10).replace(/\d\d$/, "01")).length} moves this month`, "m"],
     ["/prospects/", "Prospects", "Rankings & pipelines", "p"],
   ];
@@ -379,7 +379,7 @@ export function homePage2(ctx) {
       <section class="card"><h2>Stanley Cup odds</h2>${odds.map(([k, o]) => `<a class="odds-bar sm" href="${teamUrl(T[k])}">${logo(T[k], 20)}<span class="ob-name">${esc(T[k].common)}</span><span class="ob-track"><span style="width:${(o.cup / omax) * 100}%"></span></span><b>${P100(o.cup, 1)}</b></a>`).join("")}<a class="more" href="/cup/">All 32 teams + bracket →</a></section>
       <section class="card"><h2>Latest injuries</h2>${ctx.injuries.slice(0, 5).map((i) => `<div class="inj-row"><span class="pill ${injClass(i.status)}">${esc(INJ_SHORT[i.status] ?? i.status)}</span><div><b>${plink(ctx, i.id, i.name)}</b> <span class="muted small">${esc(i.team)}${i.body ? ` · ${esc(i.body)}` : ""}</span></div></div>`).join("")}<a class="more" href="/injuries/">All injuries &amp; scratches →</a></section>
       <section class="card"><h2>Trades &amp; signings</h2>${recentMoves.map((m) => `<div class="tx-row"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span><div><b>${esc(m.team)}</b> · ${linkNames(ctx, m)} ${(m.money ?? []).map(moneyChip).join(" ")}<div class="muted small">${esc(fmtDate(m.date, { month: "short", day: "numeric" }))}</div></div></div>`).join("")}<a class="more" href="/moves/">All moves →</a></section>
-      ${wjcDays > 0 ? `<a class="card wjc-promo" href="/wjc/"><span class="eyebrow">World Juniors · Edmonton &amp; Red Deer</span><strong>${wjcDays} days to puck drop</strong><span>Projected lines for all 10 teams →</span></a>` : ""}
+      ${wjcDays > 0 ? `<a class="card wjc-promo" href="/wjc/"><span class="eyebrow">World Juniors · Edmonton &amp; Red Deer</span><strong>${wjcDays} days to puck drop</strong><span>Odds, mock bracket and projected lines →</span></a>` : ""}
       <section class="card"><h2>Latest news</h2>${ctx.posts.filter((p) => p.parsed.type !== "other").slice(0, 4).map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts yet.</p>`}<a class="more" href="/news/">All news →</a></section>
       <section class="card"><h2>Points leaders</h2><ol class="mini-list">${lead.map((p) => `<li><a href="${playerUrl(p.id)}">${esc(p.firstName.default[0])}. ${esc(p.lastName.default)}</a><span class="muted">${esc(p.teamAbbrev)}</span><b>${p.value}</b></li>`).join("")}</ol><a class="more" href="/stats/">All stats →</a></section>
     </aside>

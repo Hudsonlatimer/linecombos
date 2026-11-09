@@ -1,4 +1,5 @@
 import { esc, attr, localTime, stage, pill, page, pct } from "./html.mjs";
+import { gamesTable, oddsTable, teamForecast } from "./wjc-forecast.mjs";
 
 const short = (p) => (p ? `${p.first?.[0] ?? ""}. ${p.last}` : "—");
 const code = (c) => c.toLowerCase();
@@ -33,13 +34,15 @@ export function wjcHub(ctx) {
   };
   const body = `<section class="hero wjc-hero">
     <div><p class="eyebrow">IIHF World Junior Championship</p><h1>${esc(cfg.name)}</h1>
-    <p class="lede">${esc(cfg.dates)} · ${esc(cfg.hosts)}. Projected lines, D pairs, power play units and starting goalies for all 10 teams, updated as rosters and line rushes come in.</p>
-    <div class="countdown" data-until="${attr(cfg.schedule[0].utc)}"></div></div>
+    <p class="lede">${esc(cfg.dates)} · ${esc(cfg.hosts)}. Win probability for every game, a simulated bracket, and projected lines, pairs, power plays and goalies for all 10 teams, built on public roster projections and updated as rosters and results come in.</p>
+    <div class="countdown" data-until="${attr(cfg.schedule[0].utc)}"></div><p class="hero-cta"><a class="btn" href="/wjc/bracket/">Mock bracket &amp; tournament odds →</a></p></div>
   </section>
   ${Object.entries(groups).map(([g, ts]) => `<h2 class="section-h">Group ${g} <span class="muted small">${g === "A" ? "Red Deer" : "Edmonton"}</span></h2><div class="wjc-grid">${ts.map(card).join("")}</div>`).join("")}
-  <h2 class="section-h">Schedule <span class="muted small">your local time</span></h2>
-  <div class="card"><div class="table-wrap"><table class="tbl"><thead><tr><th>When</th><th>Round</th><th>Game</th><th>Venue</th></tr></thead><tbody>${cfg.schedule.map((g) => gameRow(cfg, g)).join("")}</tbody></table></div>
-  <p class="muted small">Schedule: <a href="https://www.nhl.com/news/2027-world-junior-championship-schedule-announced" target="_blank" rel="noopener">NHL.com</a>. Playoff matchups are set after the group stage.</p></div>
+  <h2 class="section-h">Tournament odds <span class="muted small">from ${ctx.wjc.forecast.sims.toLocaleString()} simulated tournaments · <a href="/wjc/bracket/">mock bracket</a></span></h2>
+  <section class="card">${oddsTable(ctx)}</section>
+  <h2 class="section-h">Schedule &amp; win chances <span class="muted small">your local time</span></h2>
+  <div class="card">${gamesTable(ctx)}
+  <p class="muted small">Schedule: <a href="https://www.nhl.com/news/2027-world-junior-championship-schedule-announced" target="_blank" rel="noopener">NHL.com</a>. Playoff matchups shown are the mock bracket's projection and change as results come in.</p></div>
   <section class="card"><h2>How projections work</h2>
   <p>Each pool is every player born in 2007 or later whom a federation has already shown interest in, plus the NHL prospects and draft-ranked players who could join them:</p>
   <ul class="how">
@@ -75,7 +78,9 @@ export function wjcTeam(ctx, t) {
     ${(rep.pairs ?? []).map((l, i) => `<div class="wline"><span class="slot">D${i + 1}</span>${l.map((n) => `<span class="wchip"><span class="wn">${esc(n)}</span></span>`).join("")}</div>`).join("")}
     ${rep.goalie ? `<div class="wline"><span class="slot">G</span><span class="wchip"><span class="wn">${esc(rep.goalie)}</span></span></div>` : ""}</section>` : ""}
   <div class="layout"><div>
+    ${teamForecast(ctx, t)}
     <section class="card"><h2>Projected lines ${stage(t.stage)}</h2>
+      ${t.publicLines ? `<p class="src-note">Lines: <a href="${attr(t.publicLines.url)}" target="_blank" rel="nofollow noopener">${esc(t.publicLines.source)}</a>, ${esc(t.publicLines.date)}.${t.publicLines.partial ? " That projection doesn't cover every position, so the rest comes from our model." : ""}</p>` : ""}
       ${pr.lines.length ? rows(pr.lines, ["L1", "L2", "L3", "L4"]) : `<p class="empty">Not enough forwards in the pool yet.</p>`}
       <h3>Defence pairs</h3>${pr.pairs.length ? rows(pr.pairs, ["D1", "D2", "D3"]) : `<p class="empty">Not enough defencemen in the pool yet.</p>`}
       <h3>Power play</h3>${pr.pp.length ? rows(pr.pp, ["PP1", "PP2"]) : `<p class="empty">—</p>`}

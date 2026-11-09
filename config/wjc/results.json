@@ -1,0 +1,4 @@
+{
+  "_help": "Final scores as games finish, keyed by game number from wjc.json, for example { \"1\": { \"a\": 4, \"b\": 1 }, \"2\": { \"a\": 3, \"b\": 2, \"ot\": \"OT\" } }. a is the first team listed, b the second. ot is OT or SO when decided after regulation (the winner is the higher score). The forecast then plays out only the remaining games.",
+  "results": {}
+}

@@ -163,6 +163,23 @@ export async function buildWjc({ prospectsByTeam, rostersByTeam }) {
     if (x.kind === "returnee") p.returnee = true;
     p.rawClub ??= parseClub(x.club);
   });
+  // Public roster projections (reporters' published lineups, config/wjc/lines/<CODE>.json with kind "public"): every named player joins the pool.
+  const slotPos = (kind, i) => (kind === "lines" ? ["L", "C", "R"][i] ?? "F" : kind === "pairs" ? "D" : kind === "goalies" ? "G" : "F");
+  for (const [code, L] of Object.entries(manualLines)) if (L?.kind === "public" && codes.has(code)) {
+    const named = [];
+    for (const kind of ["lines", "pairs", "goalies", "extras"]) for (const item of L[kind] ?? []) {
+      if (Array.isArray(item)) item.forEach((n, i) => named.push([n, slotPos(kind, i)])); else named.push([item, slotPos(kind, 0)]);
+    }
+    await pool(named, 6, async ([n, pos]) => {
+      let p = byName.get(norm(n));
+      if (!p) {
+        const hit = await findYoung(n);
+        const [first, ...rest] = n.split(" ");
+        p = add({ id: hit ? Number(hit.playerId) : `x-${norm(n)}`, first, last: rest.join(" "), pos, inNhl: false });
+      }
+      p.srcCode ??= code; p.camp = true; p.publicPick = true;
+    });
+  }
   for (const id of overrides.remove ?? []) cand.delete(id);
   for (const p of overrides.add ?? []) add({ id: p.id ?? `x-${norm(p.first + " " + p.last)}`, ...p, added: true, srcCode: p.code });
 
@@ -222,6 +239,7 @@ export async function buildWjc({ prospectsByTeam, rostersByTeam }) {
     if (pick) r += pick <= 32 ? 0.32 - (0.1 * (pick - 1)) / 31 : Math.max(0, 0.2 * (1 - (pick - 33) / 190));
     if (p.ranked && !pick) r += Math.max(0, 0.12 * (1 - p.ranked.rank / 120));
     if (p.camp) r += p.campDeclined ? 0.1 : 0.25;
+    if (p.publicPick) r += 0.2;
     if (p.returnee) r += 0.3;
     if (p.natTeams?.length && p.natCode === p.code) r += 0.05;
     if (born === oldest) r += 0.1; else if (born === oldest + 1) r += 0.04;
@@ -234,6 +252,7 @@ export async function buildWjc({ prospectsByTeam, rostersByTeam }) {
 
     const s = p.cur ?? p.prev;
     const bits = [];
+    if (p.publicPick) bits.push("named in a public roster projection");
     if (p.returnee) bits.push("played at last year's World Juniors");
     if (p.camp) bits.push(p.campDeclined ? "invited to summer camp (couldn't attend)" : "invited to the summer showcase");
     if (s) bits.push(g
@@ -295,16 +314,36 @@ export async function buildWjc({ prospectsByTeam, rostersByTeam }) {
     const off = top.slice().sort((a, b) => ppVal(b) - ppVal(a));
     const pp = [[...off.slice(0, 4), topD[0]], [...off.slice(4, 8), topD[1]]].map((u) => u.filter(Boolean).map((p) => p.id)).filter((u) => u.length >= 4);
 
-    const reported = manualLines[t.code] ?? null;
+    // A public projection (reporters' published lineup) sets the lines; the model fills in everything else.
+    const pub = manualLines[t.code]?.kind === "public" ? manualLines[t.code] : null;
+    if (pub) {
+      const lookup = (n, hint) => {
+        const k = norm(n);
+        let p = players.find((x) => norm(`${x.first} ${x.last}`) === k) ?? eligible.find((x) => norm(`${x.first} ${x.last}`) === k);
+        if (!p) { const [f, ...r] = n.split(" "); p = { id: `x-${k}`, first: f, last: r.join(" "), pos: hint, code: t.code, score: 0.3, reason: `Named in ${pub.short ?? pub.source}`, unmatched: true }; }
+        if (!players.includes(p)) players.push(p);
+        return p;
+      };
+      const mapL = (l, hints) => l.map((n, i) => lookup(n, hints[i] ?? hints.at(-1)));
+      const pl = (pub.lines ?? []).map((l) => mapL(l, ["L", "C", "R"])), pd = (pub.pairs ?? []).map((l) => mapL(l, ["D"]));
+      const pg = (pub.goalies ?? []).map((n) => lookup(n, "G")), px = (pub.extras ?? []).map((n) => lookup(n, "F"));
+      if (pl.length) { fl.splice(0, fl.length, ...pl.map((l) => l.map((p) => p.id))); F.splice(0, F.length, ...pl.flat(), ...px); }
+      if (pd.length) { pairs.splice(0, pairs.length, ...pd.map((l) => l.map((p) => p.id))); D.splice(0, D.length, ...pd.flat()); }
+      if (pg.length) G.splice(0, G.length, ...pg);
+      const off2 = F.slice(0, 12).sort((a, b) => ppVal(b) - ppVal(a)), dd = D.slice(0, 6);
+      pp.splice(0, pp.length, ...[[...off2.slice(0, 4), dd[0]], [...off2.slice(4, 8), dd[1]]].map((u) => u.filter(Boolean).map((p) => p.id)).filter((u) => u.length >= 4));
+    }
+    const reported = pub ? null : manualLines[t.code] ?? null;
     const shown = new Set([...F, ...D, ...G].map((p) => p.id));
     const ranked = players.slice().sort((a, b) => b.score - a.score);
     const poolList = [...ranked.filter((p) => shown.has(p.id) || p.score >= 0.25 || p.camp || p.returnee || p.inNhl)].slice(0, 70);
     teams[t.code] = {
       ...t,
-      stage: reported ? "reported" : official?.status === "final" ? "roster" : official?.players?.length ? "camp" : "projected",
+      stage: reported ? "reported" : pub ? "public" : official?.status === "final" ? "roster" : official?.players?.length ? "camp" : "projected",
       roster: official ? { status: official.status, source: official.source, url: official.url, updated: official.updated } : null,
       projection: { lines: fl, pairs, pp, goalies: G.slice(0, 3).map((p) => p.id) },
       reported,
+      publicLines: pub ? { source: pub.source, short: pub.short, url: pub.url, date: pub.reportedAt, partial: !(pub.pairs?.length && pub.goalies?.length) } : null,
       extras: { F: F.slice(12).map((p) => p.id), D: D.slice(6).map((p) => p.id) },
       counts: { F: F.filter(confirmed).length, D: D.filter(confirmed).length, G: G.filter(confirmed).length, unconfirmed: [...F, ...D, ...G].filter((p) => p.ageUnknown).length, camp: players.filter((p) => p.camp).length, returnees: players.filter((p) => p.returnee && !p.ageUnknown).length },
       sources: { camp: sources.camps.urls?.[t.code] ?? null, last: sources.last.url, extra: sources.extra.teams?.[t.code] ? sources.extra.url : null },

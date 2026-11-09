@@ -18,3 +18,18 @@ const flagImg = (iso, label) => iso ? `<img class="flag" src="https://flagcdn.co
 export const country = (code) => C[code] ? { iso: C[code][0], name: C[code][1] } : code ? { iso: null, name: code } : null;
 export const countryByName = (name) => { const hit = BY_NAME[String(name ?? "").toLowerCase()]; return hit ? { iso: hit[0], name: hit[1] } : name ? { iso: null, name } : null; };
 export const flag = (c) => (c ? flagImg(c.iso, c.name) : "");
+
+/** A player's nation from a hometown string like "Calgary, AB" or "Zurich, ZH, Switzerland". Used for draft-class players. */
+const PROV = new Set("ON QC BC AB MB SK NS NB PE NL YT NT NU".split(" "));
+const STATES = new Set("AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC".split(" "));
+export function nationFromHome(from) {
+  const parts = String(from ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  const last = parts.at(-1);
+  if (PROV.has(last)) return country("CAN");
+  if (STATES.has(last)) return country("USA");
+  const byCode = country(last.toUpperCase());
+  if (byCode?.iso) return byCode;
+  return country({ canada: "CAN", usa: "USA", "united states": "USA", russia: "RUS", sweden: "SWE", finland: "FIN", czechia: "CZE", "czech republic": "CZE", slovakia: "SVK", switzerland: "CHE", germany: "DEU", latvia: "LVA", norway: "NOR", denmark: "DNK", belarus: "BLR", kazakhstan: "KAZ", austria: "AUT" }[last.toLowerCase()]) ?? null;
+}
+

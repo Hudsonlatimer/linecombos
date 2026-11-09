@@ -1,0 +1,6 @@
+{
+  "_help": "Team strength priors in goals per game vs an average team (0 = average of the 10). Our estimate from recent World Junior results and the rosters projected by Daily Faceoff (Nov 2026), which calls Canada the deepest team in the tournament and says the USA blue line lacks in comparison. Edit freely; the site blends these with the strength of each team's projected lineup.",
+  "priors": { "CAN": 1.35, "USA": 1.2, "SWE": 1.05, "FIN": 0.85, "CZE": 0.35, "SVK": -0.05, "SUI": -0.25, "GER": -0.85, "LAT": -1.5, "NOR": -1.85 },
+  "rosterWeight": 0.4,
+  "goalsPerGame": 5.8
+}
