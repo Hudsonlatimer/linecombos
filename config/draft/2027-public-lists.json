@@ -1,0 +1,84 @@
+{
+  "_help": "Public 2027 NHL Draft rankings and mock drafts. Each list: weight (recent lists count more), kind (ranking or mock), and players in order as 'Name|pos|club|league' (a mock also has the NHL team per pick in picks). Names are matched across lists ignoring accents; aliases maps spelling variants to one name. Add a list here and the site's consensus ranking and mock draft update on the next build.",
+  "aliases": {
+    "samuel nelson": "sammy nelson", "diego guiterrez": "diego gutierrez", "benjamin geiger": "ben geiger", "max calce penkin": "max calce",
+    "landon dupont": "landon dupont", "maxmilian mares": "maxmilian mares", "jonah neuenschwander": "jonah neuenschwander"
+  },
+  "lists": [
+    {
+      "id": "dfo-oct", "source": "Daily Faceoff (Steven Ellis), early-season top 40", "url": "https://www.dailyfaceoff.com/news/2027-nhl-draft-rankings-early-season-top-40-dupont-skvortsov-privalov-zhilkin-meyer", "date": "2026-10-09", "weight": 1.0, "kind": "ranking",
+      "players": [
+        "Landon DuPont|D|Michigan|NCAA", "Sergei Skvortsov|LW|Torpedo Nizhny Novgorod|KHL", "Nazar Privalov|LW|CSKA Moskva|KHL", "Dima Zhilkin|RW|Saginaw Spirit|OHL", "Carter Meyer|C|Québec Remparts|QMJHL",
+        "Brock England|C|Seattle Thunderbirds|WHL", "Jonah Neuenschwander|C|EHC Biel-Bienne|NL", "Brock Cripps|D|Prince Albert Raiders|WHL", "Alexis Joseph|C|Saint John Sea Dogs|QMJHL", "Milan Sundström|C|MoDo|Allsvenskan",
+        "Andrei Pustovoy|C|Lokomotiv Yaroslavl|KHL", "Sammy Nelson|C|Notre Dame|NCAA", "Jaxon Jacobson|C|Brandon Wheat Kings|WHL", "Jaakko Wycisk|C|Guelph Storm|OHL", "Noah Davidson|C|Medicine Hat Tigers|WHL",
+        "Kayden Stroeder|C|Edmonton Oil Kings|WHL", "Diego Gutiérrez|D|USNTDP|USHL", "Luca Santala|RW|Kitchener Rangers|OHL", "Bosse Meijer|C|Frölunda HC|SHL", "Levi Harper|D|Saginaw Spirit|OHL",
+        "Shaeffer Gordon-Carroll|C|Medicine Hat Tigers|WHL", "Yevgeni Yakunin|C|MHK Spartak Moskva|MHL", "Petr Tomek|C|HC Energie Karlovy Vary|Czechia", "Timothy Kazda|RW|Guelph Storm|OHL", "Nolan Fitzhenry|C|USNTDP|USHL",
+        "Malik L'Italien|D|Halifax Mooseheads|QMJHL", "Aleks Kulemin|C|Kingston Frontenacs|OHL", "Jamie Glance|RW|Saint John Sea Dogs|QMJHL", "Roberts Naudiņš|LW|Penticton Vees|WHL", "Max Calce|C|Adler Mannheim|DEL",
+        "Gunnar Conboy|C|Green Bay Gamblers|USHL", "Vladimir Shtyrkhunov|D|Shawinigan Cataractes|QMJHL", "Ryerson Edgar|C|Niagara IceDogs|OHL", "Cooper McAslan|D|London Knights|OHL", "James Scantlebury|C|Québec Remparts|QMJHL",
+        "Douglas Johnsson|D|Skellefteå AIK|Sweden U-20", "Michal Hartl|RW|HC Kometa Brno|Czechia", "Gavin Burcar|C|Spokane Chiefs|WHL", "Boston Tait|D|Wenatchee Wild|WHL", "Kohyn Eshkawkogan|D|Ottawa 67's|OHL"
+      ]
+    },
+    {
+      "id": "clutch-oct31", "source": "ClutchPoints (Tristin McKinstry), mock draft 1.0", "url": "https://clutchpoints.com/nhl/nhl-stories/2027-nhl-mock-draft-1-landon-dupont", "date": "2026-10-31", "weight": 1.0, "kind": "mock",
+      "picks": [
+        ["VAN", "Landon DuPont"], ["CHI", "Nazar Privalov"], ["PHI", "Milan Sundström"], ["WPG", "Jonah Neuenschwander"], ["LAK", "Brock England"], ["ANA", "Dima Zhilkin"], ["CBJ", "Alexis Joseph"], ["PIT", "Carter Meyer"],
+        ["CGY", "Sammy Nelson"], ["NSH", "Brock Cripps"], ["STL", "Malik L'Italien"], ["PHI", "Sergei Skvortsov"], ["NYR", "Andrei Pustovoy"], ["DET", "Bosse Meijer"], ["BUF", "Kayden Stroeder"], ["OTT", "Noah Davidson"],
+        ["SJS", "Diego Gutiérrez"], ["DAL", "Jaxon Jacobson"], ["TOR", "Yevgeni Yakunin"], ["SEA", "Jamie Glance"], ["NYI", "Levi Harper"], ["NJD", "Petr Tomek"], ["CHI", "Jaakko Wycisk"], ["UTA", "Max Calce"],
+        ["NJD", "Cooper McAslan"], ["WSH", "Timothy Kazda"], ["BOS", "Vladimir Shtyrkhunov"], ["MTL", "Easton Walos"], ["MIN", "Nolan Fitzhenry"], ["SEA", "Vilmer Salen Forsberg"], ["CHI", "Ben Geiger"], ["CAR", "Aleks Kulemin"]
+      ]
+    },
+    {
+      "id": "tsn-sep", "source": "TSN (Steve Dryden), pre-season ranking from a survey of NHL scouts", "url": "https://www.tsn.ca/nhl/article/dupont-the-definitive-no1-player-in-tsns-pre-season-draft-ranking/", "date": "2026-09-10", "weight": 0.8, "kind": "ranking",
+      "players": [
+        "Landon DuPont|D|Michigan|NCAA", "Nazar Privalov|LW|CSKA Moskva|KHL", "Carter Meyer|C|Québec Remparts|QMJHL", "Sergei Skvortsov|LW|Torpedo Nizhny Novgorod|KHL", "Alexis Joseph|C|Saint John Sea Dogs|QMJHL",
+        "Sammy Nelson|C|Notre Dame|NCAA", "Milan Sundström|C|MoDo|Sweden J20", "Dima Zhilkin|RW|Saginaw Spirit|OHL", "Jonah Neuenschwander|C|EHC Biel-Bienne|NL", "Brock England|LW|Seattle Thunderbirds|WHL",
+        "Brock Cripps|D|Prince Albert Raiders|WHL", "Petr Tomek|C|HC Energie Karlovy Vary|Czechia", "Jaxon Jacobson|C|Brandon Wheat Kings|WHL", "Andrei Pustovoy|C|Lokomotiv Yaroslavl|MHL", "Jaakko Wycisk|C|Guelph Storm|OHL",
+        "Timothy Kazda|RW|Guelph Storm|OHL", "Malik L'Italien|D|Halifax Mooseheads|QMJHL", "Noah Davidson|C|Medicine Hat Tigers|WHL", "Luca Santala|RW|London Knights|OHL", "Yevgeni Yakunin|C|Spartak Moskva|MHL"
+      ]
+    },
+    {
+      "id": "thw-sep", "source": "The Hockey Writers (Peter Baracchini), preseason top 32", "url": "https://www.yardbarker.com/nhl/articles/2027_nhl_draft_baracchinis_top_32_preseason_rankings/s1_16448_44270909", "date": "2026-09-07", "weight": 0.7, "kind": "ranking",
+      "players": [
+        "Landon DuPont|D|Michigan|NCAA", "Nazar Privalov|C|Krasnaya Armiya Moskva|MHL", "Sergei Skvortsov|LW|Torpedo Nizhny Novgorod|KHL", "Alexis Joseph|C|Saint John Sea Dogs|QMJHL", "Jonah Neuenschwander|C|EHC Biel-Bienne|NL",
+        "Carter Meyer|C|Québec Remparts|QMJHL", "Dima Zhilkin|RW|Saginaw Spirit|OHL", "Brock England|C|Seattle Thunderbirds|WHL", "Sammy Nelson|C|USNTDP|NTDP", "Jaxon Jacobson|C|Brandon Wheat Kings|WHL",
+        "Brock Cripps|D|Prince Albert Raiders|WHL", "Milan Sundström|C|MoDo U20|Nationell", "Andrei Pustovoy|C|Lokomotiv Yaroslavl|MHL", "Luca Santala|RW|London Knights|OHL", "Jaakko Wycisk|C|Guelph Storm|OHL",
+        "Bosse Meijer|C|Frölunda HC U20|Nationell", "Kayden Stroeder|C|Edmonton Oil Kings|WHL", "Timothy Kazda|RW|Guelph Storm|OHL", "Kohyn Eshkawkogan|D|Ottawa 67's|OHL", "Levi Harper|D|Saginaw Spirit|OHL",
+        "Gavin Burcar|C|Spokane Chiefs|WHL", "Boston Tait|D|Wenatchee Wild|WHL", "Yevgeni Yakunin|C|Spartak Moskva|MHL", "Malik L'Italien|D|Halifax Mooseheads|QMJHL", "Tomas Selic|RW|HC Kometa Brno|Czechia",
+        "Noah Davidson|LW|Medicine Hat Tigers|WHL", "Vladimir Shtyrkhunov|D|Shawinigan Cataractes|QMJHL", "Dorian Eklund Aspe|C|Djurgårdens IF U20|Nationell", "Lukas Kachlir|D|Bílí Tygři Liberec|Czechia U20", "Roberts Naudiņš|F|Penticton Vees|WHL",
+        "Ryerson Edgar|C|Niagara IceDogs|OHL", "John McLaughlin|C|Windsor Spitfires|OHL"
+      ]
+    },
+    {
+      "id": "thn-tier-sep", "source": "The Hockey News (Tony Ferrari), pre-season tier list (order within a tier is loose)", "url": "https://thehockeynews.com/news/latest-news/2027-nhl-draft-ranking-pre-season-tier-list-sees-landon-dupont-alone-atop", "date": "2026-09-18", "weight": 0.7, "kind": "ranking",
+      "players": [
+        "Landon DuPont|D|Michigan|NCAA", "Sergei Skvortsov|LW|Nizhny Novgorod|KHL", "Nazar Privalov|LW|CSKA|KHL", "Carter Meyer|C|Québec Remparts|QMJHL", "Dima Zhilkin|RW|Saginaw Spirit|OHL", "Jonah Neuenschwander|C|EHC Biel-Bienne|NL",
+        "Brock England|C|Seattle Thunderbirds|WHL", "Milan Sundström|C|MoDo|Sweden", "Bosse Meijer|C|Frölunda HC|Sweden", "Sammy Nelson|C|Notre Dame|NCAA", "Brock Cripps|D|Prince Albert Raiders|WHL",
+        "Malik L'Italien|D|Halifax Mooseheads|QMJHL", "Kohyn Eshkawkogan|D|Ottawa 67's|OHL", "Alexis Joseph|C|Saint John Sea Dogs|QMJHL", "Jaakko Wycisk|RW|Guelph Storm|OHL", "Petr Tomek|C|HC Energie Karlovy Vary|Czechia", "Douglas Johnsson|D|Skellefteå AIK|Sweden"
+      ]
+    },
+    {
+      "id": "thn-mock-aug", "source": "The Hockey News (Vinnie Parise), early mock: top 16 lottery picks", "url": "https://thehockeynews.com/nhl/chicago-blackhawks/latest-news/2027-nhl-mock-draft-early-projections-of-the-top-16-lottery-picks", "date": "2026-08-07", "weight": 0.5, "kind": "mock",
+      "picks": [
+        ["VAN", "Landon DuPont"], ["CGY", "Nazar Privalov"], ["CHI", "Alexis Joseph"], ["SEA", "Carter Meyer"], ["NSH", "Sergei Skvortsov"], ["DET", "Sammy Nelson"], ["NYI", "Milan Sundström"], ["STL", "Jonah Neuenschwander"],
+        ["WPG", "Brock England"], ["NYR", "Dima Zhilkin"], ["PIT", "Petr Tomek"], ["BOS", "Jaxon Jacobson"], ["PHI", "Brock Cripps"], ["CBJ", "Timothy Kazda"], ["LAK", "Luca Santala"], ["TOR", "Yevgeni Yakunin"]
+      ]
+    },
+    {
+      "id": "lines-mock", "source": "Lines.com mock draft (older: some clubs listed are out of date)", "url": "https://www.lines.com/nhl/drafts/2027", "date": "2026-08-01", "weight": 0.3, "kind": "mock",
+      "picks": [
+        ["VAN", "Landon DuPont"], ["CHI", "Nazar Privalov"], ["NYR", "Jonah Neuenschwander"], ["CGY", "Dima Zhilkin"], ["BOS", "Andrei Pustovoy"], ["SEA", "Sergei Skvortsov"], ["WPG", "Noah Davidson"], ["CHI", "Sammy Nelson"],
+        ["SJS", "Milan Sundström"], ["NSH", "Bosse Meijer"], ["STL", "Maxmilian Mareš"], ["NJD", "Aleks Kulemin"], ["NYI", "Carter Meyer"], ["CBJ", "Nolan Fitzhenry"], ["WSH", "Ben Geiger"], ["LAK", "Lenni Kokkonen"],
+        ["ANA", "Jaakko Wycisk"], ["UTA", "Brock England"], ["CHI", "Max Calce"], ["PHI", "Vladimir Shtyrkhunov"], ["PIT", "Jamie Glance"], ["OTT", "Malik L'Italien"], ["BOS", "Ryerson Edgar"], ["MIN", "Yevgeni Yakunin"],
+        ["SEA", "Luca Santala"], ["DAL", "Easton Walos"], ["BUF", "Petr Tomek"], ["MTL", "Timothy Kazda"], ["TOR", "Jaxon Jacobson"], ["NJD", "Cooper McAslan"]
+      ]
+    },
+    {
+      "id": "thn-top10-jun", "source": "The Hockey News, projected top 10 (June)", "url": "https://thehockeynews.com/news/latest-news/2027-nhl-draft-projected-top-10-landon-dupont-alexis-joseph-and-carter-meyer-highlight-exciting-class", "date": "2026-06-28", "weight": 0.3, "kind": "ranking",
+      "players": ["Landon DuPont|D|Everett|WHL", "Alexis Joseph|C|Saint John Sea Dogs|QMJHL", "Milan Sundström|C|MoDo|Sweden", "Nazar Privalov|LW|CSKA|Russia", "Carter Meyer|C|USNTDP|USHL", "Max Calce|C|Mannheim|Germany", "Jonah Neuenschwander|C|EHC Biel-Bienne|NL", "Luca Santala|C|Kiekko-Espoo|Finland", "Brock Cripps|D|Prince Albert Raiders|WHL", "Jaxon Jacobson|C|Brandon Wheat Kings|WHL"]
+    }
+  ],
+  "ownedBy": {
+    "_help": "2027 first-round picks held by a different team than the one that earned them, as shown in public mock drafts (ClutchPoints, Oct 31, 2026). Original team: current owner.",
+    "TOR": "PHI", "COL": "TOR", "VGK": "NJD", "FLA": "CHI", "EDM": "CHI", "TBL": "SEA"
+  }
+}

@@ -28,7 +28,7 @@ export const stage = (key, extra = "") => `<span class="stage stage-${key}" titl
 export const pill = (text, cls = "") => `<span class="pill ${cls}">${esc(text)}</span>`;
 
 const NAV = [
-  ["/", "Home"], ["/nhl/", "Teams"], ["/goalies/", "Goalies"], ["/injuries/", "Injuries"], ["/news/", "News"], ["/moves/", "Moves"], ["/standings/", "Standings"], ["/predictions/", "Predictions"], ["/cup/", "Cup odds"],
+  ["/", "Home"], ["/nhl/", "Lineups"], ["/goalies/", "Goalies"], ["/injuries/", "Injuries"], ["/news/", "News"], ["/moves/", "Moves"], ["/standings/", "Standings"], ["/predictions/", "Predictions"], ["/cup/", "Cup odds"],
   ["/schedule/", "Schedule"], ["/stats/", "Stats"], ["/records/", "Records"], ["/prospects/", "Prospects"], ["/wjc/", "World Juniors"],
 ];
 

@@ -1069,3 +1069,15 @@ ul.plain { padding-left: 18px; } ul.plain li { margin: 6px 0; }
 .pr-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--panel-2); }
 .pr-tbl tr[hidden] { display: none; }
 .dc-who .flag { vertical-align: -2px; margin-right: 4px; }
+
+/* ---------- Mock draft ---------- */
+.mock-tbl .mocks { white-space: normal; } .mk { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border: 1px solid var(--line); border-radius: 99px; font-size: 11px; color: var(--muted); background: var(--panel-2); }
+.mock-tbl tr.nolot td { opacity: .92; } .mock-tbl .dc-who small { display: block; color: var(--muted); font-size: 12px; }
+
+/* ---------- World Juniors live controls ---------- */
+.wjc-ctl { margin: 14px 0; } .wjc-ctl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; } .wjc-ctl-head .sp { flex: 1; }
+.wjc-ctl summary { cursor: pointer; font-weight: 600; margin-top: 12px; }
+.wjc-edit { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-top: 12px; } .wjc-edit h4 { margin: 0 0 8px; }
+.wjc-scores td { padding: 5px 6px; white-space: nowrap; } .wjc-scores td.r { text-align: right; } .wjc-scores input { width: 3.2ch; padding: 4px 6px; text-align: center; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-variant-numeric: tabular-nums; } .wjc-scores input.from-feed { background: color-mix(in srgb, var(--accent) 12%, var(--panel)); } .wjc-scores select { padding: 4px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-size: 12px; }
+.adjs { display: grid; gap: 10px; } .adj { display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 13px; } .adj span { display: flex; justify-content: space-between; } .adj input[type=range] { width: 100%; accent-color: var(--accent); }
+@media (max-width: 860px) { .wjc-edit { grid-template-columns: 1fr; } }

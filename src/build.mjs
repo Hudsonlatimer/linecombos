@@ -10,7 +10,7 @@ import { ingest, reportedFor } from "./lib/posts.mjs";
 import { goalieReports, goalieId } from "./lib/goalies.mjs";
 import { dfoLines } from "./lib/dailyfaceoff.mjs";
 import { buildWjc } from "./lib/wjc.mjs";
-import { forecast as wjcForecast } from "./lib/wjcpredict.mjs";
+import { forecast as wjcForecast, WIKI_URL } from "./lib/wjcpredict.mjs";
 import { bracketPage } from "./render/wjc-forecast.mjs";
 import { gameJson } from "./core/game.mjs";
 import * as P from "./render/nhl-pages.mjs";
@@ -24,6 +24,7 @@ import * as X from "./render/more-pages.mjs";
 import * as C from "./lib/contracts.mjs";
 import { draftClass } from "./lib/draft.mjs";
 import { nhlProspectsPage } from "./render/prospect-pages.mjs";
+import { mockDraftPage } from "./render/mock-draft.mjs";
 
 const t0 = Date.now();
 const log = (m) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${m}`);
@@ -277,10 +278,14 @@ await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));
 await put("/prospects/", P.prospectsPage(ctx));
 await put("/prospects/nhl/", nhlProspectsPage(ctx));
+if (dc?.publicLists) await put("/prospects/mock-draft/", mockDraftPage(ctx));
 await put("/about/", P.aboutPage(ctx));
 for (const p of Object.values(profiles)) await put(`/players/${p.id}/`, X.profilePage(ctx, p));
 await put("/wjc/", wjcHub(ctx));
 await put("/wjc/bracket/", bracketPage(ctx));
+await write("data/wjc-live.json", JSON.stringify({ built: wjc.forecast.built, wikiApi: WIKI_URL, wikiPage: wjc.forecast.resultsSource?.url ?? "https://en.wikipedia.org/wiki/2027_World_Junior_Ice_Hockey_Championships", T: wjc.forecast.T,
+  cfg: { teams: wjc.cfg.teams.map((t) => ({ code: t.code, name: t.name, group: t.group, flag: t.flag })), schedule: wjc.cfg.schedule },
+  ratings: Object.fromEntries(Object.entries(wjc.forecast.ratings).map(([c, r]) => [c, { rating: r.rating, prior: r.prior, roster: r.roster }])), results: wjc.forecast.results, playoffResults: wjc.forecast.playoffResults }));
 await write("data/wjc-forecast.json", JSON.stringify({ built: wjc.forecast.built, sims: wjc.forecast.sims, odds: wjc.forecast.odds, games: wjc.forecast.games, bracket: wjc.forecast.bracket }));
 for (const t of Object.values(wjc.teams)) await put(`/wjc/${t.code.toLowerCase()}/`, wjcTeam(ctx, t));
 
@@ -309,6 +314,7 @@ const search = [
   ...Object.values(profiles).filter((p) => p.status !== "alumni").map((p) => ({ n: `${p.first} ${p.last}`, s: p.team ?? p.nhlTeam ?? "", u: `/players/${p.id}/`, k: p.team ? p.pos : "Prospect", h: p.headshot ?? "" })),
   { n: "Stanley Cup predictor", s: "", u: "/cup/", k: "Team" },
   { n: "NHL prospect pools", s: "", u: "/prospects/nhl/", k: "Team" },
+  { n: "2027 NHL mock draft", s: "", u: "/prospects/mock-draft/", k: "Team" },
   { n: "Game predictions", s: "", u: "/predictions/", k: "Team" },
   { n: "World Juniors mock bracket and predictions", s: "WJC", u: "/wjc/bracket/", k: "WJC" },
   { n: "Injuries & scratches", s: "", u: "/injuries/", k: "Team" },

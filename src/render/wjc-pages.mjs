@@ -39,9 +39,9 @@ export function wjcHub(ctx) {
   </section>
   ${Object.entries(groups).map(([g, ts]) => `<h2 class="section-h">Group ${g} <span class="muted small">${g === "A" ? "Red Deer" : "Edmonton"}</span></h2><div class="wjc-grid">${ts.map(card).join("")}</div>`).join("")}
   <h2 class="section-h">Tournament odds <span class="muted small">from ${ctx.wjc.forecast.sims.toLocaleString()} simulated tournaments · <a href="/wjc/bracket/">mock bracket</a></span></h2>
-  <section class="card">${oddsTable(ctx)}</section>
+  <section class="card" id="wjc-odds">${oddsTable(ctx)}</section>
   <h2 class="section-h">Schedule &amp; win chances <span class="muted small">your local time</span></h2>
-  <div class="card">${gamesTable(ctx)}
+  <div class="card" id="wjc-games">${gamesTable(ctx)}
   <p class="muted small">Schedule: <a href="https://www.nhl.com/news/2027-world-junior-championship-schedule-announced" target="_blank" rel="noopener">NHL.com</a>. Playoff matchups shown are the mock bracket's projection and change as results come in.</p></div>
   <section class="card"><h2>How projections work</h2>
   <p>Each pool is every player born in 2007 or later whom a federation has already shown interest in, plus the NHL prospects and draft-ranked players who could join them:</p>
@@ -52,7 +52,7 @@ export function wjcHub(ctx) {
   </ul>
   <p>A player's country is the national team he has actually played for (U17, U18, U20), not where he was born. Players already in the NHL are listed but left out of the projection, because NHL teams rarely loan them. The score combines league-adjusted scoring, draft position, camp invites, World Juniors experience and age.</p>
   <p class="muted small"><i class="wt ret">R</i> returning player · <i class="wt camp">C</i> showcase invite · <i class="wt unk">?</i> birthdate not confirmed. Sources: <a href="https://thehockeynews.com/news/latest-news/2026-world-junior-championship-full-roster-list" target="_blank" rel="noopener">THN 2026 rosters</a>, <a href="https://www.nhl.com/news/canada-2026-world-junior-summer-showcase-roster" target="_blank" rel="noopener">NHL.com</a> and <a href="https://www.dailyfaceoff.com/news/2026-usa-world-junior-summer-showcase-roster-announced" target="_blank" rel="noopener">Daily Faceoff</a> showcase rosters, Hockey Canada roster birthdates, NHL Central Scouting.</p></section>`;
-  return page({ site: ctx.site, title: "World Juniors 2027: projected lines for every team", description: "2027 World Junior Championship projected lines, D pairs, power play and goalies for Canada, USA, Sweden, Finland and every team. Schedule in your time zone.", path: "/wjc/", active: "/wjc/", body });
+  return page({ site: ctx.site, title: "World Juniors 2027: projected lines for every team", description: "2027 World Junior Championship projected lines, D pairs, power play and goalies for Canada, USA, Sweden, Finland and every team. Schedule in your time zone.", path: "/wjc/", active: "/wjc/", body, scripts: ["/assets/wjc-live.js#module"] });
 }
 
 export function wjcTeam(ctx, t) {

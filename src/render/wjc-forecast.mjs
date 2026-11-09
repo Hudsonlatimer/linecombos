@@ -67,11 +67,12 @@ export function bracketPage(ctx) {
   const champ = Object.values(F.odds).sort((a, b) => b.gold - a.gold).slice(0, 5);
   const body = `<section class="hero wjc-hero"><div><p class="eyebrow"><a href="/wjc/">${esc(cfg.name)}</a> · mock bracket</p><h1>Projected World Juniors bracket</h1>
     <p class="lede">We play the whole tournament ${F.sims.toLocaleString()} times from team ratings built on recent results, public roster projections and each team's projected lineup. This bracket seeds every group by its average finish and takes the favourite in each game. The odds below show how often each result really happens.</p></div></section>
-  <div class="rec-tiles"><div class="tile-stat"><b>${T[B.champion].flag} ${esc(T[B.champion].name)}</b><span>Projected gold · ${pc(F.odds[B.champion].gold)} to win it</span></div>
+  <div id="wjc-ctl"></div>
+  <div class="rec-tiles" id="wjc-tiles"><div class="tile-stat"><b>${T[B.champion].flag} ${esc(T[B.champion].name)}</b><span>Projected gold · ${pc(F.odds[B.champion].gold)} to win it</span></div>
     <div class="tile-stat"><b>${T[B.silver].flag} ${esc(T[B.silver].name)}</b><span>Projected silver</span></div>
     <div class="tile-stat"><b>${T[B.bronzeWinner].flag} ${esc(T[B.bronzeWinner].name)}</b><span>Projected bronze</span></div>
     <div class="tile-stat"><b>${T[B.relegation.a === B.relegation.win ? B.relegation.b : B.relegation.a].flag} ${esc(T[B.relegation.a === B.relegation.win ? B.relegation.b : B.relegation.a].name)}</b><span>Projected relegation</span></div></div>
-  <section class="card bk-card"><h2>Mock bracket <span class="muted small">favourite advances · win chance in each game</span></h2>
+  <section class="card bk-card" id="wjc-bracket"><h2>Mock bracket <span class="muted small">favourite advances · win chance in each game</span></h2>
     <div class="bk">
       <div class="bk-col"><h3>Quarterfinals</h3>${B.qf.map((m, i) => matchCard(T, m, seed.qf[i])).join("")}</div>
       <div class="bk-col mid"><h3>Semifinals</h3>${B.sf.map((m) => matchCard(T, m)).join("")}</div>
@@ -80,19 +81,19 @@ export function bracketPage(ctx) {
     <p class="src-note">Quarterfinals follow the usual IIHF pairings (A1–B4, B2–A3, B1–A4, A2–B3); the schedule doesn't say which game is which, so the order is our assumption. The two fifth-place teams play one relegation game on Jan 2.</p></section>
   <h2 class="section-h">Who wins gold</h2>
   <section class="card">${champ.map((o) => `<div class="odds-bar"><span class="flag">${T[o.code].flag}</span><span class="ob-name">${esc(T[o.code].name)}</span><span class="ob-track"><span style="width:${(o.gold / champ[0].gold) * 100}%"></span></span><b>${pc(o.gold, 1)}</b></div>`).join("")}</section>
-  <h2 class="section-h">Tournament odds</h2><section class="card">${oddsTable(ctx)}</section>
+  <h2 class="section-h">Tournament odds</h2><section class="card" id="wjc-odds">${oddsTable(ctx)}</section>
   <div class="gc-grid" style="margin-top:20px">${groupTbl("A")}${groupTbl("B")}</div>
   <h2 class="section-h">Likeliest matchups</h2>
   <section class="card"><div class="slots">${["QF1", "QF2", "QF3", "QF4", "SF1", "SF2", "Final", "Bronze"].map((k) => slotList(k, { QF1: "Quarterfinal 1 (A1–B4)", QF2: "Quarterfinal 2 (B2–A3)", QF3: "Quarterfinal 3 (B1–A4)", QF4: "Quarterfinal 4 (A2–B3)", SF1: "Semifinal 1", SF2: "Semifinal 2", Final: "Gold medal game", Bronze: "Bronze medal game" }[k])).join("")}</div></section>
-  <h2 class="section-h">All games</h2><section class="card">${gamesTable(ctx)}</section>
+  <h2 class="section-h">All games</h2><section class="card" id="wjc-games">${gamesTable(ctx)}</section>
   <section class="card" style="margin-top:20px"><h2>How the forecast works</h2><ul class="plain">
     <li><b>Ratings.</b> Each team's rating is goals per game against an average team. It starts from our read of recent World Junior results and public roster projections (Canada is ${esc("\"the deepest team in the tournament\"")} per Daily Faceoff's Nov 4 projection), then moves up or down with the strength of the team's projected lineup: forwards, defence and goalie, scored from league-adjusted production and draft pedigree.</li>
     <li><b>Each game.</b> Both teams' goals are Poisson counts set by the rating gap, about ${F.T} goals a game in total. Ties after regulation go to overtime and a shootout, which favour the better team only slightly. Wins are worth 3 points in regulation, 2 in overtime or a shootout, and 1 for an overtime loss.</li>
     <li><b>The tournament.</b> Round robin in two groups of five, then the top four from each group go to the quarterfinals and the fifth-place teams play one relegation game. Ties in the standings break on goal difference, then goals for.</li>
     <li><b>Lines.</b> Canada and USA use Steven Ellis's Daily Faceoff projections (Nov 4 and 5); Sweden's forwards use The Hockey News' January projection. Other teams use our own pool model. Official rosters replace all of it when federations announce them.</li>
-    <li><b>Updating.</b> Rosters, ratings and results feed the simulation on every rebuild. As games finish, results are added and the rest of the tournament is simulated from there.</li></ul>
+    <li><b>Live.</b> During the tournament this page checks Wikipedia's tournament page every minute for finished games and re-runs the simulation in your browser, so the odds, bracket and win chances move as games end. Open <i>What if?</i> to enter scores or change team ratings yourself. The site's own rebuild uses the same results every few minutes.</li></ul>
     <p class="muted small">This is a forecast, not a betting line: junior hockey is volatile and rosters are not set. Ratings are in <code>config/wjc/ratings.json</code>.</p></section>`;
-  return page({ site: ctx.site, title: "World Juniors 2027 mock bracket and predictions", description: "Projected 2027 World Juniors bracket: win probability for every game, medal and relegation odds for all ten teams from 20,000 simulated tournaments.", path: "/wjc/bracket/", active: "/wjc/", body });
+  return page({ site: ctx.site, title: "World Juniors 2027 mock bracket and predictions", description: "Projected 2027 World Juniors bracket: win probability for every game, medal and relegation odds for all ten teams from 20,000 simulated tournaments.", path: "/wjc/bracket/", active: "/wjc/", body, scripts: ["/assets/wjc-live.js#module"] });
 }
 
 /** A team page's forecast card. */
