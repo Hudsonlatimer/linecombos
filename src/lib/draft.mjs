@@ -3,6 +3,7 @@
 // with NHL Central Scouting's preliminary watch-list grades merged in where published.
 import fs from "node:fs/promises";
 import { publicDraftLists } from "./draftlists.mjs";
+import { outsideStats } from "./outsidestats.mjs";
 import path from "node:path";
 import { get, pool } from "./http.mjs";
 import { CONFIG } from "./paths.mjs";
@@ -69,7 +70,7 @@ export async function draftClass(year) {
         const row = out.get(key) ?? {
           id: key, name: `${p.first_name} ${p.last_name}`.trim(), first: p.first_name, last: p.last_name, born, league: L.code, lw: L.weight,
           pos: p.position || "", shoots: (g ? p.catches : p.shoots) || "", height: fmtHeight(p.height), weight: p.weight || "",
-          team: teamName(p.team_name), from: [p.hometown, p.homeprov, p.homecntry].filter(Boolean).join(", "), now: null, prev: null,
+          team: teamName(p.team_name), from: [p.hometown || p.birthtown, p.homeprov || p.birthprov, p.homecntry || p.birthcntry].filter(Boolean).join(", "), now: null, prev: null,
         };
         if (i === 0) { if (!row.now || line.gp > row.now.gp) { row.now = line; row.team = teamName(p.team_name); row.league = L.code; row.lw = L.weight; } }
         else if (!row.prev || line.gp > row.prev.gp) row.prev = line;
@@ -92,6 +93,7 @@ export async function draftClass(year) {
   }
   // Consensus: public rankings and mock drafts combined (config/draft/<year>-public-lists.json), recent lists weighted more.
   const pub = await publicDraftLists(year).catch(() => null);
+  const outside = await outsideStats(year).catch(() => new Map()); // NCAA and national-program stats, read from open pages
   const consensus = (pub ? pub.players.filter((c) => c.n >= 2 || c.rank <= 40) : css.consensus ?? []).map((c, i) => ({ ...c, rank: i + 1 }));
   const consBy = new Map(consensus.map((c) => [normName(c.name), c]));
   const names = (p) => [p.name, ...(p.aliases ?? [])].map(normName);
@@ -103,6 +105,8 @@ export async function draftClass(year) {
     const c = find(cssBy, p);
     if (c && (!c.league || c.league === p.league || !p.now)) { p.css = c.rating; if (!p.now && c.team) p.nowTeam = `${c.team}${c.league ? ` (${c.league})` : ""}`; }
     const k = find(consBy, p);
+    // NCAA and national-program stats (open pages read at build) fill in players the CHL/USHL feeds only know from last season.
+    { const o = names(p).map((n) => outside.get(n)).find(Boolean); if (o && !p.now?.gp) { p.now = { gp: o.gp, g: o.g, a: o.a, p: o.p, pim: 0, pm: 0, team: o.team, league: o.league }; p.team = o.team; p.league = o.league; } }
     if (k) { p.consensus = k.rank; p.nat = k.nat ?? null; p.consAvg = k.avg ?? null; p.consN = k.n ?? null; p.consRanks = k.ranks ?? null; p.consMocks = k.mocks ?? null; if (!p.now && k.team) p.nowTeam = `${k.team}${k.league ? ` (${k.league})` : ""}`; }
     // Players who have left these leagues (NCAA, Europe) with no grade or ranking are noise: drop them, and empty stat lines.
     if (!p.now?.gp && !p.css && !p.consensus) continue;
@@ -114,7 +118,8 @@ export async function draftClass(year) {
   for (const k of consensus) {
     if (seen.has(normName(k.name))) continue;
     const c = cssBy.get(normName(k.name));
-    list.push({ id: `x|${normName(k.name)}`, name: k.name, pos: k.pos ?? "", born: null, league: "", lw: 1, now: null, last: null, prev: null,
+    const o = outside.get(normName(k.name));
+    list.push({ id: `x|${normName(k.name)}`, name: k.name, pos: k.pos ?? "", born: null, league: o?.league ?? "", team: o?.team ?? "", lw: 1, now: o ? { gp: o.gp, g: o.g, a: o.a, p: o.p, pim: 0, pm: 0, team: o.team, league: o.league } : null, last: null, prev: null,
       css: c?.rating, consensus: k.rank, nat: k.nat ?? null, consAvg: k.avg ?? null, consN: k.n ?? null, consRanks: k.ranks ?? null, consMocks: k.mocks ?? null, nowTeam: [k.team ?? c?.team, k.league ?? (c?.league !== "International" ? c?.league : null)].filter(Boolean).join(", ") || "Outside the CHL/USHL" });
     seen.add(normName(k.name));
   }

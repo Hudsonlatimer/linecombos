@@ -5,7 +5,7 @@ const C = {
   DNK: ["dk", "Denmark"], DEN: ["dk", "Denmark"], NOR: ["no", "Norway"], AUT: ["at", "Austria"], SVN: ["si", "Slovenia"], SLO: ["si", "Slovenia"], BLR: ["by", "Belarus"],
   KAZ: ["kz", "Kazakhstan"], UKR: ["ua", "Ukraine"], FRA: ["fr", "France"], GBR: ["gb", "Great Britain"], ITA: ["it", "Italy"], POL: ["pl", "Poland"],
   NLD: ["nl", "Netherlands"], HRV: ["hr", "Croatia"], LTU: ["lt", "Lithuania"], EST: ["ee", "Estonia"], KOR: ["kr", "South Korea"], JPN: ["jp", "Japan"],
-  AUS: ["au", "Australia"], SRB: ["rs", "Serbia"], VEN: ["ve", "Venezuela"], LBN: ["lb", "Lebanon"], IRL: ["ie", "Ireland"], BRA: ["br", "Brazil"],
+  AUS: ["au", "Australia"], HKG: ["hk", "Hong Kong"], SRB: ["rs", "Serbia"], VEN: ["ve", "Venezuela"], LBN: ["lb", "Lebanon"], IRL: ["ie", "Ireland"], BRA: ["br", "Brazil"],
   ZAF: ["za", "South Africa"], TWN: ["tw", "Taiwan"], PRY: ["py", "Paraguay"], JAM: ["jm", "Jamaica"], HTI: ["ht", "Haiti"], NGA: ["ng", "Nigeria"],
   BEL: ["be", "Belgium"], BHR: ["bh", "Bahrain"], TZA: ["tz", "Tanzania"], BHS: ["bs", "Bahamas"], IDN: ["id", "Indonesia"], BGR: ["bg", "Bulgaria"],
   UZB: ["uz", "Uzbekistan"], CHN: ["cn", "China"], HUN: ["hu", "Hungary"], MDA: ["md", "Moldova"], ISR: ["il", "Israel"], MEX: ["mx", "Mexico"],
@@ -30,6 +30,8 @@ export function nationFromHome(from) {
   if (STATES.has(last)) return country("USA");
   const byCode = country(last.toUpperCase());
   if (byCode?.iso) return byCode;
+  const byName = countryByName(last);
+  if (byName?.iso) return byName;
   return country({ canada: "CAN", usa: "USA", "united states": "USA", russia: "RUS", sweden: "SWE", finland: "FIN", czechia: "CZE", "czech republic": "CZE", slovakia: "SVK", switzerland: "CHE", germany: "DEU", latvia: "LVA", norway: "NOR", denmark: "DNK", belarus: "BLR", kazakhstan: "KAZ", austria: "AUT" }[last.toLowerCase()]) ?? null;
 }
 

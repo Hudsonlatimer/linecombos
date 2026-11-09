@@ -1,0 +1,10 @@
+{
+  "_help": "Current-season stats for draft prospects outside the OHL, WHL, QMJHL and USHL feeds. Each player points at an open stats page that is read at every build (kind chn = College Hockey News team page, ntdp = USA Hockey NTDP stats page). Add a player with team, league, kind and url; or give fixed numbers with kind manual (gp, g, a, p, source, asOf). Sites that block automated requests (KHL, Swiss NL, Liiga, DEL, Elite Prospects) can't be read.",
+  "players": {
+    "Landon DuPont": { "kind": "chn", "team": "Michigan", "league": "NCAA", "url": "https://www.collegehockeynews.com/stats/team/Michigan/31" },
+    "Sammy Nelson": { "kind": "chn", "team": "Notre Dame", "league": "NCAA", "url": "https://www.collegehockeynews.com/stats/team/Notre-Dame/43" },
+    "Diego Gutiérrez": { "kind": "ntdp", "team": "USNTDP U18", "league": "NTDP", "url": "https://www.usahockeyntdp.com/stats/team_instance/10591971?subseason=964212&tab=team_instance_player_stats&tool=5837904" },
+    "Nolan Fitzhenry": { "kind": "ntdp", "team": "USNTDP U18", "league": "NTDP", "url": "https://www.usahockeyntdp.com/stats/team_instance/10591971?subseason=964212&tab=team_instance_player_stats&tool=5837904" },
+    "Benjamin Geiger": { "kind": "ntdp", "team": "USNTDP U18", "league": "NTDP", "url": "https://www.usahockeyntdp.com/stats/team_instance/10591971?subseason=964212&tab=team_instance_player_stats&tool=5837904" }
+  }
+}
