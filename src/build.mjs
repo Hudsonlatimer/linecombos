@@ -276,9 +276,11 @@ await put("/schedule/", P.schedulePage(ctx));
 await put("/stats/", P.statsPage(ctx));
 await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));
-await put("/prospects/", P.prospectsPage(ctx));
+// The mock draft replaces the old prospects page at /prospects/ (the old page is only a fallback if the public lists are missing).
+await put("/prospects/", dc?.publicLists ? mockDraftPage(ctx) : P.prospectsPage(ctx));
 await put("/prospects/nhl/", nhlProspectsPage(ctx));
-if (dc?.publicLists) await put("/prospects/mock-draft/", mockDraftPage(ctx));
+// Old mock draft address: send visitors to the new home.
+await write("prospects/mock-draft/index.html", `<!doctype html><meta charset="utf-8"><title>Moved</title><link rel="canonical" href="${site.url.replace(/\/$/, "")}/prospects/"><meta http-equiv="refresh" content="0; url=/prospects/"><p><a href="/prospects/">The mock draft is now at /prospects/</a></p>`);
 await put("/about/", P.aboutPage(ctx));
 for (const p of Object.values(profiles)) await put(`/players/${p.id}/`, X.profilePage(ctx, p));
 await put("/wjc/", wjcHub(ctx));
@@ -314,7 +316,7 @@ const search = [
   ...Object.values(profiles).filter((p) => p.status !== "alumni").map((p) => ({ n: `${p.first} ${p.last}`, s: p.team ?? p.nhlTeam ?? "", u: `/players/${p.id}/`, k: p.team ? p.pos : "Prospect", h: p.headshot ?? "" })),
   { n: "Stanley Cup predictor", s: "", u: "/cup/", k: "Team" },
   { n: "NHL prospect pools", s: "", u: "/prospects/nhl/", k: "Team" },
-  { n: "2027 NHL mock draft", s: "", u: "/prospects/mock-draft/", k: "Team" },
+  { n: "2027 NHL mock draft", s: "", u: "/prospects/", k: "Team" },
   { n: "Game predictions", s: "", u: "/predictions/", k: "Team" },
   { n: "World Juniors mock bracket and predictions", s: "WJC", u: "/wjc/bracket/", k: "WJC" },
   { n: "Injuries & scratches", s: "", u: "/injuries/", k: "Team" },

@@ -29,7 +29,7 @@ export const pill = (text, cls = "") => `<span class="pill ${cls}">${esc(text)}<
 
 const NAV = [
   ["/", "Home"], ["/nhl/", "Lineups"], ["/goalies/", "Goalies"], ["/injuries/", "Injuries"], ["/news/", "News"], ["/moves/", "Moves"], ["/standings/", "Standings"], ["/predictions/", "Predictions"], ["/cup/", "Cup odds"],
-  ["/schedule/", "Schedule"], ["/stats/", "Stats"], ["/records/", "Records"], ["/prospects/", "Prospects"], ["/wjc/", "World Juniors"],
+  ["/schedule/", "Schedule"], ["/stats/", "Stats"], ["/records/", "Records"], ["/prospects/", "Mock draft"], ["/wjc/", "World Juniors"],
 ];
 
 // Cache-busting version for /assets: changes on every build.

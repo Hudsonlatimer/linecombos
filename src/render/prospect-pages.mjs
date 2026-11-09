@@ -42,7 +42,7 @@ export function nhlProspectsPage(ctx) {
       <td data-v="${p.draft ? p.draft.year * 1000 - p.draft.overallPick : 0}">${draftTxt(p.draft)}</td></tr>`;
   };
   const opts = (items) => items.map(([v, l]) => `<option value="${attr(v)}">${esc(l)}</option>`).join("");
-  const body = `<section class="hero"><div><p class="eyebrow"><a href="/prospects/">Prospects</a> · NHL prospect pools</p><h1>Every NHL prospect, by team</h1>
+  const body = `<section class="hero"><div><p class="eyebrow"><a href="/prospects/">Mock draft</a> · NHL prospect pools</p><h1>Every NHL prospect, by team</h1>
     <p class="lede">${list.length.toLocaleString()} drafted prospects across all 32 teams: who holds their rights, where they play now, this season's numbers and where they were picked. Filter by team, country, league or position.</p></div></section>
     <div class="statbox slim"><div><span>Prospects</span><b>${list.length.toLocaleString()}</b></div><div><span>Countries</span><b>${topC.length}</b></div>${topC.slice(0, 5).map(([, v]) => `<div><span>${flag(v.c)} ${esc(v.c.name)}</span><b>${v.n}</b></div>`).join("")}</div>
     <section class="card pr-card"><div class="pr-filters" id="pr-filters">

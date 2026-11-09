@@ -351,7 +351,7 @@ export function homePage2(ctx) {
     ["/cup/", "Cup odds", fav ? `${fav.common} lead at ${P100(odds[0][1].cup, 1)}` : "10,000 sims", "c"],
     ["/wjc/", "World Juniors", wjcDays > 0 ? `${wjcDays} days · odds, bracket, lines` : "Live now", "w"],
     ["/moves/", "Trades & signings", `${ctx.tx.filter((m) => m.date >= ctx.site.builtAt.slice(0, 10).replace(/\d\d$/, "01")).length} moves this month`, "m"],
-    ["/prospects/", "Prospects", "Rankings & pipelines", "p"],
+    ["/prospects/", "Mock draft", "2027 picks & consensus", "p"],
   ];
   const ICON = {
     g: '<path d="M4 4h16v10a8 8 0 0 1-16 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8h8" stroke="currentColor" stroke-width="2"/>',
