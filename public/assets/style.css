@@ -1081,3 +1081,8 @@ ul.plain { padding-left: 18px; } ul.plain li { margin: 6px 0; }
 .wjc-scores td { padding: 5px 6px; white-space: nowrap; } .wjc-scores td.r { text-align: right; } .wjc-scores input { width: 3.2ch; padding: 4px 6px; text-align: center; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-variant-numeric: tabular-nums; } .wjc-scores input.from-feed { background: color-mix(in srgb, var(--accent) 12%, var(--panel)); } .wjc-scores select { padding: 4px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-size: 12px; }
 .adjs { display: grid; gap: 10px; } .adj { display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 13px; } .adj span { display: flex; justify-content: space-between; } .adj input[type=range] { width: 100%; accent-color: var(--accent); }
 @media (max-width: 860px) { .wjc-edit { grid-template-columns: 1fr; } }
+
+/* World Juniors flags: the wrapper span must not be sized like a bare flag image */
+span.flag { width: auto; height: auto; box-shadow: none; border-radius: 0; object-fit: initial; display: inline-flex; align-items: center; vertical-align: middle; }
+span.flag.big { display: flex; }
+span.flag.big .flag-img { width: 72px; height: 48px; }
