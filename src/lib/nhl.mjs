@@ -30,9 +30,15 @@ export async function loadLeague() {
     record: `${t.wins}-${t.losses}-${t.otLosses}`,
   }));
   const seasonId = st.standings[0]?.seasonId;
-  const score = await get(`${WEB}/score/now`, { ttl: 0 });
+  // "Today" is the hockey day in Eastern time (before 6am ET it's still last night's slate). The NHL's own "now" feed switches
+  // days hours late, so ask for the date directly and only fall back to "now" if that fails.
+  const etDate = (d) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(d);
+  const etHour = Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date())) % 24;
+  const hockeyDay = etDate(new Date(Date.now() - (etHour < 6 ? 864e5 : 0)));
+  let score = await get(`${WEB}/score/${hockeyDay}`, { ttl: 0 });
+  if (!score?.games) score = await get(`${WEB}/score/now`, { ttl: 0 });
   const week = await get(`${WEB}/schedule/now`, { ttl: 300 });
-  return { teams, seasonId, today: score.currentDate, todayGames: score.games, week };
+  return { teams, seasonId, today: score.currentDate && score.currentDate >= hockeyDay ? score.currentDate : hockeyDay, todayGames: score.games ?? [], week };
 }
 
 export async function teamSchedules(teams) {

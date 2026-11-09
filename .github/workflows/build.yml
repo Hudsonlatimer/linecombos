@@ -5,10 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Every 15 min from 15:00 to 06:59 UTC (morning skates through late West games), hourly otherwise.
-    # About 72 deploys a day; Vercel's free plan allows 100.
-    - cron: "*/15 15-23,0-6 * * *"
-    - cron: "0 7-14 * * *"
+    # GitHub drops many scheduled runs, so ask often; the gap check below keeps deploys under Vercel's 100 a day.
+    - cron: "*/6 15-23,0-6 * * *"
+    - cron: "*/20 7-14 * * *"
 
 concurrency:
   group: build
@@ -22,23 +21,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Skip scheduled runs that come right after a deploy
+        id: gap
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            built=$(curl -s "https://linecombos.vercel.app/version.json?t=$RANDOM" | sed -n 's/.*"builtAt":"\([^"]*\)".*/\1/p')
+            if [ -n "$built" ]; then
+              age=$(( $(date +%s) - $(date -d "$built" +%s) ))
+              echo "last build $age seconds ago"
+              if [ "$age" -lt 660 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+            fi
+          fi
       - uses: actions/checkout@v4
+        if: steps.gap.outputs.skip != 'true'
       - uses: actions/setup-node@v4
+        if: steps.gap.outputs.skip != 'true'
         with:
           node-version: 22
       - name: Restore API cache
+        if: steps.gap.outputs.skip != 'true'
         uses: actions/cache@v4
         with:
           path: .cache
           key: nhl-cache-${{ github.run_id }}
           restore-keys: nhl-cache-
       - run: npm test
+        if: steps.gap.outputs.skip != 'true'
       - name: Build site
+        if: steps.gap.outputs.skip != 'true'
         run: npm run build
         env:
           LIVE_API: ${{ secrets.LIVE_API }}
           X_FEED_URL: ${{ secrets.X_FEED_URL }}
       - name: Save collected posts
+        if: steps.gap.outputs.skip != 'true'
         run: |
           git config user.name "linecombos-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -46,6 +62,7 @@ jobs:
           git diff --cached --quiet || git commit -m "Update posts [skip ci]"
           git push || true
       - name: Deploy to Vercel
+        if: steps.gap.outputs.skip != 'true'
         working-directory: dist
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
