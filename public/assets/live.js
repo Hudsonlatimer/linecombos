@@ -10,11 +10,12 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const per = (n, t) => (t === "SO" ? "SO" : t === "OT" || n === 4 ? "OT" : n > 4 ? `${n - 3}OT` : `P${n}`);
   const time = (utc) => new Date(utc).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const logo = (t) => (t.logo ? `<img class="logo" src="${esc(t.logo)}" data-dark="${esc(t.darkLogo ?? t.logo)}" alt="" width="20" height="20">` : "");
   function chip(g) {
     const live = LIVE.has(g.gameState), fin = FINAL.has(g.gameState), pd = g.periodDescriptor ?? {}, c = g.clock ?? {};
     const st = live ? `<span class="live-dot">${c.inIntermission ? `${per(pd.number, pd.periodType)} int.` : `${per(pd.number, pd.periodType)} ${esc(c.timeRemaining ?? "")}`}</span>` : fin ? `Final${pd.periodType && pd.periodType !== "REG" ? ` ${pd.periodType}` : ""}` : time(g.startTimeUTC);
     const sc = (t) => (live || fin ? `<em>${t.score ?? 0}</em>` : "");
-    return `<a class="lb-game${live ? " is-live" : ""}" href="/game/${g.id}/"><span class="lb-t"><b>${esc(g.awayTeam.abbrev)}</b>${sc(g.awayTeam)}</span><span class="lb-t"><b>${esc(g.homeTeam.abbrev)}</b>${sc(g.homeTeam)}</span><span class="lb-st">${st}</span></a>`;
+    return `<a class="lb-game${live ? " is-live" : ""}" href="/game/${g.id}/"><span class="lb-t">${logo(g.awayTeam)}<b>${esc(g.awayTeam.abbrev)}</b>${sc(g.awayTeam)}</span><span class="lb-t">${logo(g.homeTeam)}<b>${esc(g.homeTeam.abbrev)}</b>${sc(g.homeTeam)}</span><span class="lb-st">${st}</span></a>`;
   }
   async function poll() {
     try {
@@ -33,6 +34,7 @@
       const n = games.filter((g) => LIVE.has(g.gameState)).length;
       bar.innerHTML = `<div class="wrap lb-in"><span class="lb-lbl">${n ? `<span class="live-dot">${n} live</span>` : "Today"}</span><div class="lb-scroll">${games.map(chip).join("")}</div></div>`;
       bar.hidden = false;
+      window.LC?.swapLogos?.();
     } catch {}
   }
   poll();
