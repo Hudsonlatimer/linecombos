@@ -18,9 +18,15 @@
   }
   async function poll() {
     try {
-      const r = await fetch(`/live/scorenow/?t=${Math.floor(Date.now() / 15000)}`, { cache: "no-store" });
-      if (!r.ok) return;
-      const games = ((await r.json()).games ?? []).filter((g) => g.gameType === 2 || g.gameType === 3);
+      // Today's NHL slate by Eastern date (the feed redirects "now" to a dated URL, which a browser can't follow across sites).
+      // Before 7am ET, last night's late games are still the story, so include yesterday.
+      const et = (d) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(d);
+      const hour = +new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date()) % 24;
+      const days = [et(new Date())]; if (hour < 7) days.push(et(new Date(Date.now() - 864e5)));
+      const t = Math.floor(Date.now() / 15000);
+      const feeds = await Promise.all(days.map((d) => fetch(`/live/score/${d}/?t=${t}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+      const seen = new Set(), games = [];
+      for (const f of feeds) for (const g of f?.games ?? []) if (!seen.has(g.id) && (g.gameType === 2 || g.gameType === 3)) { seen.add(g.id); games.push(g); }
       if (!games.length) { bar.hidden = true; return; }
       const order = (g) => (LIVE.has(g.gameState) ? 0 : FINAL.has(g.gameState) ? 2 : 1);
       games.sort((a, b) => order(a) - order(b) || a.startTimeUTC.localeCompare(b.startTimeUTC));

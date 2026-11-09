@@ -220,9 +220,12 @@
   const state = G?.state ?? root.dataset.state;
   if (!FINAL.has(state)) {
     // Live: poll the worker every 20s, or the rebuilt snapshot every 60s. Pre-game: check every 2 min.
-    // Live: every 15s. Not started yet: every 45s, so the page flips to live on its own at puck drop.
-    const every = LIVE.has(state) ? 15000 : 45000;
-    setInterval(() => { if (!document.hidden) refresh(); }, every);
-    if (LIVE.has(state)) refresh();
+    // Check right away (the page may be a build snapshot from before puck drop), then every 15s around game time
+    // so it flips to live on its own, and every minute when the game is hours away.
+    const start = Date.parse(document.querySelector("[data-wp]")?.dataset.start ?? "") || 0;
+    const near = () => !start || Date.now() > start - 45 * 60e3;
+    refresh();
+    const iv = setInterval(() => { if (FINAL.has(G?.state)) return clearInterval(iv); if (!document.hidden && (LIVE.has(G?.state ?? state) || near())) refresh(); }, 15000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
   }
 })();
