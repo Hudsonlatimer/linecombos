@@ -46,7 +46,7 @@ export function comboRows(ctx, combos, labels, players, { flags = [], newIds = [
   const max = Math.max(...combos.map((c) => c.sec ?? 0), 1);
   return combos.map((c, i) => `
     <div class="unit">
-      <div class="unit-head"><span class="slot">${esc(labels[i] ?? "")}</span>
+      <div class="unit-head"><span class="slot">${esc(labels[i] ?? (labels[0] ? labels[0].replace(/\d+$/, i + 1) : ""))}</span>
         ${c.sec != null ? `<span class="bar"><span style="width:${Math.max(4, (c.sec / max) * 100).toFixed(1)}%"></span></span><span class="toi" title="Time these players were on the ice together at 5-on-5">${mmss(c.sec)} <small>together</small></span>` : `<span class="unit-sp"></span>`}</div>
       <div class="unit-players n${c.ids.length}">${c.ids.map((id) => {
         if (String(id).startsWith("name:")) { const [nm, num] = String(id).slice(5).split("|"); return playerCard({ id: "", name: nm, num }); } // from a source, not in our NHL data

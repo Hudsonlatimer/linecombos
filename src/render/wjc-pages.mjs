@@ -60,7 +60,7 @@ export function wjcTeam(ctx, t) {
   const P = t.pool;
   const pr = t.projection;
   const total = t.counts.F + t.counts.D + t.counts.G;
-  const rows = (arr, labels) => arr.map((ids, i) => `<div class="wline"><span class="slot">${labels[i]}</span>${ids.map((id) => chip(P[id])).join("")}</div>`).join("");
+  const rows = (arr, labels) => arr.map((ids, i) => `<div class="wline"><span class="slot">${labels[i] ?? labels[0].replace(/\d+$/, i + 1)}</span>${ids.map((id) => chip(P[id])).join("")}</div>`).join("");
   const why = [...pr.lines.flat(), ...pr.pairs.flat(), ...pr.goalies.slice(0, 1)].map((id) => P[id]).filter(Boolean)
     .map((p) => `<li><b>${esc(p.first)} ${esc(p.last)}</b> <span class="muted">${esc(p.pos)}</span> · ${esc(p.reason || "no stats found")}</li>`).join("");
   const pool = Object.values(P).sort((a, b) => (a.pos === "G") - (b.pos === "G") || b.score - a.score);
@@ -97,7 +97,7 @@ export function wjcTeam(ctx, t) {
   </aside></div>
   <section class="card"><h2>Player pool <span class="muted small">${pool.length} players</span></h2>
   <div class="table-wrap"><table class="tbl sortable"><thead><tr><th>Player</th><th>Pos</th><th>Born</th><th>Club</th><th class="n">GP</th><th class="n">P / SV%</th><th>Drafted</th><th class="n">Index</th></tr></thead><tbody>
-  ${pool.map((p) => `<tr${p.inNhl ? ' class="dim"' : ""}><td>${p.linked && ctx.profiles?.[p.id] ? `<a href="/players/${p.id}/">${esc(p.first)} ${esc(p.last)}</a>` : `${esc(p.first)} ${esc(p.last)}`} ${p.returnee ? '<i class="wt ret" title="Returning">R</i>' : ""}${p.camp ? '<i class="wt camp" title="Showcase invite">C</i>' : ""}${p.ageUnknown ? '<i class="wt unk" title="Birthdate not confirmed">?</i>' : ""} ${p.inNhl ? pill("In NHL", "muted") : ""}</td><td>${esc(p.pos)}</td><td>${esc(p.birthDate ?? "?")}</td><td>${p.club ? `${esc(p.club.team)} <span class="muted">${esc(p.club.league)}</span>` : "—"}</td><td class="n">${p.club?.gp ?? "—"}</td><td class="n">${p.club ? (p.pos === "G" ? pct(p.club.svPct) : p.club.pts) : "—"}</td><td>${p.draft ? `${esc(p.draft.team)} #${p.draft.overall} (${p.draft.year})` : "—"}</td><td class="n">${(p.score * 100).toFixed(0)}</td></tr>`).join("")}
+  ${pool.map((p) => `<tr${p.inNhl ? ' class="dim"' : ""}><td>${p.linked && ctx.profiles?.[p.id] ? `<a href="/players/${p.id}/">${esc(p.first)} ${esc(p.last)}</a>` : `${esc(p.first)} ${esc(p.last)}`} ${p.returnee ? '<i class="wt ret" title="Returning">R</i>' : ""}${p.camp ? '<i class="wt camp" title="Showcase invite">C</i>' : ""}${p.ageUnknown ? '<i class="wt unk" title="Birthdate not confirmed">?</i>' : ""} ${p.inNhl ? pill("In NHL", "muted") : ""}</td><td>${esc(p.pos)}</td><td>${esc(p.birthDate ?? "?")}</td><td>${p.club ? `${esc(p.club.team)} <span class="muted">${esc(p.club.league)}</span>` : "—"}</td><td class="n">${p.club?.gp ?? "—"}</td><td class="n">${p.club ? (p.pos === "G" ? pct(p.club.svPct) : p.club.pts ?? "—") : "—"}</td><td>${p.draft ? `${esc(p.draft.team)} #${p.draft.overall} (${p.draft.year})` : "—"}</td><td class="n">${(p.score * 100).toFixed(0)}</td></tr>`).join("")}
   </tbody></table></div></section>`;
   const json = { team: { code: t.code, name: t.name }, projection: pr, pool: P };
   return page({ site: ctx.site, title: `${t.name} World Juniors 2027 projected lines`, description: `${t.name}'s projected 2027 World Juniors lineup: forward lines, D pairs, power play and starting goalie, plus the full eligible player pool. Build your own lineup.`, path: `/wjc/${code(t.code)}/`, active: "/wjc/", body, scripts: ["/assets/builder.js"], json });
