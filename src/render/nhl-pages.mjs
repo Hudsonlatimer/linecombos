@@ -1,6 +1,6 @@
 import { teamExtras } from "./more-pages.mjs";
 import { wpBlock, gamePredictCard } from "./predict-pages.mjs";
-import { nationFromHome, flag as flagOf } from "./geo.mjs";
+import { nationFromHome, country, flag as flagOf } from "./geo.mjs";
 import { esc, attr, h, mmss, pct, signed, fmtDate, localTime, ago, stage, pill, page } from "./html.mjs";
 
 // ---------- shared bits ----------
@@ -425,7 +425,7 @@ export function prospectsPage(ctx) {
   const sk = (D?.players ?? []).filter((p) => p.pos !== "G");
   const gl = (D?.players ?? []).filter((p) => p.pos === "G").sort((a, b) => (b.css ? 1 : 0) - (a.css ? 1 : 0) || b.score - a.score);
   const fix = (t) => (/[ÃÂ]/.test(String(t ?? "")) ? Buffer.from(String(t), "latin1").toString("utf8") : String(t ?? "")); // feeds that double-encode UTF-8
-  const who = (p) => `${flagOf(nationFromHome(p.from))} <b>${esc(p.name)}</b>${p.consensus ? ` <span class="dc-cons" title="${p.consAvg != null ? `Average rank ${p.consAvg} across ${p.consN} of ${D.publicLists?.count ?? "the"} public rankings and mocks` : "Consensus rank from public rankings"}">Top ${p.consensus}</span>` : ""}<small>${[p.born && dob(p.born), fix(p.from), p.height].filter(Boolean).map(esc).join(" · ")}</small>`;
+  const who = (p) => `<b>${flagOf(nationFromHome(p.from) ?? (p.nat ? country(p.nat) : null))} ${esc(p.name)}</b>${p.consensus ? ` <span class="dc-cons" title="${p.consAvg != null ? `Average rank ${p.consAvg} across ${p.consN} of ${D.publicLists?.count ?? "the"} public rankings and mocks` : "Consensus rank from public rankings"}">Top ${p.consensus}</span>` : ""}<small>${[p.born && dob(p.born), fix(p.from), p.height].filter(Boolean).map(esc).join(" · ")}</small>`;
   const club = (p) => p.now ? `${esc(p.team)} <span class="muted">${esc(p.league)}</span>` : `<span class="muted">${p.nowTeam ? esc(p.nowTeam) : p.last ? `${esc(p.last.team)} ${esc(p.last.league)} · no games yet` : "—"}</span>`;
   const ppg = (s) => (s?.gp ? (s.p / s.gp).toFixed(2) : "—");
   const skRows = sk.map((p, i) => `<tr class="post" data-type="${posGroup(p)}${p.css ? ` css-${p.css}` : ""}" data-team="${attr(p.league)}"><td class="n">${i + 1}</td><td class="dc-who">${who(p)}</td><td>${grade(p.css)}</td><td>${esc(p.pos || "—")}</td><td>${club(p)}</td><td class="n">${p.now?.gp ?? "—"}</td><td class="n">${p.now?.g ?? "—"}</td><td class="n">${p.now?.a ?? "—"}</td><td class="n"><b>${p.now?.p ?? "—"}</b></td><td class="n">${ppg(p.now)}</td><td class="n muted" title="${attr(p.last ? `${p.last.team}, ${p.last.league}: ${p.last.p} pts in ${p.last.gp} GP` : "")}">${ppg(p.last)}</td><td class="n"><b>${p.now || p.last ? (p.score * 100).toFixed(0) : "—"}</b></td></tr>`).join("");

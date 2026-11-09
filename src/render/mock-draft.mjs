@@ -2,7 +2,8 @@
 // rankings and mock drafts filling the picks, and the public mocks shown side by side.
 import { esc, attr, fmtDate, page } from "./html.mjs";
 import { logo } from "./nhl-pages.mjs";
-import { flag, nationFromHome } from "./geo.mjs";
+import { flag, nationFromHome, country } from "./geo.mjs";
+const natOf = (p) => nationFromHome(p.from) ?? (p.nat ? country(p.nat) : null);
 
 const SHORT = { "clutch-oct31": "ClutchPoints", "thn-mock-aug": "THN", "lines-mock": "Lines.com" };
 
@@ -18,7 +19,7 @@ export function mockDraftPage(ctx) {
     return `<tr${lot ? "" : ' class="nolot"'}><td class="n"><b>${i + 1}</b></td>
       <td><a class="team-cell" href="/nhl/${t.slug}/">${logo(t, 22)}<b>${esc(owner)}</b></a>${owner !== orig ? ` <span class="muted small">via ${esc(orig)}</span>` : ""}</td>
       <td class="n muted" title="Projected final points from the Cup predictor">${odds[orig].pts.toFixed(0)}</td>
-      <td class="dc-who">${p ? `${flag(nationFromHome(p.from))} <b>${esc(p.name)}</b><small>${[p.pos, p.born, p.height].filter(Boolean).map(esc).join(" · ")}</small>` : "—"}</td>
+      <td class="dc-who">${p ? `<b>${flag(natOf(p))} ${esc(p.name)}</b><small>${[p.pos, p.born, p.height].filter(Boolean).map(esc).join(" · ")}</small>` : "—"}</td>
       <td>${p ? club(p) : ""}</td><td class="n">${p?.consAvg != null ? p.consAvg.toFixed(1) : "—"}</td><td class="mocks">${mockChips(p)}</td></tr>`;
   }).join("");
 
@@ -26,7 +27,7 @@ export function mockDraftPage(ctx) {
   const cmpRows = Array.from({ length: 16 }, (_, i) => `<tr><td class="n"><b>${i + 1}</b></td><td><b>${esc(at(i + 1)?.name ?? "—")}</b> <span class="muted small">${esc(order[i])}</span></td>${cmp.map((m) => `<td>${m.picks[i] ? `${esc(m.picks[i][1])} <span class="muted small">${esc(m.picks[i][0])}</span>` : ""}</td>`).join("")}</tr>`).join("");
 
   const top = cons.slice(0, 40);
-  const rankRows = top.map((p) => `<tr><td class="n"><b>${p.consensus}</b></td><td class="dc-who">${flag(nationFromHome(p.from))} <b>${esc(p.name)}</b></td><td>${esc(p.pos ?? "")}</td><td>${club(p)}</td>
+  const rankRows = top.map((p) => `<tr><td class="n"><b>${p.consensus}</b></td><td class="dc-who"><b>${flag(natOf(p))} ${esc(p.name)}</b></td><td>${esc(p.pos ?? "")}</td><td>${club(p)}</td>
     <td class="n">${p.consAvg?.toFixed(1) ?? "—"}</td><td class="n">${p.consN ?? "—"}/${pub.count}</td><td>${p.css ? `<span class="css-grade g-${p.css.toLowerCase()}">${esc(p.css)}</span>` : ""}</td><td class="n">${p.score != null ? p.score.toFixed(2) : "—"}</td></tr>`).join("");
 
   const body = `<section class="hero"><div><p class="eyebrow"><a href="/prospects/">Prospects</a> · ${D.year} NHL Draft</p><h1>${D.year} mock draft</h1>

@@ -18,6 +18,7 @@ export async function publicDraftLists(year = 2027) {
   const by = new Map(); // key → player
   const touch = (name) => { const k = key(name); if (!by.has(k)) by.set(k, { name, pos: null, team: null, league: null, ranks: {}, mocks: [], k }); return by.get(k); };
   const sources = [];
+  const nats = Object.fromEntries(Object.entries(file.nationalities ?? {}).filter(([k]) => k !== "_help").map(([n, c]) => [key(n), c]));
   for (const L of file.lists) {
     const entries = L.kind === "mock" ? L.picks.map(([team, name], i) => ({ name, team, pick: i + 1 })) : L.players.map((s, i) => { const [name, pos, team, league] = s.split("|"); return { name, pos, team, league, pick: i + 1 }; });
     const seen = new Set();
@@ -36,7 +37,7 @@ export async function publicDraftLists(year = 2027) {
   const players = [...by.values()].map((p) => {
     let tot = 0;
     for (const L of file.lists) tot += L.weight * (p.ranks[L.id] ?? lastRank[L.id] + MISS);
-    return { ...p, n: Object.keys(p.ranks).length, avg: tot / wsum };
+    return { ...p, nat: nats[p.k] ?? null, n: Object.keys(p.ranks).length, avg: tot / wsum };
   }).sort((a, b) => a.avg - b.avg || b.n - a.n).map((p, i) => ({ ...p, rank: i + 1, avg: +p.avg.toFixed(2) }));
   const mocks = file.lists.filter((L) => L.kind === "mock").map((L) => ({ id: L.id, source: L.source, url: L.url, date: L.date, picks: L.picks }));
   return { players, sources, mocks, ownedBy: file.ownedBy ?? {}, count: file.lists.length };

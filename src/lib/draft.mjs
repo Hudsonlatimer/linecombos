@@ -103,7 +103,7 @@ export async function draftClass(year) {
     const c = find(cssBy, p);
     if (c && (!c.league || c.league === p.league || !p.now)) { p.css = c.rating; if (!p.now && c.team) p.nowTeam = `${c.team}${c.league ? ` (${c.league})` : ""}`; }
     const k = find(consBy, p);
-    if (k) { p.consensus = k.rank; p.consAvg = k.avg ?? null; p.consN = k.n ?? null; p.consRanks = k.ranks ?? null; p.consMocks = k.mocks ?? null; if (!p.now && k.team) p.nowTeam = `${k.team}${k.league ? ` (${k.league})` : ""}`; }
+    if (k) { p.consensus = k.rank; p.nat = k.nat ?? null; p.consAvg = k.avg ?? null; p.consN = k.n ?? null; p.consRanks = k.ranks ?? null; p.consMocks = k.mocks ?? null; if (!p.now && k.team) p.nowTeam = `${k.team}${k.league ? ` (${k.league})` : ""}`; }
     // Players who have left these leagues (NCAA, Europe) with no grade or ranking are noise: drop them, and empty stat lines.
     if (!p.now?.gp && !p.css && !p.consensus) continue;
     if (!p.now?.gp && !p.last?.gp) continue;
@@ -115,7 +115,7 @@ export async function draftClass(year) {
     if (seen.has(normName(k.name))) continue;
     const c = cssBy.get(normName(k.name));
     list.push({ id: `x|${normName(k.name)}`, name: k.name, pos: k.pos ?? "", born: null, league: "", lw: 1, now: null, last: null, prev: null,
-      css: c?.rating, consensus: k.rank, consAvg: k.avg ?? null, consN: k.n ?? null, consRanks: k.ranks ?? null, consMocks: k.mocks ?? null, nowTeam: [k.team ?? c?.team, k.league ?? (c?.league !== "International" ? c?.league : null)].filter(Boolean).join(", ") || "Outside the CHL/USHL" });
+      css: c?.rating, consensus: k.rank, nat: k.nat ?? null, consAvg: k.avg ?? null, consN: k.n ?? null, consRanks: k.ranks ?? null, consMocks: k.mocks ?? null, nowTeam: [k.team ?? c?.team, k.league ?? (c?.league !== "International" ? c?.league : null)].filter(Boolean).join(", ") || "Outside the CHL/USHL" });
     seen.add(normName(k.name));
   }
 
