@@ -300,5 +300,14 @@ export async function gamePredictions({ league, schedules, T, reported, stats, p
     baseline: score(log.map((g) => ({ p: 0.535, homeWon: g.homeWon }))).logLoss, homeRate,
     recent: picks.slice(-40).reverse().map((p) => ({ id: p.id, date: p.date, home: p.home, away: p.away, p: +p.p.toFixed(3), homeWon: p.homeWon, hg: p.hg, ag: p.ag, ot: p.ot })),
   };
-  return { games, record, params: { ...DEFAULTS }, fit: FIT, svLg: +R.svLg().toFixed(4) };
+  // Season totals per team for the team-stats pages: our expected goals (all situations and 5v5), unblocked attempts, actual goals.
+  const teamXg = {};
+  for (const g of log) {
+    if (g.hx == null) continue;
+    for (const [abbr, xf, xa, xf5, xa5, ff, fa, gf, ga] of [[g.home, g.hx, g.ax, g.hx5, g.ax5, g.hf, g.af, g.hg, g.ag], [g.away, g.ax, g.hx, g.ax5, g.hx5, g.af, g.hf, g.ag, g.hg]]) {
+      const t = (teamXg[abbr] ??= { gp: 0, xgf: 0, xga: 0, xgf5: 0, xga5: 0, ff: 0, fa: 0, gf: 0, ga: 0 });
+      t.gp++; t.xgf += xf; t.xga += xa; t.xgf5 += xf5 ?? 0; t.xga5 += xa5 ?? 0; t.ff += ff ?? 0; t.fa += fa ?? 0; t.gf += gf; t.ga += ga;
+    }
+  }
+  return { games, record, params: { ...DEFAULTS }, fit: FIT, svLg: +R.svLg().toFixed(4), teamXg };
 }

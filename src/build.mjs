@@ -25,6 +25,8 @@ import * as C from "./lib/contracts.mjs";
 import { draftClass } from "./lib/draft.mjs";
 import { nhlProspectsPage } from "./render/prospect-pages.mjs";
 import { mockDraftPage } from "./render/mock-draft.mjs";
+import { teamStats } from "./lib/teamstats.mjs";
+import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
 const t0 = Date.now();
 const log = (m) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${m}`);
@@ -247,7 +249,9 @@ for (const m of tx) (txByTeam[m.team] ??= []).push(m);
 log("Draft class: CHL + USHL feeds");
 const dc = await draftClass(Math.floor(league.seasonId / 10000) + 1).catch((e) => (console.warn("draft class:", e.message), null));
 log(`Draft class: ${dc?.players.length ?? 0} eligible players`);
-const ctx = { draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, cup, preds, profiles };
+log("Team stats: NHL reports + expected goals");
+const teamStatsData = await teamStats(league, preds.teamXg);
+const ctx = { teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, cup, preds, profiles };
 
 // ---------- pages ----------
 log("Rendering");
@@ -274,6 +278,7 @@ await put("/news/", P.newsPage(ctx));
 await put("/standings/", P.standingsPage(ctx));
 await put("/schedule/", P.schedulePage(ctx));
 await put("/stats/", P.statsPage(ctx));
+await put("/stats/teams/", teamStatsPage(ctx));
 await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));
 // The mock draft replaces the old prospects page at /prospects/ (the old page is only a fallback if the public lists are missing).
@@ -315,6 +320,7 @@ const search = [
   ...wjc.cfg.teams.map((c) => ({ n: `${c.name} (World Juniors)`, s: c.code, u: `/wjc/${c.code.toLowerCase()}/`, k: "WJC" })),
   ...Object.values(profiles).filter((p) => p.status !== "alumni").map((p) => ({ n: `${p.first} ${p.last}`, s: p.team ?? p.nhlTeam ?? "", u: `/players/${p.id}/`, k: p.team ? p.pos : "Prospect", h: p.headshot ?? "" })),
   { n: "Stanley Cup predictor", s: "", u: "/cup/", k: "Team" },
+  { n: "Team stats", s: "", u: "/stats/teams/", k: "Team" },
   { n: "NHL prospect pools", s: "", u: "/prospects/nhl/", k: "Team" },
   { n: "2027 NHL mock draft", s: "", u: "/prospects/", k: "Team" },
   { n: "Game predictions", s: "", u: "/predictions/", k: "Team" },

@@ -1,6 +1,7 @@
 import { teamExtras } from "./more-pages.mjs";
 import { wpBlock, gamePredictCard } from "./predict-pages.mjs";
 import { nationFromHome, country, flag as flagOf } from "./geo.mjs";
+import { teamStatsCard } from "./teamstats-pages.mjs";
 import { esc, attr, h, mmss, pct, signed, fmtDate, localTime, ago, stage, pill, page } from "./html.mjs";
 
 // ---------- shared bits ----------
@@ -299,6 +300,7 @@ export function teamPage(ctx, t) {
       ${L.extras.length ? `<section class="card"><h2>Rotated / extra skaters</h2><div class="names">${L.extras.map((id) => pname(ctx, id, players)).join("")}</div></section>` : ""}` : ""}
       ${rosterCard}
       ${recordsCard}
+      ${teamStatsCard(ctx, t)}
     </div>
     <aside class="side">${changesCard}${teamExtras(ctx, t)}${goalieCard}${capCard}${sched}
       <section class="card"><h2>${esc(t.common)} news</h2>${teamNews.map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts in the last two weeks.</p>`}</section>
@@ -402,6 +404,7 @@ export function statsPage(ctx) {
   const edge = Object.entries(L.edge).map(([k, v]) => `<div class="edge"><span class="eyebrow">${esc(edgeNames[k] ?? k)}</span><strong>${esc(edgeValue(v))}</strong><span>${v.player ? `<a href="${playerUrl(v.player.id)}">${esc(v.player.firstName.default)} ${esc(v.player.lastName.default)}</a> · ${esc(v.player.team?.abbrev ?? "")}` : esc(v.team?.abbrev ?? "")}</span></div>`).join("");
   const sk = [...ctx.stats.skaters].sort((a, b) => b.points - a.points || b.goals - a.goals).slice(0, 150);
   const body = `<h1>Stats</h1>
+  <p class="hero-cta"><a class="btn" href="/stats/teams/">Team stats: advanced numbers for every team →</a></p>
   <div class="leaders">
     ${leaderCard(ctx, "Points", L.skaters.points)}${leaderCard(ctx, "Goals", L.skaters.goals)}${leaderCard(ctx, "Assists", L.skaters.assists)}${leaderCard(ctx, "Plus/minus", L.skaters.plusMinus, signed)}
     ${leaderCard(ctx, "Save %", L.goalies.savePctg, (v) => pct(v))}${leaderCard(ctx, "Goals-against avg", L.goalies.goalsAgainstAverage, (v) => Number(v).toFixed(2))}${leaderCard(ctx, "Wins", L.goalies.wins)}${leaderCard(ctx, "Shutouts", L.goalies.shutouts)}

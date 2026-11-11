@@ -1086,3 +1086,10 @@ ul.plain { padding-left: 18px; } ul.plain li { margin: 6px 0; }
 span.flag { width: auto; height: auto; box-shadow: none; border-radius: 0; object-fit: initial; display: inline-flex; align-items: center; vertical-align: middle; }
 span.flag.big { display: flex; }
 span.flag.big .flag-img { width: 72px; height: 48px; }
+
+/* ---------- Team stats ---------- */
+.ts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 20px 28px; } .ts-group h3 { margin: 0 0 6px; }
+.ts-group td { padding: 5px 6px; } .ts-group td:first-child { white-space: normal; }
+.rk { display: inline-block; min-width: 2.2ch; padding: 1px 7px; border-radius: 99px; font-size: 12px; font-weight: 700; text-align: center; background: color-mix(in srgb, var(--good, #16a34a) calc(var(--h) * 60%), color-mix(in srgb, var(--bad, #dc2626) calc((1 - var(--h)) * 55%), var(--panel-2))); }
+.ts-cell.ranked { background: color-mix(in srgb, var(--good, #16a34a) calc(var(--h) * 38%), color-mix(in srgb, var(--bad, #dc2626) calc((1 - var(--h)) * 30%), transparent)); }
+.ts-tbl th { white-space: normal; min-width: 64px; vertical-align: bottom; } .ts-avg td { border-top: 2px solid var(--line-2); color: var(--muted); }
