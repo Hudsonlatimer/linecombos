@@ -149,7 +149,7 @@ export function predictionsPage(ctx) {
     <div class="gc-grid" style="margin-top:20px">
       <section class="card"><h2>Is it any good?</h2>
         <p>Every game this season was predicted using only the games before it, so this is the record it would have had. Hockey is close to a coin flip: even betting markets pick only around 60% of winners.</p>
-        <table class="tbl compact"><thead><tr><th>Favourite's chance</th><th class="n">Games</th><th class="n">Predicted</th><th class="n">Favourite won</th></tr></thead><tbody>${R.bands.map(band).join("")}</tbody></table>
+        <div class="table-wrap"><table class="tbl compact"><thead><tr><th>Favourite's chance</th><th class="n">Games</th><th class="n">Predicted</th><th class="n">Favourite won</th></tr></thead><tbody>${R.bands.map(band).join("")}</tbody></table></div>
         <p class="src-note">When the predicted and actual columns match, the percentages mean what they say. The backtest uses each game's actual starting goalies; tonight's picks use the confirmed or projected starter.</p>
       </section>
       <section class="card"><h2>Recent picks</h2><div class="table-wrap"><table class="tbl compact"><thead><tr><th>Date</th><th>Game</th><th>Pick</th><th class="n">Final</th><th class="n"></th></tr></thead><tbody>${recent}</tbody></table></div></section>
