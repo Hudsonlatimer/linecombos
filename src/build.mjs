@@ -26,6 +26,7 @@ import { draftClass } from "./lib/draft.mjs";
 import { nhlProspectsPage } from "./render/prospect-pages.mjs";
 import { mockDraftPage } from "./render/mock-draft.mjs";
 import { teamStats } from "./lib/teamstats.mjs";
+import { rosterStats } from "./lib/rosterstats.mjs";
 import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
 const t0 = Date.now();
@@ -137,8 +138,9 @@ const unmatched = Object.entries(dfo).filter(([, d]) => d.unmatched.length).map(
 log(`Lines: Daily Faceoff for ${Object.keys(dfo).length} teams, ${Object.values(reported).filter((r) => r.lines && !r.lines.stale).length} posted since their last game${unmatched.length ? `; unmatched names ${unmatched.join(" | ")}` : ""}`);
 log(`News: ${posts.length} posts, ${posts.filter((p) => p.parsed.type === "lines").length} with lines`);
 
-log("Injuries, transactions, scratches");
-const [injuries, tx] = await Promise.all([M.injuries(league.teams, rosters), M.transactions(2014)]);
+log("Injuries, transactions, suspensions");
+const [injuries, tx, discipline] = await Promise.all([M.injuries(league.teams, rosters), M.transactions(2014), M.discipline(league.teams)]);
+log(`Player safety: ${discipline.length} suspensions and fines`);
 const scratches = M.scratches(T, rosters, injuries);
 
 log("Cup predictor: simulating seasons");
@@ -251,7 +253,9 @@ const dc = await draftClass(Math.floor(league.seasonId / 10000) + 1).catch((e) =
 log(`Draft class: ${dc?.players.length ?? 0} eligible players`);
 log("Team stats: NHL reports + expected goals");
 const teamStatsData = await teamStats(league, preds.teamXg);
-const ctx = { teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, cup, preds, profiles };
+log("Roster stats: advanced skater and goalie reports");
+const rosterStatsData = await rosterStats(league.seasonId);
+const ctx = { rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
 
 // ---------- pages ----------
 log("Rendering");
@@ -348,6 +352,9 @@ await write("vercel.json", JSON.stringify({
     { source: "/live/shifts/:id/", destination: "https://api.nhle.com/stats/rest/en/shiftcharts?cayenneExp=gameId=:id" },
     { source: "/live/scorenow/", destination: "https://api-web.nhle.com/v1/score/now" },
     { source: "/live/standings/", destination: "https://api-web.nhle.com/v1/standings/now" },
+    { source: "/live/club/:abbr/", destination: "https://api-web.nhle.com/v1/club-stats/:abbr/now" },
+    { source: "/live/skater/:report/", destination: "https://api.nhle.com/stats/rest/en/skater/:report" },
+    { source: "/live/goalie/:report/", destination: "https://api.nhle.com/stats/rest/en/goalie/:report" },
   ],
   headers: [
     { source: "/(.*)", headers: [...cc(120), { key: "X-Content-Type-Options", value: "nosniff" }, { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" }] },

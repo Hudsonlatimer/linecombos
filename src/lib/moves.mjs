@@ -48,12 +48,138 @@ export function txKind(s) {
   if (/\brecalled\b|called up|\bpromoted\b/i.test(s)) return "recall";
   if (/assigned|loaned|\bsent\b/i.test(s)) return "assign";
   if (/suspend/i.test(s)) return "suspension";
+  if (/\bfined\b/i.test(s)) return "fine";
   if (/retire/i.test(s)) return "retire";
   if (/released|terminated|buy-?out|bought out|unconditional/i.test(s)) return "release";
   if (/activated|reinstated/i.test(s)) return "return";
   return "other";
 }
-export const TX_LABEL = { trade: "Trade", sign: "Signing", waivers: "Waivers", injury: "Injured reserve", return: "Activated", recall: "Recalled", assign: "Assigned", suspension: "Suspension", retire: "Retired", release: "Released", other: "Move" };
+export const TX_LABEL = { trade: "Trade", sign: "Signing", waivers: "Waivers", injury: "Injured reserve", return: "Activated", recall: "Recalled", assign: "Assigned", suspension: "Suspension", fine: "Fine", retire: "Retired", release: "Released", other: "Move" };
+
+const GAME_WORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+
+/** "2" from "suspended two games" / "suspended 6 regular-season games". */
+export function gamesIn(text) {
+  const m = String(text ?? "").match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+(?:regular-season\s+)?games?\b/i);
+  if (!m) return null;
+  const n = GAME_WORDS[m[1].toLowerCase()] ?? Number(m[1]);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** One ESPN blurb is several moves. Split it into dated, classified sentences. */
+export function txPieces(t) {
+  const parts = String(t?.text ?? "").split(SPLIT).map((s) => s.replace(/\s+/g, " ").trim()).filter(Boolean);
+  return (parts.length ? parts : [String(t?.text ?? "")]).map((text) => ({ date: t.date, team: t.team, text, kind: txKind(text) }));
+}
+
+/**
+ * Two sides of a trade sentence.
+ * "Traded C Shane Wright to Nashville Predators for RW Matthew Wood."
+ * "Acquired G Connor Hellebuyck from Winnipeg in exchange for Fs Dawson Mercer."
+ * Returns { gets, sends, other } from the reporting team's point of view, or null.
+ */
+export function tradeShape(text) {
+  const clean = String(text ?? "").replace(/\.\s*$/, "").trim();
+  const tail = "(?: in exchange for | for )";
+  let m = clean.match(new RegExp(`^traded (.+?) to (?:the )?(.+?)${tail}(.+)$`, "i"));
+  if (m) return { sends: m[1].trim(), other: m[2].trim(), gets: m[3].trim() };
+  m = clean.match(new RegExp(`^acquired (.+?) from (?:the )?(.+?)${tail}(.+)$`, "i"));
+  if (m) return { gets: m[1].trim(), other: m[2].trim(), sends: m[3].trim() };
+  return null;
+}
+
+/** Stable key for both sides of the same deal ("Wright for Wood" and "Wood for Wright"). */
+export function tradeKey(shape) {
+  if (!shape) return null;
+  const lead = (chunk) => {
+    const cleaned = String(chunk).replace(/^(?:[A-Z]{1,3}s?\s+)+/, "");
+    const m = cleaned.match(/[A-Z][\p{L}'’.-]+(?:\s+[A-Z][\p{L}'’.-]+){1,2}/u);
+    return m ? normName(m[0]) : "";
+  };
+  const names = [lead(shape.gets), lead(shape.sends)].filter(Boolean).sort();
+  return names.length ? names.join("|") : null;
+}
+
+/** Player named in "Frank Nazar suspended two games", after the team name is peeled off. */
+export function suspensionName(title, teams = []) {
+  const head = String(title ?? "").split(/\s+(?:suspended|fined)\b/i)[0] ?? "";
+  let rest = head;
+  const team = teamInText(teams, head);
+  if (team) {
+    for (const label of [team.name, team.place, team.common].filter(Boolean).sort((a, b) => b.length - a.length)) {
+      const i = rest.toLowerCase().indexOf(label.toLowerCase());
+      if (i >= 0) rest = `${rest.slice(0, i)} ${rest.slice(i + label.length)}`;
+    }
+  }
+  const stop = new Set(["the", "for", "and"]);
+  const bits = rest.replace(/[^A-Za-zÀ-ÿ.'’\s-]/g, " ").split(/\s+/).map((w) => w.trim()).filter((w) => w && !stop.has(w.toLowerCase()));
+  return bits.slice(-3).join(" ");
+}
+
+/** "Hodgson" plus /hayden-hodgson-suspended becomes "Hayden Hodgson". */
+export function fullerName(name, url) {
+  const clean = String(name ?? "").trim();
+  if (!clean || clean.includes(" ")) return clean;
+  const slug = decodeURIComponent(String(url ?? "").split("/").pop() ?? "").toLowerCase();
+  const bits = slug.split(/-(?:suspended|fined)\b/i)[0].split("-").filter(Boolean);
+  const at = bits.lastIndexOf(clean.toLowerCase());
+  if (at <= 0) return clean;
+  return bits.slice(at - 1, at + 1).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+export function teamInText(teams, text) {
+  const n = normName(text);
+  let best = null, len = 0;
+  for (const t of teams ?? []) for (const label of [t.name, t.place, t.common]) {
+    const k = normName(label);
+    if (k.length > 3 && n.includes(k) && k.length > len) { best = t; len = k.length; }
+  }
+  return best ?? null;
+}
+
+const DOPS = "https://www.nhl.com/news/topic/player-safety";
+
+/** Suspension and fine cards from the NHL Player Safety topic page. */
+export function parseDiscipline(html, teams = []) {
+  if (!html) return [];
+  const found = [];
+  const cards = /<a class="nhl-c-card-wrap[^"]*"\s+href="([^"]+)"[\s\S]*?<h3 class="fa-text__title">([^<]+)<\/h3>[\s\S]*?<time datetime="([^"]+)"/g;
+  for (const m of String(html).matchAll(cards)) {
+    const title = m[2].replace(/\s+/g, " ").trim();
+    if (!/suspend|\bfined\b/i.test(title)) continue;
+    const href = m[1].startsWith("http") ? m[1] : `https://www.nhl.com${m[1]}`;
+    const kind = /suspend/i.test(title) ? "suspension" : "fine";
+    const team = teamInText(teams, title);
+    const name = fullerName(kind === "suspension" || kind === "fine" ? suspensionName(m[2], teams) : "", href);
+    let shown = title;
+    if (name && !shown.toLowerCase().includes(name.toLowerCase())) {
+      const last = name.split(" ").at(-1);
+      shown = shown.replace(new RegExp(`\\b${last}\\b`), name);
+    }
+    found.push({
+      date: m[3].slice(0, 10),
+      title: shown,
+      url: href,
+      kind,
+      name,
+      games: gamesIn(title),
+      fine: (title.match(/\$[\d,]+/) ?? [])[0] ?? "",
+      team: team?.abbrev ?? "",
+    });
+  }
+  found.sort((a, b) => b.date.localeCompare(a.date));
+  const kept = [];
+  for (const x of found) {
+    const who = normName(x.name) || normName(x.title);
+    const dup = kept.find((k) => k.kind === x.kind && (normName(k.name) || normName(k.title)) === who && k.games === x.games && k.fine === x.fine && Math.abs(Date.parse(k.date) - Date.parse(x.date)) < 21 * 864e5);
+    if (!dup) kept.push(x);
+  }
+  return kept.slice(0, 20);
+}
+
+export async function discipline(teams = []) {
+  const html = await get(DOPS, { ttl: 2 * HOUR, text: true });
+  return parseDiscipline(html, teams);
+}
 
 export async function transactions(fromYear = 2014) {
   const now = new Date().getUTCFullYear();

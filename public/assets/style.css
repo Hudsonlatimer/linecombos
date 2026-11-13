@@ -511,7 +511,7 @@ select { font: inherit; font-size: 14px; color: var(--ink); background: var(--pa
 .odds-tbl td.heat { border-radius: 0; font-family: var(--mono); font-size: 13px; }
 
 /* Injuries + moves rows */
-.inj-row, .tx-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; align-items: start; }
+.inj-row, .tx-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; align-items: start; }
 .inj-row:first-of-type, .tx-row:first-of-type, h2 + .inj-row, h2 + .tx-row { border-top: 0; }
 .inj-row .pill, .tx-row .pill { justify-self: start; margin-top: 2px; }
 .pill.tx-trade { background: var(--info-soft); color: var(--info); }
@@ -520,6 +520,8 @@ select { font: inherit; font-size: 14px; color: var(--ink); background: var(--pa
 .pill.tx-injury { background: var(--bad-soft); color: var(--bad); }
 .pill.tx-return { background: var(--ok-soft); color: var(--ok); }
 .pill.tx-recall, .pill.tx-assign { background: var(--accent-soft); color: var(--accent); }
+.pill.tx-suspension, .pill.tx-fine { background: var(--bad-soft); color: var(--bad); }
+.pill.tx-release, .pill.tx-retire { background: var(--soft); color: var(--ink-2); }
 .inj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 14px; margin: 16px 0; }
 .inj-grid h2 a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
 .card-warn { border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); background: linear-gradient(180deg, var(--bad-soft), transparent 140px), var(--panel); }
@@ -610,6 +612,9 @@ select { font: inherit; font-size: 14px; color: var(--ink); background: var(--pa
   .tl { grid-template-columns: 1fr; gap: 2px; }
   .inj-grid { grid-template-columns: 1fr; }
   .inj-row, .tx-row { grid-template-columns: 1fr; gap: 4px; }
+  .trade-grid, .wire-split { grid-template-columns: 1fr; }
+  .swap { grid-template-columns: 1fr; }
+  .swap-mid { transform: rotate(90deg); height: 28px; }
   .odds-bar { grid-template-columns: 22px 84px minmax(0, 1fr) 50px; }
   .b-rounds { grid-template-columns: repeat(3, 76vw); }
   .tabs { width: 100%; }
@@ -1093,3 +1098,40 @@ span.flag.big .flag-img { width: 72px; height: 48px; }
 .rk { display: inline-block; min-width: 2.2ch; padding: 1px 7px; border-radius: 99px; font-size: 12px; font-weight: 700; text-align: center; background: color-mix(in srgb, var(--good, #16a34a) calc(var(--h) * 60%), color-mix(in srgb, var(--bad, #dc2626) calc((1 - var(--h)) * 55%), var(--panel-2))); }
 .ts-cell.ranked { background: color-mix(in srgb, var(--good, #16a34a) calc(var(--h) * 38%), color-mix(in srgb, var(--bad, #dc2626) calc((1 - var(--h)) * 30%), transparent)); }
 .ts-tbl th { white-space: normal; min-width: 64px; vertical-align: bottom; } .ts-avg td { border-top: 2px solid var(--line-2); color: var(--muted); }
+#roster .tabs { margin: 8px 0 12px; } #roster th { white-space: nowrap; }
+
+/* ---------- Transaction wire ---------- */
+.wire-hero h1 { font-size: clamp(40px, 7vw, 76px); max-width: 16ch; }
+.trade-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 14px; }
+.wire-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 22px; align-items: start; }
+.trade-card, .sign-card, .susp-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+.trade-card { background: radial-gradient(120% 90% at 0 0, color-mix(in srgb, var(--info) 18%, transparent), transparent 58%), var(--panel); }
+.trade-card header, .sign-card header, .susp-card header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.trade-card header { margin-bottom: 10px; }
+.trade-card time, .sign-card time, .susp-card time { margin-left: auto; color: var(--muted); font-size: 12.5px; }
+.swap { display: grid; grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.swap-side { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.swap-side.gets { border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }
+.swap-side.sends { border-color: color-mix(in srgb, var(--bad) 42%, var(--line)); }
+.swap-k { display: block; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+.swap-side.gets .swap-k { color: var(--ok); }
+.swap-side.sends .swap-k { color: var(--bad); }
+.swap-side p { margin: 8px 0 0; font-size: 14.5px; font-weight: 650; line-height: 1.35; }
+.swap-mid { display: grid; place-items: center; font: 700 22px/1 var(--display); color: var(--accent); }
+.swap-team { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 750; }
+.swap-team:hover { text-decoration: none; }
+.sign-grid, .susp-list { display: grid; gap: 10px; }
+.sign-card { border-left: 4px solid var(--ok); }
+.sign-money { margin: 4px 0 8px; }
+.sign-money .money { font-size: 15px; padding: 4px 10px; }
+.sign-card p, .susp-card p, .trade-card > p { margin: 8px 0 0; font-size: 14px; }
+.susp-card { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; border-left: 4px solid var(--bad); }
+.susp-n { font: 800 34px/1 var(--display); color: var(--bad); text-align: center; }
+.susp-n small { display: block; margin-top: 4px; font: 700 10px/1.2 Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.wire-day h3 { margin: 18px 0 0; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.swap-inline b { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 3px; }
+.wire-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 14px; scrollbar-width: thin; }
+.wire-bit { flex: none; display: inline-flex; align-items: center; gap: 8px; max-width: min(460px, 86vw); padding: 6px 12px 6px 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink); font-size: 13.5px; font-weight: 650; box-shadow: var(--shadow); }
+.wire-bit:hover { text-decoration: none; border-color: var(--accent); }
+.wire-bit > span:last-child { display: inline-flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wire-more { color: var(--accent); font-weight: 800; padding-inline: 14px; }

@@ -1,7 +1,7 @@
 // Player profiles, injuries & scratches, transactions, Stanley Cup predictor, and the homepage.
 import { esc, attr, mmss, pct, signed, fmtDate, localTime, stage, pill, page } from "./html.mjs";
 import { logo, pname, onIce, homeCards, newsItem, anyPlayerUrl } from "./nhl-pages.mjs";
-import { TX_LABEL } from "../lib/moves.mjs";
+import { TX_LABEL, normName, txPieces, tradeShape, tradeKey, gamesIn } from "../lib/moves.mjs";
 import { fmtMoney, contractForSigning } from "../lib/contracts.mjs";
 import { country, countryByName, flag } from "./geo.mjs";
 
@@ -76,11 +76,155 @@ function plink(ctx, id, name) {
   return id ? `<a href="${anyPlayerUrl(ctx, id, name)}">${esc(name)}</a>` : esc(name);
 }
 
+const HEADLINE = new Set(["trade", "sign", "suspension", "fine", "waivers", "release", "retire"]);
+const SEASON_START = (ctx) => `${Math.floor(ctx.league.seasonId / 10000)}-07-01`;
+
+function nameIndex(ctx) {
+  if (ctx._nameIdx) return ctx._nameIdx;
+  const idx = new Map();
+  for (const p of Object.values(ctx.profiles ?? {})) {
+    const k = normName(`${p.first} ${p.last}`);
+    if (!idx.has(k)) idx.set(k, []);
+    idx.get(k).push(p);
+  }
+  ctx._nameIdx = idx;
+  return idx;
+}
+function idByName(ctx, name) {
+  const hits = nameIndex(ctx).get(normName(name)) ?? [];
+  if (hits.length === 1) return hits[0].id;
+  const onRoster = hits.filter((p) => p.status === "roster" || p.active);
+  return onRoster.length === 1 ? onRoster[0].id : null;
+}
+
+/** Every sentence in the transaction log, plus Player Safety suspensions that the log doesn't carry. */
+function wireItems(ctx) {
+  if (ctx._wire) return ctx._wire;
+  const items = [];
+  for (const t of ctx.tx ?? []) {
+    const pieces = txPieces(t);
+    const signs = pieces.filter((p) => p.kind === "sign");
+    for (const p of pieces) {
+      let money = [];
+      if (p.kind === "sign" && t.money?.length) {
+        const n = normName(p.text);
+        money = t.money.filter((k) => {
+          const pl = ctx.profiles[k.id];
+          return pl && n.includes(normName(`${pl.first} ${pl.last}`));
+        });
+        if (!money.length && signs.length === 1) money = t.money;
+      }
+      items.push({ ...p, money, ids: t.ids ?? [], url: "", games: p.kind === "suspension" ? gamesIn(p.text) : null, fine: "", name: "" });
+    }
+  }
+  for (const d of ctx.discipline ?? []) {
+    const who = normName(d.name);
+    const dup = who && items.some((it) => (it.kind === "suspension" || it.kind === "fine") && it.date.slice(0, 7) === d.date.slice(0, 7) && normName(it.text).includes(who));
+    if (dup) continue;
+    const id = d.name ? idByName(ctx, d.name) : null;
+    items.push({ date: d.date, team: d.team, text: d.title, kind: d.kind, money: [], ids: id ? [id] : [], url: d.url, games: d.games, fine: d.fine, name: d.name });
+  }
+  items.sort((a, b) => b.date.localeCompare(a.date) || String(a.text).localeCompare(String(b.text)));
+  ctx._wire = items;
+  return items;
+}
+
+/** Latest deals, with player-for-player trades ahead of pick-only swaps. */
+function featureTrades(items) {
+  const recent = uniqueTrades(items.filter((m) => m.kind === "trade")).slice(0, 8);
+  const both = (m) => (m.key ?? "").includes("|");
+  return [...recent].sort((a, b) => Number(both(b)) - Number(both(a)) || b.date.localeCompare(a.date)).slice(0, 4);
+}
+function uniqueTrades(items) {
+  const kept = [];
+  for (const it of items) {
+    const shape = tradeShape(it.text);
+    const key = tradeKey(shape);
+    if (key && kept.some((k) => k.key === key && Math.abs(Date.parse(k.date) - Date.parse(it.date)) < 5 * 864e5)) continue;
+    kept.push({ ...it, shape, key });
+  }
+  return kept;
+}
+
+function teamMark(ctx, abbr, size = 22) {
+  const t = ctx.T[abbr];
+  if (!t) return "";
+  return `<a class="swap-team" href="${teamUrl(t)}">${logo(t, size)} <b>${esc(t.common)}</b></a>`;
+}
+
+function swapCard(ctx, m) {
+  const shape = m.shape ?? tradeShape(m.text);
+  const other = shape ? teamInMention(ctx, shape.other) : null;
+  const when = fmtDate(m.date, { month: "short", day: "numeric" });
+  if (!shape) {
+    return `<article class="trade-card" data-type="trade" data-team="${attr(m.team)}"><header><span class="pill tx-trade">Trade</span><time>${esc(when)}</time></header><p>${teamMark(ctx, m.team, 20)} ${linkNames(ctx, m)}</p></article>`;
+  }
+  return `<article class="trade-card" data-type="trade" data-team="${attr(m.team)}">
+    <header><span class="pill tx-trade">Trade</span><time>${esc(when)}</time></header>
+    <div class="swap">
+      <div class="swap-side gets"><span class="swap-k">Gets</span>${teamMark(ctx, m.team, 26)}<p>${linkNames(ctx, { ...m, text: shape.gets })}</p></div>
+      <div class="swap-mid" aria-hidden="true">⇄</div>
+      <div class="swap-side sends"><span class="swap-k">Sends</span>${other ? teamMark(ctx, other.abbrev, 26) : `<b class="swap-team">${esc(shape.other)}</b>`}<p>${linkNames(ctx, { ...m, text: shape.sends })}</p></div>
+    </div>
+  </article>`;
+}
+function teamInMention(ctx, mention) {
+  const n = normName(mention);
+  let best = null, len = 0;
+  for (const t of Object.values(ctx.T)) for (const label of [t.name, t.place, t.common]) {
+    const k = normName(label);
+    if (k && (n === k || n.startsWith(`${k} `)) && k.length > len) { best = t; len = k.length; }
+  }
+  return best;
+}
+
+function signCard(ctx, m) {
+  const when = fmtDate(m.date, { month: "short", day: "numeric" });
+  const money = (m.money ?? []).map(moneyChip).join(" ");
+  return `<article class="sign-card" data-type="sign" data-team="${attr(m.team)}">
+    <header>${teamMark(ctx, m.team, 20)}<time>${esc(when)}</time></header>
+    ${money ? `<div class="sign-money">${money}</div>` : `<span class="pill tx-sign">Signing</span>`}
+    <p>${linkNames(ctx, m)}</p>
+  </article>`;
+}
+
+function suspCard(ctx, m) {
+  const when = fmtDate(m.date, { month: "short", day: "numeric" });
+  const max = m.kind === "fine" && /\bmaximum\b/i.test(m.text);
+  const big = m.kind === "fine" ? (m.fine || (max ? "Max" : "Fine")) : (m.games ? String(m.games) : "Out");
+  const small = m.kind === "suspension" ? (m.games ? (m.games === 1 ? "game" : "games") : "roster") : (max ? "fine" : "");
+  const src = m.url ? `<a href="${attr(m.url)}" target="_blank" rel="nofollow noopener">Player Safety</a>` : "";
+  return `<article class="susp-card" data-type="${m.kind}" data-team="${attr(m.team ?? "")}">
+    <div class="susp-n">${esc(big)}${small ? `<small>${small}</small>` : ""}</div>
+    <div><header><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span>${teamMark(ctx, m.team, 18)}<time>${esc(when)}</time></header><p>${linkNames(ctx, m)}</p>${src ? `<div class="muted small">${src}</div>` : ""}</div>
+  </article>`;
+}
+
+function stripBit(ctx, m) {
+  const t = ctx.T[m.team];
+  const shape = m.kind === "trade" ? tradeShape(m.text) : null;
+  let label = m.name && m.kind === "suspension" ? `${m.name}${m.games ? ` · ${m.games} game${m.games === 1 ? "" : "s"}` : ""}` : m.text;
+  if (shape) label = `${t?.common ?? m.team} get ${shape.gets}`;
+  const short = label.length > 78 ? `${label.slice(0, 76)}…` : label;
+  return `<a class="wire-bit" href="/moves/"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span><span>${t ? `${logo(t, 16)}` : ""} ${esc(short)}</span></a>`;
+}
+
+function wireRow(ctx, m) {
+  const shape = m.kind === "trade" ? tradeShape(m.text) : null;
+  const body = shape
+    ? `<span class="swap-inline"><b>Gets</b> ${linkNames(ctx, { ...m, text: shape.gets })} <span class="muted">·</span> <b>Sends</b> ${linkNames(ctx, { ...m, text: shape.sends })}</span>`
+    : linkNames(ctx, m);
+  const when = fmtDate(m.date, { month: "short", day: "numeric" });
+  const extra = m.games ? ` · ${m.games} game${m.games === 1 ? "" : "s"}` : "";
+  const src = m.url ? ` · <a href="${attr(m.url)}" target="_blank" rel="nofollow noopener">Player Safety</a>` : "";
+  return `<div class="post tx-row" data-type="${attr(m.kind)}" data-team="${attr(m.team ?? "")}"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind] ?? "Move")}</span><div>${teamMark(ctx, m.team, 18)} ${body} ${(m.money ?? []).map(moneyChip).join(" ")}<div class="muted small">${esc(when)}${extra}${src}</div></div></div>`;
+}
+
 // ---------- team page extras ----------
 export function teamExtras(ctx, t) {
   const inj = ctx.injByTeam?.[t.abbrev] ?? [];
   const scr = (ctx.scratches?.[t.abbrev] ?? []).filter((s) => !s.injury);
-  const moves = (ctx.txByTeam?.[t.abbrev] ?? []).slice(0, 5);
+  const moves = wireItems(ctx).filter((m) => m.team === t.abbrev).slice(0, 6);
   const odds = ctx.cup?.odds?.[t.abbrev];
   return `${odds ? `<a class="card odds-card" href="/cup/"><span class="eyebrow">Cup predictor</span><div class="odds-row"><div><b>${P100(odds.playoffs)}</b><span>Playoffs</span></div><div><b>${P100(odds.cup, 1)}</b><span>Stanley Cup</span></div><div><b>${odds.pts}</b><span>Proj. points</span></div></div></a>` : ""}
   <section class="card"><h2>Injuries &amp; scratches</h2>
@@ -88,10 +232,8 @@ export function teamExtras(ctx, t) {
     ${scr.length ? `<h3>Scratched last game</h3><p class="small">${scr.map((s) => plink(ctx, s.id, `${s.first} ${s.last}`)).join(", ")}</p>` : ""}
     ${!inj.length && !scr.length ? `<p class="empty">No injuries reported.</p>` : ""}
     <a class="more" href="/injuries/">All teams →</a></section>
-  ${moves.length ? `<section class="card"><h2>Recent moves</h2>${moves.map((m) => txRow(m)).join("")}<a class="more" href="/moves/">All moves →</a></section>` : ""}`;
+  ${moves.length ? `<section class="card"><h2>Recent moves</h2>${moves.map((m) => wireRow(ctx, m)).join("")}<a class="more" href="/moves/">Trades, signings &amp; suspensions →</a></section>` : ""}`;
 }
-
-const txRow = (m, team = null) => `<div class="tx-row"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span><div>${team ? `<b>${esc(team)}</b> · ` : ""}${esc(m.text)} ${(m.money ?? []).map(moneyChip).join(" ")}<div class="muted small">${esc(fmtDate(m.date, { month: "short", day: "numeric", year: "numeric" }))}</div></div></div>`;
 
 // ---------- player profile ----------
 const TL_GROUP = { born: "milestone", debut: "milestone", draft: "milestone", award: "milestone", club: "team", team: "team", intl: "team", sign: "contract", release: "contract", retire: "contract", trade: "move", waivers: "move", recall: "move", assign: "move", other: "move", injury: "health", return: "health", "injury-now": "health", suspension: "health", news: "news" };
@@ -269,19 +411,42 @@ export function injuriesPage(ctx) {
 
 // ---------- transactions ----------
 export function movesPage(ctx) {
+  const since = SEASON_START(ctx);
   const cut = new Date(Date.parse(ctx.site.builtAt) - 120 * 864e5).toISOString().slice(0, 10);
-  const list = ctx.tx.filter((t) => t.date >= cut);
+  const items = wireItems(ctx);
+  const season = items.filter((m) => m.date >= since);
+  const count = (kind) => season.filter((m) => m.kind === kind).length;
+  const trades = featureTrades(season);
+  const signs = season.filter((m) => m.kind === "sign").slice(0, 4);
+  const susps = season.filter((m) => m.kind === "suspension" || m.kind === "fine").slice(0, 6);
+  const feed = items.filter((m) => m.date >= cut);
+  const days = [];
+  for (const m of feed) {
+    const last = days.at(-1);
+    if (last?.date === m.date) last.items.push(m);
+    else days.push({ date: m.date, items: [m] });
+  }
   const teams = Object.values(ctx.T).sort((a, b) => a.name.localeCompare(b.name));
-  const kinds = ["trade", "sign", "waivers", "recall", "assign", "injury", "return"];
-  const body = `<h1>Trades, signings &amp; moves</h1>
-  <p class="lede">Every NHL transaction from the last four months: trades, contract signings and extensions, waiver claims, call-ups and injured-reserve moves. Player names link to full career timelines.</p>
+  const chips = [["headlines", "Headlines"], ["trade", "Trades"], ["sign", "Signings"], ["suspension", "Suspensions"], ["fine", "Fines"], ["waivers", "Waivers"], ["release", "Buyouts"], ["recall", "Call-ups"], ["assign", "Assignments"], ["injury", "IR"], ["return", "Activated"], ["all", "Everything"]];
+  const body = `<section class="wire-hero"><div>
+    <p class="eyebrow">The wire · since July 1</p>
+    <h1>Trades, signings &amp; suspensions</h1>
+    <p class="lede">Deals split into who got whom, contract money where we have it, and Department of Player Safety suspensions sitting next to the waiver wire.</p>
+  </div></section>
+  <div class="statbox" data-label="This season"><div><span>Trades</span><b>${count("trade")}</b></div><div><span>Signings</span><b>${count("sign")}</b></div><div><span>Suspensions</span><b>${count("suspension")}</b></div><div><span>Fines</span><b>${count("fine")}</b></div><div><span>Waivers</span><b>${count("waivers")}</b></div><div><span>Call-ups</span><b>${count("recall")}</b></div></div>
+  ${trades.length ? `<h2 class="section-h">Latest trades</h2><div class="trade-grid">${trades.map((m) => swapCard(ctx, m)).join("")}</div>` : ""}
+  <div class="wire-split">
+    <section>${signs.length ? `<h2 class="section-h">Signings</h2><div class="sign-grid">${signs.map((m) => signCard(ctx, m)).join("")}</div>` : ""}</section>
+    <section>${susps.length ? `<h2 class="section-h">Suspensions &amp; fines</h2><div class="susp-list">${susps.map((m) => suspCard(ctx, m)).join("")}</div>` : `<h2 class="section-h">Suspensions &amp; fines</h2><p class="empty">No Player Safety rulings in this window.</p>`}</section>
+  </div>
+  <h2 class="section-h">Full wire <span class="muted small">last four months</span></h2>
   <div class="filters" data-filter-target="#feed">
-    <div class="chips"><button class="chip on" data-type="all">All</button>${kinds.map((k) => `<button class="chip" data-type="${k}">${TX_LABEL[k]}${k === "trade" || k === "sign" || k === "waivers" ? "s" : ""}</button>`).join("")}</div>
+    <div class="chips">${chips.map(([k, label], i) => `<button class="chip${i === 0 ? " on" : ""}" data-type="${k}">${label}</button>`).join("")}</div>
     <select class="team-filter" aria-label="Filter by team"><option value="">All teams</option>${teams.map((t) => `<option value="${t.abbrev}">${esc(t.name)}</option>`).join("")}</select>
   </div>
-  <div id="feed" class="feed card">${list.map((m) => { const t = ctx.T[m.team]; return `<div class="post tx-row" data-type="${m.kind}" data-team="${attr(m.team)}"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span><div>${t ? `<a href="${teamUrl(t)}">${logo(t, 18)} <b>${esc(t.common)}</b></a> · ` : ""}${linkNames(ctx, m)}${(m.money ?? []).map(moneyChip).join(" ")}<div class="muted small">${esc(fmtDate(m.date, { weekday: "short", month: "short", day: "numeric" }))}</div></div></div>`; }).join("")}</div>
-  <p class="muted small">Source: team transaction logs via ESPN, back to 2014 on each player's page.</p>`;
-  return page({ site: ctx.site, title: "NHL transactions: trades, signings, waivers", description: "Every NHL trade, contract signing, waiver claim and call-up, filterable by team.", path: "/moves/", active: "/moves/", body });
+  <div id="feed" class="wire">${days.map((d) => `<section class="wire-day"><h3>${esc(fmtDate(d.date, { weekday: "short", month: "short", day: "numeric" }))}</h3>${d.items.map((m) => wireRow(ctx, m).replace("<div ", `<div ${HEADLINE.has(m.kind) ? "" : "hidden "} `)).join("")}</section>`).join("")}</div>
+  <p class="muted small">Trades, signings, waivers and call-ups: team transaction logs via ESPN, back to 2014 on each player's page. Suspensions and fines: <a href="https://www.nhl.com/news/topic/player-safety" target="_blank" rel="noopener">NHL Player Safety</a>.</p>`;
+  return page({ site: ctx.site, title: "NHL trades, signings and suspensions", description: "NHL trades split by who got whom, contract signings with cap hits, Player Safety suspensions and the waiver wire.", path: "/moves/", active: "/moves/", body });
 }
 function linkNames(ctx, m) {
   let html = esc(m.text);
@@ -343,14 +508,22 @@ export function homePage2(ctx) {
   const fav = odds[0] ? T[odds[0][0]] : null;
   const wjcDays = Math.ceil((Date.parse("2026-12-26T19:00:00Z") - Date.parse(ctx.site.builtAt)) / 864e5);
   const lead = ctx.leaders.skaters.points?.slice(0, 5) ?? [];
-  const recentMoves = ctx.tx.filter((m) => ["trade", "sign", "waivers"].includes(m.kind)).slice(0, 6);
+  const seasonWire = wireItems(ctx).filter((m) => m.date >= SEASON_START(ctx));
+  const stripItems = [];
+  const topTrade = featureTrades(seasonWire)[0];
+  if (topTrade) stripItems.push(topTrade);
+  for (const k of ["sign", "suspension", "waivers"]) {
+    const hit = seasonWire.find((m) => m.kind === k);
+    if (hit) stripItems.push(hit);
+  }
+  const sideWire = seasonWire.filter((m) => ["trade", "sign", "suspension", "fine", "waivers"].includes(m.kind)).slice(0, 5);
   const tiles = [
     ["/goalies/", "Starting goalies", `${games.length * 2} starters tracked`, "g"],
     ["/injuries/", "Injuries", `${ctx.injuries.length} players out`, "i"],
     ["/predictions/", "Predictions", "Win chances for every game, live", "c"],
     ["/cup/", "Cup odds", fav ? `${fav.common} lead at ${P100(odds[0][1].cup, 1)}` : "10,000 sims", "c"],
     ["/wjc/", "World Juniors", wjcDays > 0 ? `${wjcDays} days · odds, bracket, lines` : "Live now", "w"],
-    ["/moves/", "Trades & signings", `${ctx.tx.filter((m) => m.date >= ctx.site.builtAt.slice(0, 10).replace(/\d\d$/, "01")).length} moves this month`, "m"],
+    ["/moves/", "Trades & suspensions", `${seasonWire.filter((m) => m.kind === "trade").length} trades · ${seasonWire.filter((m) => m.kind === "suspension").length} suspensions`, "m"],
     ["/prospects/", "Mock draft", "2027 picks & consensus", "p"],
   ];
   const ICON = {
@@ -363,11 +536,12 @@ export function homePage2(ctx) {
   };
   const body = `
   ${strip ? `<div class="score-strip" aria-label="Today's scores">${strip}</div>` : ""}
+  ${stripItems.length ? `<div class="wire-strip" aria-label="Latest trades, signings and suspensions">${stripItems.map((m) => stripBit(ctx, m)).join("")}<a class="wire-bit wire-more" href="/moves/">Full wire</a></div>` : ""}
   <section class="home-hero">
     <div class="hh-main">
       <p class="eyebrow">${esc(fmtDate(league.today, { weekday: "long", month: "long", day: "numeric" }))}</p>
       <h1>${esc(dayLabel)}: ${games.length} game${games.length === 1 ? "" : "s"}</h1>
-      <p class="lede">Lines from real ice time, starting goalies, injuries, every trade and signing, and Cup odds, all updated through the day.</p>
+      <p class="lede">Lines from real ice time, starting goalies, injuries, trades, signings and suspensions, and Cup odds, all updated through the day.</p>
       <button class="hh-search" type="button" data-open-search><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Search ${(ctx.profileCount ?? Object.keys(ctx.profiles).length).toLocaleString("en-US")} players, from Gretzky to today</span><kbd>/</kbd></button>
       <div class="stage-flow">${stage("projected")}<i></i>${stage("reported")}<i></i>${stage("confirmed")}<i></i>${stage("actual")}</div>
     </div>
@@ -378,7 +552,7 @@ export function homePage2(ctx) {
     <aside class="side">
       <section class="card"><h2>Stanley Cup odds</h2>${odds.map(([k, o]) => `<a class="odds-bar sm" href="${teamUrl(T[k])}">${logo(T[k], 20)}<span class="ob-name">${esc(T[k].common)}</span><span class="ob-track"><span style="width:${(o.cup / omax) * 100}%"></span></span><b>${P100(o.cup, 1)}</b></a>`).join("")}<a class="more" href="/cup/">All 32 teams + bracket →</a></section>
       <section class="card"><h2>Latest injuries</h2>${ctx.injuries.slice(0, 5).map((i) => `<div class="inj-row"><span class="pill ${injClass(i.status)}">${esc(INJ_SHORT[i.status] ?? i.status)}</span><div><b>${plink(ctx, i.id, i.name)}</b> <span class="muted small">${esc(i.team)}${i.body ? ` · ${esc(i.body)}` : ""}</span></div></div>`).join("")}<a class="more" href="/injuries/">All injuries &amp; scratches →</a></section>
-      <section class="card"><h2>Trades &amp; signings</h2>${recentMoves.map((m) => `<div class="tx-row"><span class="pill tx-${m.kind}">${esc(TX_LABEL[m.kind])}</span><div><b>${esc(m.team)}</b> · ${linkNames(ctx, m)} ${(m.money ?? []).map(moneyChip).join(" ")}<div class="muted small">${esc(fmtDate(m.date, { month: "short", day: "numeric" }))}</div></div></div>`).join("")}<a class="more" href="/moves/">All moves →</a></section>
+      <section class="card"><h2>The wire</h2>${sideWire.map((m) => wireRow(ctx, m)).join("") || `<p class="empty">No trades or signings yet.</p>`}<a class="more" href="/moves/">Trades, signings &amp; suspensions →</a></section>
       ${wjcDays > 0 ? `<a class="card wjc-promo" href="/wjc/"><span class="eyebrow">World Juniors · Edmonton &amp; Red Deer</span><strong>${wjcDays} days to puck drop</strong><span>Odds, mock bracket and projected lines →</span></a>` : ""}
       <section class="card"><h2>Latest news</h2>${ctx.posts.filter((p) => p.parsed.type !== "other").slice(0, 4).map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts yet.</p>`}<a class="more" href="/news/">All news →</a></section>
       <section class="card"><h2>Points leaders</h2><ol class="mini-list">${lead.map((p) => `<li><a href="${playerUrl(p.id)}">${esc(p.firstName.default[0])}. ${esc(p.lastName.default)}</a><span class="muted">${esc(p.teamAbbrev)}</span><b>${p.value}</b></li>`).join("")}</ol><a class="more" href="/stats/">All stats →</a></section>

@@ -200,17 +200,25 @@
     }));
   });
 
-  // News filters
+  // News and transaction filters. "headlines" keeps trades, signings, suspensions and the other roster-changing moves.
+  const HEADLINES = new Set(["trade", "sign", "suspension", "fine", "waivers", "release", "retire"]);
   $$(".filters").forEach((f) => {
     const feed = $(f.dataset.filterTarget);
-    let type = "all", team = "";
-    const apply = () => $$(".post", feed).forEach((p) => {
-      p.hidden = (type !== "all" && !(p.dataset.type || "").split(" ").includes(type)) || (team && p.dataset.team !== team);
-    });
+    if (!feed) return;
+    let type = $(".chip.on", f)?.dataset.type || "all", team = "";
+    const apply = () => {
+      $$(".post", feed).forEach((p) => {
+        const kinds = (p.dataset.type || "").split(" ");
+        const typeOk = type === "all" || (type === "headlines" ? kinds.some((k) => HEADLINES.has(k)) : kinds.includes(type));
+        p.hidden = !typeOk || (team && p.dataset.team !== team);
+      });
+      $$(".wire-day", feed).forEach((day) => { day.hidden = ![...$$(".post", day)].some((p) => !p.hidden); });
+    };
     $$(".chip", f).forEach((c) => c.addEventListener("click", () => {
       type = c.dataset.type; $$(".chip", f).forEach((x) => x.classList.toggle("on", x === c)); apply();
     }));
     $(".team-filter", f)?.addEventListener("change", (e) => { team = e.target.value; apply(); });
+    apply();
   });
 
   // Timeline filters (player pages)

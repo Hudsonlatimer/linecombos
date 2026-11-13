@@ -2,6 +2,7 @@ import { teamExtras } from "./more-pages.mjs";
 import { wpBlock, gamePredictCard } from "./predict-pages.mjs";
 import { nationFromHome, country, flag as flagOf } from "./geo.mjs";
 import { teamStatsCard } from "./teamstats-pages.mjs";
+import { rosterCard } from "./roster-pages.mjs";
 import { esc, attr, h, mmss, pct, signed, fmtDate, localTime, ago, stage, pill, page } from "./html.mjs";
 
 // ---------- shared bits ----------
@@ -224,8 +225,14 @@ export function teamPage(ctx, t) {
   const teamNews = ctx.posts.filter((p) => p.parsed.team === t.abbrev && p.parsed.type !== "other").slice(0, 8);
 
   const R = rep?.lines?.parsed;
-  const repCard = R ? `<section class="card card-accent">
-    <h2>${nextG ? `Lines for ${nextG.home ? "vs" : "@"} ${esc(nextG.opp)}` : "Latest lines"} ${stage(rep.lines.stale ? "projected" : "reported")}</h2>
+  // One lineup only. A live game wins, then a lineup posted since the last game, then the last game's shift chart.
+  const freshReport = !!(R && rep.lines && !rep.lines.stale);
+  const showLive = !!t.live;
+  const showReport = !showLive && freshReport;
+  const showActual = !showLive && !showReport && !!L;
+
+  const repCard = showReport ? `<section class="card card-accent">
+    <h2>${nextG ? `Lines for ${nextG.home ? "vs" : "@"} ${esc(nextG.opp)}` : "Latest lines"} ${stage("reported")}</h2>
     ${srcNote(linesSource(ctx, { ...t, live: null }, rep))}
     ${comboRows(ctx, R.lines.map((ids) => ({ ids })), ["L1", "L2", "L3", "L4"], null)}
     ${comboRows(ctx, R.pairs.map((ids) => ({ ids })), ["D1", "D2", "D3"], null)}
@@ -233,7 +240,7 @@ export function teamPage(ctx, t) {
     ${R.pk?.length ? `<h3>Penalty kill</h3>${comboRows(ctx, R.pk.map((ids) => ({ ids })), ["PK1", "PK2"], null)}` : ""}
   </section>` : "";
 
-  const liveCard = t.live ? `<section class="card card-live"><h2>${stage("live")} vs ${esc(t.live.opp)} right now</h2><p>Lines from shift data so far, about 10 game minutes behind. <a class="btn-sm" href="/game/${t.live.gameId}/">Open gamecenter</a></p>
+  const liveCard = showLive ? `<section class="card card-live"><h2>${stage("live")} vs ${esc(t.live.opp)} right now</h2><p>Lines from shift data so far, about 10 game minutes behind. <a class="btn-sm" href="/game/${t.live.gameId}/">Open gamecenter</a></p>
     ${comboRows(ctx, t.live.lines, ["L1", "L2", "L3", "L4"], t.live.players)}</section>` : "";
 
   const g = t.goalies, gmax = Math.max(1, ...g.starts.map((x) => x.starts));
@@ -260,10 +267,8 @@ export function teamPage(ctx, t) {
     ${t.upcoming.map((x) => `<li><span class="muted">${esc(fmtDate(x.date))}</span><span>${x.home ? "vs" : "@"} ${esc(x.opp)}</span><span>${localTime(x.startUTC)}</span><a href="/game/${x.id}/">Preview</a></li>`).join("")}</ul></section>`;
 
   const roster = ctx.rosters[t.abbrev] ?? [];
-  const sk = Object.fromEntries(ctx.stats.skaters.map((s) => [s.playerId, s]));
   const Y = Math.floor(ctx.league.seasonId / 10000);
   const capOf = (id) => { const k = ctx.profiles[id]?.contract?.list?.find((x) => x.startYear <= Y && +x.end.slice(0, 4) >= Y); return k ? { aav: k.aav, until: +k.end.slice(0, 4) + 1, exp: k.expiry } : null; };
-  const ageOf = (id) => { const b = ctx.profiles[id]?.birthDate; return b ? Math.floor((Date.parse(ctx.site.builtAt) - Date.parse(b)) / (365.25 * 864e5)) : null; };
   const capM = (n) => `$${(n / 1e6).toFixed(n >= 1e7 ? 1 : 2).replace(/\.?0+$/, "")}M`;
   const cap = ctx.capTeams?.[t.abbrev];
   const capCard = cap?.capHit ? `<section class="card cap-card"><h2>Salary cap</h2>
@@ -275,9 +280,7 @@ export function teamPage(ctx, t) {
   const fr = ctx.records?.franchise?.[t.abbrev];
   const frBoard = (list, k, label) => { const top = [...(list ?? [])].filter((p) => p[k] > 0).sort((a, b) => b[k] - a[k]).slice(0, 5); return `<div class="fr-col"><h3>${label}</h3><ol class="fr-list">${top.map((p, i) => `<li><span class="rb-rank">${i + 1}</span><a href="${anyPlayerUrl(ctx, p.id, p.name)}">${esc(p.name)}</a>${ctx.rosters[t.abbrev]?.some((r) => r.id === p.id) ? ` <span class="pill ok">Active</span>` : ""}<b>${p[k].toLocaleString("en-US")}</b></li>`).join("")}</ol></div>`; };
   const recordsCard = fr ? `<section class="card"><h2>Franchise record book <span class="muted small">regular season, all time</span></h2><div class="fr-grid">${frBoard(fr.skaters, "pts", "Points")}${frBoard(fr.skaters, "g", "Goals")}${frBoard(fr.skaters, "a", "Assists")}${frBoard(fr.goalies, "w", "Goalie wins")}</div><a class="more" href="/records/#fr-${t.abbrev}">Full record book →</a></section>` : "";
-  const rosterCard = `<section class="card"><h2>Roster</h2><div class="table-wrap"><table class="tbl sortable"><thead><tr><th>#</th><th>Player</th><th>Pos</th><th class="n">GP</th><th class="n">G</th><th class="n">A</th><th class="n">P</th><th class="n">TOI</th><th class="n">Age</th><th class="n">Cap hit</th></tr></thead><tbody>
-    ${roster.filter((p) => p.pos !== "G").map((p) => { const s = sk[p.id]; return `<tr><td class="num">${esc(p.num ?? "")}</td><td><a href="${playerUrl(p.id)}">${esc(p.first)} ${esc(p.last)}</a></td><td>${esc(p.pos)}</td><td class="n">${s?.gamesPlayed ?? 0}</td><td class="n">${s?.goals ?? 0}</td><td class="n">${s?.assists ?? 0}</td><td class="n"><b>${s?.points ?? 0}</b></td><td class="n">${s ? mmss(s.timeOnIcePerGame) : "—"}</td><td class="n">${ageOf(p.id) ?? ""}</td>${(() => { const c = capOf(p.id); return c ? `<td class="n" data-v="${c.aav}" title="Through ${c.until - 1}-${String(c.until).slice(2)}${c.exp ? `, then ${c.exp}` : ""}">${capM(c.aav)}</td>` : `<td class="n muted" data-v="0">—</td>`; })()}</tr>`; }).join("")}
-  </tbody></table></div></section>`;
+  const rosterHtml = rosterCard(ctx, t);
 
   const body = h`
   ${t.accent ? `<style>:root{--team:${t.accent}}</style>` : ""}
@@ -289,16 +292,16 @@ export function teamPage(ctx, t) {
     </div>
     <button class="fav" data-fav="${attr(t.abbrev)}" aria-pressed="false" title="Pin as my team">★ <span>My team</span></button>
   </section>
-  ${L ? `<div class="source-note">${stage("actual")}<span><b>Source:</b> NHL shift chart from the last game, ${gameRef(L)} (${esc(L.result)} ${esc(L.score)}). Lines are grouped by who played together and numbered by ice time. This is what the coach <i>used</i>; morning-skate changes appear above as Reported when they're posted.</span></div>` : `<div class="source-note">${stage("projected")}<span>No shift data yet for this team's last game. The NHL posts it a few hours after the final horn.</span></div>`}
+  ${showActual ? `<div class="source-note">${stage("actual")}<span><b>Source:</b> NHL shift chart from the last game, ${gameRef(L)} (${esc(L.result)} ${esc(L.score)}). Lines are grouped by who played together and numbered by ice time.</span></div>` : !showReport && !showLive ? `<div class="source-note">${stage("projected")}<span>No shift data yet for this team's last game. The NHL posts it a few hours after the final horn.</span></div>` : ""}
   <div class="layout">
     <div>
       ${liveCard}${repCard}
-      ${L ? `<section class="card"><h2>Forward lines <span class="muted small">5v5 · ${mmss(L.toi.es)}</span></h2>${comboRows(ctx, L.lines, ["L1", "L2", "L3", "L4"], players, { flags: c?.newLines, newIds })}</section>
+      ${showActual ? `<section class="card"><h2>Forward lines <span class="muted small">5v5 · ${mmss(L.toi.es)}</span></h2>${comboRows(ctx, L.lines, ["L1", "L2", "L3", "L4"], players, { flags: c?.newLines, newIds })}</section>
       <section class="card"><h2>Defence pairs</h2>${comboRows(ctx, L.pairs, ["D1", "D2", "D3"], players, { flags: c?.newPairs, newIds })}</section>
       <section class="card"><h2>Power play <span class="muted small">${mmss(L.toi.pp)} total</span></h2>${comboRows(ctx, L.pp, ["PP1", "PP2"], players)}</section>
       <section class="card"><h2>Penalty kill <span class="muted small">${mmss(L.toi.pk)} total</span></h2>${comboRows(ctx, L.pk, ["PK1", "PK2"], players)}</section>
       ${L.extras.length ? `<section class="card"><h2>Rotated / extra skaters</h2><div class="names">${L.extras.map((id) => pname(ctx, id, players)).join("")}</div></section>` : ""}` : ""}
-      ${rosterCard}
+      ${rosterHtml}
       ${recordsCard}
       ${teamStatsCard(ctx, t)}
     </div>
@@ -306,7 +309,7 @@ export function teamPage(ctx, t) {
       <section class="card"><h2>${esc(t.common)} news</h2>${teamNews.map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts in the last two weeks.</p>`}</section>
     </aside>
   </div>`;
-  return page({ site: ctx.site, title: `${t.name} lines & goalies`, description: `${t.name} line combinations, D pairs, power play units and starting goalie, from real ice time${L ? ` (last game ${L.date} vs ${L.opp})` : ""}.`, path: teamUrl(t), active: "/nhl/", body });
+  return page({ site: ctx.site, title: `${t.name} lines, roster stats & goalies`, description: `${t.name} line combinations, roster stats (scoring, advanced, special teams, faceoffs) and starting goalie, from real ice time${L ? ` (last game ${L.date} vs ${L.opp})` : ""}.`, path: teamUrl(t), active: "/nhl/", body, scripts: ["/assets/roster.js"] });
 }
 
 // ---------- Goalies ----------
