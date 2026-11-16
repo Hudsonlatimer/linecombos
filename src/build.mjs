@@ -27,6 +27,8 @@ import { nhlProspectsPage } from "./render/prospect-pages.mjs";
 import { mockDraftPage } from "./render/mock-draft.mjs";
 import { teamStats } from "./lib/teamstats.mjs";
 import { rosterStats } from "./lib/rosterstats.mjs";
+import { loadAwards } from "./lib/awards.mjs";
+import { awardsPage } from "./render/awards-pages.mjs";
 import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
 const t0 = Date.now();
@@ -255,7 +257,8 @@ log("Team stats: NHL reports + expected goals");
 const teamStatsData = await teamStats(league, preds.teamXg);
 log("Roster stats: advanced skater and goalie reports");
 const rosterStatsData = await rosterStats(league.seasonId);
-const ctx = { rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
+const awardsData = await loadAwards(league, rosterStatsData);
+const ctx = { awards: awardsData, rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
 
 // ---------- pages ----------
 log("Rendering");
@@ -283,6 +286,8 @@ await put("/standings/", P.standingsPage(ctx));
 await put("/schedule/", P.schedulePage(ctx));
 await put("/stats/", P.statsPage(ctx));
 await put("/stats/teams/", teamStatsPage(ctx));
+await put("/awards/", awardsPage(ctx));
+if (awardsData) await write("data/awards.json", JSON.stringify(awardsData));
 await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));
 // The mock draft replaces the old prospects page at /prospects/ (the old page is only a fallback if the public lists are missing).

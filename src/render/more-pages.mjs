@@ -4,6 +4,7 @@ import { logo, pname, onIce, homeCards, newsItem, anyPlayerUrl } from "./nhl-pag
 import { TX_LABEL, normName, txPieces, tradeShape, tradeKey, gamesIn } from "../lib/moves.mjs";
 import { fmtMoney, contractForSigning } from "../lib/contracts.mjs";
 import { country, countryByName, flag } from "./geo.mjs";
+import { awardsTile } from "./awards-pages.mjs";
 
 const ord = (n) => `${n}${["th", "st", "nd", "rd"][((n % 100) - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th"}`;
 const dob = (d) => fmtDate(d, { month: "short", day: "numeric", year: "numeric" });
@@ -524,6 +525,7 @@ export function homePage2(ctx) {
     ["/cup/", "Cup odds", fav ? `${fav.common} lead at ${P100(odds[0][1].cup, 1)}` : "10,000 sims", "c"],
     ["/wjc/", "World Juniors", wjcDays > 0 ? `${wjcDays} days · odds, bracket, lines` : "Live now", "w"],
     ["/moves/", "Trades & suspensions", `${seasonWire.filter((m) => m.kind === "trade").length} trades · ${seasonWire.filter((m) => m.kind === "suspension").length} suspensions`, "m"],
+    ["/awards/", "Award race", ctx.awards?.voted?.hart?.[0] ? `Hart: ${ctx.awards.voted.hart[0].name}` : "Hart, Vezina, Norris", "c"],
     ["/prospects/", "Mock draft", "2027 picks & consensus", "p"],
   ];
   const ICON = {
@@ -552,6 +554,7 @@ export function homePage2(ctx) {
     <aside class="side">
       <section class="card"><h2>Stanley Cup odds</h2>${odds.map(([k, o]) => `<a class="odds-bar sm" href="${teamUrl(T[k])}">${logo(T[k], 20)}<span class="ob-name">${esc(T[k].common)}</span><span class="ob-track"><span style="width:${(o.cup / omax) * 100}%"></span></span><b>${P100(o.cup, 1)}</b></a>`).join("")}<a class="more" href="/cup/">All 32 teams + bracket →</a></section>
       <section class="card"><h2>Latest injuries</h2>${ctx.injuries.slice(0, 5).map((i) => `<div class="inj-row"><span class="pill ${injClass(i.status)}">${esc(INJ_SHORT[i.status] ?? i.status)}</span><div><b>${plink(ctx, i.id, i.name)}</b> <span class="muted small">${esc(i.team)}${i.body ? ` · ${esc(i.body)}` : ""}</span></div></div>`).join("")}<a class="more" href="/injuries/">All injuries &amp; scratches →</a></section>
+      ${awardsTile(ctx)}
       <section class="card"><h2>The wire</h2>${sideWire.map((m) => wireRow(ctx, m)).join("") || `<p class="empty">No trades or signings yet.</p>`}<a class="more" href="/moves/">Trades, signings &amp; suspensions →</a></section>
       ${wjcDays > 0 ? `<a class="card wjc-promo" href="/wjc/"><span class="eyebrow">World Juniors · Edmonton &amp; Red Deer</span><strong>${wjcDays} days to puck drop</strong><span>Odds, mock bracket and projected lines →</span></a>` : ""}
       <section class="card"><h2>Latest news</h2>${ctx.posts.filter((p) => p.parsed.type !== "other").slice(0, 4).map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts yet.</p>`}<a class="more" href="/news/">All news →</a></section>
