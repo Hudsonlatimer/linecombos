@@ -5,7 +5,7 @@ import { awardRaces } from "../../public/assets/awardsmodel.js";
 const API = "https://api.nhle.com/stats/rest/en";
 const q = (seasonId, extra = "") => `limit=-1&cayenneExp=seasonId=${seasonId}%20and%20gameTypeId=2${extra}`;
 
-export async function loadAwards(league, rosterStats) {
+export async function loadAwards(league, rosterStats, coachData = {}) {
   const s = league.seasonId;
   const [sk, gk, rsk, rgk] = await Promise.all([
     get(`${API}/skater/summary?${q(s)}`, { ttl: 300 }),
@@ -21,5 +21,5 @@ export async function loadAwards(league, rosterStats) {
   });
   const goalies = (gk?.data ?? []).map((r) => ({ ...r, isRookie: rg.has(r.playerId) }));
   const teams = Object.fromEntries(Object.values(league.teams ?? {}).map((t) => [t.abbrev, { gp: t.gp, pts: t.pts, ptsPct: t.ptsPct, rw: t.rw, ga: t.ga }]));
-  return { ...awardRaces({ skaters, goalies, teams }), builtAt: new Date().toISOString() };
+  return { ...awardRaces({ skaters, goalies, teams, coaches: coachData.coaches, lastSeason: coachData.lastSeason }), builtAt: new Date().toISOString() };
 }

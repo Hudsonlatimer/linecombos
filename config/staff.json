@@ -1,0 +1,4 @@
+{
+  "_how": "Add assistants and other staff per team: \"EDM\": [{ \"name\": \"First Last\", \"role\": \"Assistant coach\", \"photo\": \"https://...\" }]. Photos are optional. \"heads\" maps a head coach's name to a photo URL.",
+  "heads": {}
+}

@@ -2,6 +2,7 @@ import { teamExtras } from "./more-pages.mjs";
 import { wpBlock, gamePredictCard } from "./predict-pages.mjs";
 import { nationFromHome, country, flag as flagOf } from "./geo.mjs";
 import { teamStatsCard } from "./teamstats-pages.mjs";
+import { staffCard } from "./staff.mjs";
 import { rosterCard } from "./roster-pages.mjs";
 import { esc, attr, h, mmss, pct, signed, fmtDate, localTime, ago, stage, pill, page } from "./html.mjs";
 
@@ -305,7 +306,7 @@ export function teamPage(ctx, t) {
       ${recordsCard}
       ${teamStatsCard(ctx, t)}
     </div>
-    <aside class="side">${changesCard}${teamExtras(ctx, t)}${goalieCard}${capCard}${sched}
+    <aside class="side">${changesCard}${staffCard(ctx, t)}${teamExtras(ctx, t)}${goalieCard}${capCard}${sched}
       <section class="card"><h2>${esc(t.common)} news</h2>${teamNews.map((p) => newsItem(ctx, p, { compact: true })).join("") || `<p class="empty">No posts in the last two weeks.</p>`}</section>
     </aside>
   </div>`;

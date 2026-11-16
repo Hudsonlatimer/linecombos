@@ -31,7 +31,7 @@ const standardise = (items, get) => {
  * @param goalies  rows of goalie/summary, each with `isRookie`
  * @param teams    { [abbrev]: { gp, pts, ptsPct, rw, ga } }
  */
-export function awardRaces({ skaters, goalies, teams }) {
+export function awardRaces({ skaters, goalies, teams, coaches = {}, lastSeason = {} }) {
   const gpTeam = Math.max(1, Math.round(mean(Object.values(teams).map((t) => t.gp))));
   const teamBoost = (abbrev) => {
     const t = teams[abbrev];
@@ -103,9 +103,28 @@ export function awardRaces({ skaters, goalies, teams }) {
   const jennings = tl.filter((t) => t.gp > 0).slice().sort((a, b) => a.ga / a.gp - b.ga / b.gp).slice(0, 5)
     .map((t) => ({ team: t.abbrev, value: +(t.ga / t.gp).toFixed(2), pace: Math.round((t.ga / t.gp) * 82), line: `${t.ga} goals against in ${t.gp} GP` }));
 
+  // Jack Adams: the coach whose team is doing best, and best compared with last season. A coach hired mid-season is left out
+  // (credit for the record is shared), and so is any team with no coach on file.
+  const tAll = Object.entries(teams).filter(([a, t]) => t.gp > 0 && coaches[a] && !coaches[a].midSeason);
+  const zNow = standardise(tAll, ([, t]) => t.ptsPct), zUp = standardise(tAll, ([a, t]) => t.ptsPct - (lastSeason[a] ?? t.ptsPct));
+  const adamsAll = tAll.map((e) => { const [a, t] = e, d = lastSeason[a] != null ? t.ptsPct - lastSeason[a] : null; return { team: a, name: coaches[a].name, score: 0.6 * zNow.get(e) + 0.4 * zUp.get(e), line: `${t.gp} GP · ${(t.ptsPct * 100).toFixed(1)}% of points${d == null ? "" : ` · ${d >= 0 ? "+" : ""}${(d * 100).toFixed(1)} pts% vs last season`}` }; });
+  const adams = finish(adamsAll);
+
+  // All-Star teams: the best at each position by the Hart-style score (C, LW, RW, two D, G), and the same among rookies.
+  const slotTeam = (skPool, gPool, score, gScore) => {
+    const by = (codes) => skPool.filter((s) => codes.includes(s.positionCode)).map((s) => sk(s, score(s), sline(s))).sort((a, b) => b.score - a.score);
+    const g = gPool.map((x) => gk(x, gScore(x), gline(x))).sort((a, b) => b.score - a.score);
+    const c = by(["C"]), l = by(["L"]), r = by(["R"]), d = by(["D"]);
+    return [["C", c[0]], ["LW", l[0]], ["RW", r[0]], ["D", d[0]], ["D", d[1]], ["G", g[0]]].filter(([, p]) => p);
+  };
+  const allStar = slotTeam(pool, gpool, (s) => zRate.get(s) + 0.1 * zToi.get(s), (g) => vezScore(g));
+  const rookieScore = (s) => (rate(s) - lgPG) / sd(pool.map(rate));
+  const allRookie = slotTeam(rkS, rkG, rookieScore, (g) => (svS(g) - lgSv) / sd(gpool.map(svS)));
+
   return {
     gpTeam,
-    voted: { hart, lindsay, norris, vezina, calder, selke, byng },
+    voted: { hart, lindsay, norris, vezina, calder, selke, byng, adams },
+    teams: { allStar, allRookie },
     races: { artRoss, richard, presidents, jennings },
   };
 }
@@ -118,6 +137,7 @@ export const AWARDS = [
   { k: "selke", name: "Selke Trophy", sub: "Best defensive forward", note: "A rough proxy: shot share relative to teammates, takeaways, ice time and faceoffs. Defence is hard to measure." },
   { k: "lindsay", name: "Ted Lindsay Award", sub: "Most outstanding player (players' vote)", note: "Like the Hart, without the team-success boost." },
   { k: "byng", name: "Lady Byng Trophy", sub: "Sportsmanship and ability", note: "Scoring rate, minus penalty minutes." },
+  { k: "adams", name: "Jack Adams Award", sub: "Coach of the year", coach: true, note: "Team points %, plus the jump from last season. Coaches hired mid-season are left out." },
 ];
 export const RACES = [
   { k: "artRoss", name: "Art Ross Trophy", sub: "Points leader", unit: "P", paceUnit: "pts" },

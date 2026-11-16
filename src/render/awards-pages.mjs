@@ -9,8 +9,8 @@ const pctTxt = (x) => (x >= 0.995 ? "99%" : x < 0.01 ? "<1%" : `${Math.round(x *
 function votedCard(ctx, a, list) {
   const rows = list.map((c, i) => `<li class="aw-row${i === 0 ? " lead" : ""}">
     <span class="aw-rank">${i + 1}</span>
-    <img class="aw-shot" src="${attr(shot(ctx, c))}" alt="" width="40" height="40" loading="lazy" onerror="this.style.visibility='hidden'">
-    <span class="aw-who"><a href="${attr(anyPlayerUrl(ctx, c.id, c.name))}"><b>${esc(c.name)}</b></a> <span class="muted small">${esc(c.pos)} · ${logo(ctx.T[c.team], 14)} ${esc(c.team)}</span><span class="aw-line muted small">${esc(c.line)}</span></span>
+    ${a.coach ? `<span class="aw-shot aw-logo">${logo(ctx.T[c.team], 30)}</span>` : `<img class="aw-shot" src="${attr(shot(ctx, c))}" alt="" width="40" height="40" loading="lazy" onerror="this.style.visibility='hidden'">`}
+    <span class="aw-who">${a.coach ? `<b>${esc(c.name)}</b>` : `<a href="${attr(anyPlayerUrl(ctx, c.id, c.name))}"><b>${esc(c.name)}</b></a>`} <span class="muted small">${a.coach ? `<a href="/nhl/${ctx.T[c.team]?.slug}/">${esc(ctx.T[c.team]?.common ?? c.team)}</a>` : `${esc(c.pos)} · ${logo(ctx.T[c.team], 14)} ${esc(c.team)}`}</span><span class="aw-line muted small">${esc(c.line)}</span></span>
     <span class="aw-share" title="Model's share of the contenders' combined strength, not betting odds"><span class="aw-bar"><i style="width:${Math.max(2, Math.round(c.share * 100))}%"></i></span><b>${pctTxt(c.share)}</b></span></li>`).join("");
   return `<section class="card aw-card" id="${a.k}"><h2>${esc(a.name)} <span class="muted small">${esc(a.sub)}</span></h2><ol class="aw-list">${rows}</ol><p class="muted small aw-note">${esc(a.note)}</p></section>`;
 }
@@ -24,6 +24,11 @@ function raceCard(ctx, r, list) {
   return `<section class="card" id="${r.k}"><h2>${esc(r.name)} <span class="muted small">${esc(r.sub)}</span></h2><div class="table-wrap"><table class="tbl compact"><thead><tr><th class="n">#</th><th>${isTeam ? "Team" : "Player"}</th><th class="n">${esc(r.unit)}</th><th class="n">82-game pace</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 
+function teamCard(ctx, title, note, slots) {
+  const rows = slots.map(([slot, c]) => `<li class="aw-row"><span class="aw-rank">${esc(slot)}</span><img class="aw-shot" src="${attr(shot(ctx, c))}" alt="" width="40" height="40" loading="lazy" onerror="this.style.visibility='hidden'"><span class="aw-who"><a href="${attr(anyPlayerUrl(ctx, c.id, c.name))}"><b>${esc(c.name)}</b></a> <span class="muted small">${logo(ctx.T[c.team], 14)} ${esc(c.team)}</span><span class="aw-line muted small">${esc(c.line)}</span></span></li>`).join("");
+  return `<section class="card aw-card"><h2>${esc(title)}</h2><ol class="aw-list aw-team">${rows}</ol><p class="muted small aw-note">${esc(note)}</p></section>`;
+}
+
 /** /awards/ */
 export function awardsPage(ctx) {
   const A = ctx.awards;
@@ -35,9 +40,11 @@ export function awardsPage(ctx) {
     <div class="pill-row" style="margin-top:10px">${jump}</div></div></section>
     <h2 class="section-h">Voted awards <span class="muted small">model estimates</span></h2>
     <div class="grid2 aw-grid">${AWARDS.map((a) => votedCard(ctx, a, A.voted[a.k])).join("")}</div>
+    <h2 class="section-h">All-Star teams <span class="muted small">if the season ended today</span></h2>
+    <div class="grid2 aw-grid">${teamCard(ctx, "First All-Star Team", "The best at each position by the same score as the Hart and Lindsay.", A.teams.allStar)}${teamCard(ctx, "All-Rookie Team", "Rookies only, same method.", A.teams.allRookie)}</div>
     <h2 class="section-h">Stat races <span class="muted small">exact leaders</span></h2>
     <div class="grid2 aw-grid">${RACES.map((r) => raceCard(ctx, r, A.races[r.k])).join("")}</div>
-    <section class="card" style="margin-top:20px"><h2>Not covered</h2><p class="muted small">The Conn Smythe (playoffs only), Masterton, King Clancy and Jack Adams aren't shown: they depend on stories, off-ice character or coach data this site doesn't have, and a made-up ranking would be worse than none.</p></section>`;
+    <section class="card" style="margin-top:20px"><h2>Awards that can't be ranked from stats</h2><ul class="plain muted small"><li><b>Conn Smythe</b> (playoff MVP) appears here once the playoffs start.</li><li><b>Bill Masterton</b> (perseverance) and <b>King Clancy</b> (leadership and community work) are decided on off-ice stories, and each team's nominee isn't published until the spring.</li><li><b>General Manager of the Year</b> is voted by GMs on roster moves; there's no data to rank it honestly, so it's left out rather than guessed.</li></ul></section>`;
   return page({ site: ctx.site, title: "NHL award race: Hart, Vezina, Norris, Calder front-runners", description: "Live NHL award front-runners: Hart, Vezina, Norris, Calder, Selke, Lindsay and Lady Byng model estimates, plus exact Art Ross, Rocket Richard and Presidents' Trophy races.", path: "/awards/", active: "/awards/", body });
 }
 

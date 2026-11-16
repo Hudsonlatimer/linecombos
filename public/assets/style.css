@@ -1156,3 +1156,9 @@ span.flag.big .flag-img { width: 72px; height: 48px; }
 a.pill { padding: 6px 12px; font-size: 12px; letter-spacing: .03em; text-transform: none; text-decoration: none; border: 1px solid var(--line); transition: background .15s, color .15s, border-color .15s; }
 a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .aw-card { padding-bottom: 14px; } .aw-row { padding: 10px 0; }
+
+.aw-logo { display: grid; place-items: center; border-radius: 10px !important; } .aw-team .aw-rank { width: auto; min-width: 28px; font-size: 11px; letter-spacing: .04em; }
+.stf-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; } .stf { display: flex; align-items: center; gap: 10px; }
+.stf-ph { position: relative; width: 44px; height: 44px; flex: none; border-radius: 50%; overflow: hidden; background: var(--soft); display: grid; place-items: center; }
+.stf-ph i { font-style: normal; font-weight: 800; font-size: 14px; color: var(--muted); } .stf-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stf-who { display: flex; flex-direction: column; min-width: 0; } .stf-note { margin: 12px 0 0; }

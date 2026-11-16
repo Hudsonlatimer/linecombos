@@ -28,6 +28,7 @@ import { mockDraftPage } from "./render/mock-draft.mjs";
 import { teamStats } from "./lib/teamstats.mjs";
 import { rosterStats } from "./lib/rosterstats.mjs";
 import { loadAwards } from "./lib/awards.mjs";
+import { loadCoaches } from "./lib/coaches.mjs";
 import { awardsPage } from "./render/awards-pages.mjs";
 import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
@@ -257,8 +258,9 @@ log("Team stats: NHL reports + expected goals");
 const teamStatsData = await teamStats(league, preds.teamXg);
 log("Roster stats: advanced skater and goalie reports");
 const rosterStatsData = await rosterStats(league.seasonId);
-const awardsData = await loadAwards(league, rosterStatsData);
-const ctx = { awards: awardsData, rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
+const coachData = await loadCoaches(league, schedules);
+const awardsData = await loadAwards(league, rosterStatsData, coachData);
+const ctx = { coachData, awards: awardsData, rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
 
 // ---------- pages ----------
 log("Rendering");
