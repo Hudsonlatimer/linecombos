@@ -1145,3 +1145,14 @@ span.flag.big .flag-img { width: 72px; height: 48px; }
 .aw-share { display: flex; align-items: center; gap: 6px; justify-content: flex-end; } .aw-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--panel-2, rgba(128,128,128,.2)); overflow: hidden; } .aw-bar i { display: block; height: 100%; background: var(--accent); }
 .aw-note { margin: 8px 0 0; }
 @media (max-width: 560px) { .aw-row { grid-template-columns: 18px 34px 1fr 72px; gap: 8px; } .aw-shot { width: 34px; height: 34px; } }
+
+/* ---------- Spacing and chips (site-wide) ---------- */
+.card + .card, section + section.card, .card + section { margin-top: 16px; }
+.side > .card + .card, .side > .card, .grid2 > .card, .grid2 > .card + .card { margin-top: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.section-h { margin: 28px 0 12px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+a.pill { padding: 6px 12px; font-size: 12px; letter-spacing: .03em; text-transform: none; text-decoration: none; border: 1px solid var(--line); transition: background .15s, color .15s, border-color .15s; }
+a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.aw-card { padding-bottom: 14px; } .aw-row { padding: 10px 0; }
