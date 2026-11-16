@@ -821,9 +821,9 @@ button.goal-clip { cursor: pointer; padding: 0; font: inherit; font-size: 10px; 
 /* The score strip sat 8px under the sticky header, clipping the cards' tops. Give it its own breathing room. */
 .score-strip { margin: 0 -2px 18px; padding: 4px 2px 10px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); }
 .ss-game { min-width: 168px; }
-/* 13 nav links need ~1120px. Below that, the row was silently cut off ("Cup odds" half visible, the rest unreachable):
+/* 15 nav links need ~1300px (it was 13 at ~1120px). Below that, the row was silently cut off ("Cup odds" half visible, the rest unreachable):
    collapse to the menu button and open a tidy grid instead. */
-@media (max-width: 1180px) {
+@media (max-width: 1340px) {
   .menu-btn { display: grid; }
   .nav { display: none; }
   .nav.open { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 6px 20px 14px; margin-top: 0; }
@@ -1162,3 +1162,7 @@ a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(
 .stf-ph { position: relative; width: 44px; height: 44px; flex: none; border-radius: 50%; overflow: hidden; background: var(--soft); display: grid; place-items: center; }
 .stf-ph i { font-style: normal; font-weight: 800; font-size: 14px; color: var(--muted); } .stf-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .stf-who { display: flex; flex-direction: column; min-width: 0; } .stf-note { margin: 12px 0 0; }
+
+/* Nav: wrap onto a second row instead of scrolling off-screen and getting cut off */
+.nav { flex-wrap: wrap; overflow: visible; row-gap: 4px; }
+.nav a { flex: none; }
