@@ -4,3 +4,4 @@ node_modules/
 .wrangler/
 data/x-inbox/*.json
 .vercel/
+scripts/.logs.json

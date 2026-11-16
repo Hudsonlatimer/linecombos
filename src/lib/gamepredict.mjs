@@ -154,14 +154,14 @@ export function rater(prevLog = [], F = FIT) {
 }
 
 /** Play through a season's log game by game, predicting each from only the games before it. */
-export function backtest(prevLog, log, { F = FIT, P = DEFAULTS, b2b = true } = {}) {
+export function backtest(prevLog, log, { F = FIT, P = DEFAULTS, b2b = true, hideGoalie = false, hideLineup = false } = {}) {
   const R = rater(prevLog, F);
   const lastDay = {};
   const out = [];
   const day = (d) => Date.parse(d + "T12:00:00Z") / 864e5;
   for (const g of log) {
     const hB2b = b2b && lastDay[g.home] === day(g.date) - 1, aB2b = b2b && lastDay[g.away] === day(g.date) - 1;
-    const m = R.matchup({ home: g.home, away: g.away, hG: g.hG?.id, aG: g.aG?.id, hB2b, aB2b, hLine: g.hP, aLine: g.aP }, P);
+    const m = R.matchup({ home: g.home, away: g.away, hG: hideGoalie ? null : g.hG?.id, aG: hideGoalie ? null : g.aG?.id, hB2b, aB2b, hLine: hideLineup ? null : g.hP, aLine: hideLineup ? null : g.aP }, P);
     const p = predictGame(m.lh, m.la, { P });
     out.push({ id: g.id, date: g.date, home: g.home, away: g.away, p: p.home, homeWon: g.homeWon, hg: g.hg + (g.so && g.homeWon ? 1 : 0), ag: g.ag + (g.so && !g.homeWon ? 1 : 0), ot: g.ot || g.so, lh: m.lh, la: m.la });
     R.add(g);

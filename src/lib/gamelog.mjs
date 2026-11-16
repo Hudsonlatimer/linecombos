@@ -18,7 +18,7 @@ export async function seasonLog(teams, seasonId, { boxes = true } = {}) {
     const s = await get(`${WEB}/club-schedule-season/${abbr}/${seasonId}`, { ttl: 1800 });
     for (const g of s?.games ?? []) if (g.gameType === 2 && FINAL.has(g.gameState)) seen.set(g.id, g);
   });
-  const games = [...seen.values()].sort((a, b) => a.id - b.id);
+  const games = [...seen.values()].sort((a, b) => (a.gameDate < b.gameDate ? -1 : a.gameDate > b.gameDate ? 1 : a.id - b.id)); // chronological: a postponed game keeps its old id
   const rows = await pool(games, 8, async (g) => {
     const last = g.gameOutcome?.lastPeriodType;
     let hg = g.homeTeam.score, ag = g.awayTeam.score;
