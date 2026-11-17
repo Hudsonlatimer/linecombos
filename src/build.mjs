@@ -29,6 +29,7 @@ import { teamStats } from "./lib/teamstats.mjs";
 import { rosterStats } from "./lib/rosterstats.mjs";
 import { loadAwards } from "./lib/awards.mjs";
 import { loadCoaches } from "./lib/coaches.mjs";
+import { appData } from "./lib/appdata.mjs";
 import { awardsPage } from "./render/awards-pages.mjs";
 import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
@@ -289,6 +290,7 @@ await put("/schedule/", P.schedulePage(ctx));
 await put("/stats/", P.statsPage(ctx));
 await put("/stats/teams/", teamStatsPage(ctx));
 await put("/awards/", awardsPage(ctx));
+await write("data/app.json", JSON.stringify(appData(ctx)));
 if (awardsData) await write("data/awards.json", JSON.stringify(awardsData));
 await put("/records/", X.recordsPage(ctx));
 await write("player/index.html", X.viewerPage(ctx));

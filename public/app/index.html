@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LineCombos app prototype</title>
+<meta name="description" content="A clickable iPhone prototype of the whole LineCombos app, running on live data.">
+<meta name="theme-color" content="#0b0d12">
+<style>
+:root{--bg:#f2f3f7;--card:#fff;--ink:#0d1220;--mute:#6b7385;--line:rgba(13,18,32,.09);--acc:#0a5bd3;--acc-soft:rgba(10,91,211,.12);--ok:#168a4a;--bad:#c93a3a;--warn:#b7791f}
+@media (prefers-color-scheme:dark){:root{--bg:#07090d;--card:#13171f;--ink:#f1f3f8;--mute:#8d96a8;--line:rgba(255,255,255,.09);--acc:#58a6ff;--acc-soft:rgba(88,166,255,.15);--ok:#4cc38a;--bad:#ff7b7b;--warn:#e3b341}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif}
+body{display:flex;align-items:center;justify-content:center}
+#phone{position:relative;width:100%;height:100%;max-width:430px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+@media (min-width:600px) and (min-height:760px){#phone{height:min(880px,96vh);border-radius:46px;border:8px solid #111;box-shadow:0 20px 60px rgba(0,0,0,.35)}}
+#status{display:flex;justify-content:space-between;padding:12px 26px 2px;font-size:14px;font-weight:600;flex:none}
+@media (max-width:599px){#status{display:none}}
+#view{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 16px 24px}
+#nav{display:flex;align-items:center;gap:8px;height:34px;flex:none;padding:6px 16px 0}
+#nav button{border:0;background:none;color:var(--acc);font-size:16px;padding:4px 0;display:flex;align-items:center;gap:2px;cursor:pointer}
+h1{font-size:32px;line-height:1.1;margin:4px 0 14px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:13px;margin:20px 0 8px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.card{background:var(--card);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line);cursor:pointer}
+.row:first-child{border-top:0}.row.flat{cursor:default}
+.grow{flex:1;min-width:0}.t{font-weight:600}.s{font-size:13px;color:var(--mute)}.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev::after{content:"";width:8px;height:8px;border-top:2px solid var(--mute);border-right:2px solid var(--mute);transform:rotate(45deg);opacity:.5;margin-left:2px;flex:none}
+.badge{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;position:relative;overflow:hidden}
+.badge img{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:contain;background:#fff;border-radius:50%;padding:2px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--line);object-fit:cover;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--mute);overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.pct{font-weight:800;font-variant-numeric:tabular-nums}.acc{color:var(--acc)}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.bar{display:flex;height:6px;gap:2px;border-radius:3px;overflow:hidden}.bar i{display:block}.bar .a{background:var(--acc);opacity:.35}.bar .b{background:var(--acc)}
+.sbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.sbar i{display:block;height:100%;background:var(--acc)}
+.strip{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.chip{flex:none;background:var(--card);border-radius:14px;padding:10px 12px;min-width:132px;cursor:pointer}
+.seg{display:flex;background:var(--line);border-radius:9px;padding:2px;margin:0 0 12px}.seg button{flex:1;border:0;background:none;color:var(--ink);padding:6px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer}.seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kv div{background:var(--card);border-radius:12px;padding:10px;text-align:center}.kv b{display:block;font-size:20px}
+.tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--acc-soft);color:var(--acc);white-space:nowrap}
+#tabs{display:flex;flex:none;border-top:1px solid var(--line);background:var(--card);padding:6px 0 calc(8px + env(safe-area-inset-bottom))}
+#tabs button{flex:1;border:0;background:none;color:var(--mute);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:2px 0}
+#tabs button.on{color:var(--acc)}#tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.note{font-size:12px;color:var(--mute);margin:8px 4px}
+.lines{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;padding:10px 12px;border-top:1px solid var(--line);font-size:13px}.lines:first-child{border-top:0}.lines .l{grid-column:1/-1;font-size:11px;color:var(--mute);font-weight:700}
+.empty{padding:40px 0;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="phone">
+  <div id="status"><span id="clock">9:41</span><span>LineCombos</span></div>
+  <div id="nav"></div>
+  <div id="view"><div class="empty">Loading…</div></div>
+  <div id="tabs"></div>
+</div>
+<script>
+var D = {}, stack = [], tab = "home";
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+var pct = function (x) { return x == null ? "–" : x >= 0.995 ? "99%" : x < 0.01 ? "<1%" : Math.round(x * 100) + "%"; };
+function load(n) { return window.__SNAP__ ? Promise.resolve(window.__SNAP__[n]) : fetch("/data/" + n + ".json").then(function (r) { return r.json(); }); }
+var TM = {};
+function color(a) { return (TM[a] && TM[a].color) || "hsl(" + ([].reduce.call(a, function (h, c) { return (h * 31 + c.charCodeAt(0)) % 360; }, 7)) + ",50%,38%)"; }
+function badge(a, sz) { sz = sz || 36; return '<div class="badge" style="width:' + sz + 'px;height:' + sz + 'px;background:' + color(a) + ';font-size:' + Math.round(sz * .3) + 'px">' + esc(a) + '<img alt="" src="https://assets.nhle.com/logos/nhl/svg/' + esc(a) + '_light.svg" onerror="this.remove()"></div>'; }
+function mug(id, team) { return id ? '<div class="av"><img alt="" loading="lazy" src="https://assets.nhle.com/mugs/nhl/20262027/' + esc(team) + '/' + id + '.png" onerror="this.remove()"></div>' : badge(team, 40); }
+function ini(n) { return String(n).split(" ").map(function (w) { return w[0]; }).slice(0, 2).join(""); }
+function when(iso) { var d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+function day(iso) { var d = new Date(iso + "T12:00:00"); var t = new Date(); if (d.toDateString() === t.toDateString()) return "Today"; return d.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" }); }
+function ago(iso) { var m = Math.max(0, (Date.now() - new Date(iso)) / 6e4); return m < 60 ? Math.round(m) + "m" : m < 1440 ? Math.round(m / 60) + "h" : Math.round(m / 1440) + "d"; }
+function row(inner, go, extra) { return '<div class="row' + (go ? " chev" : " flat") + '"' + (go ? ' data-go="' + esc(go) + '"' : "") + (extra || "") + '>' + inner + '</div>'; }
+function card(rows) { return '<div class="card">' + rows + '</div>'; }
+
+var ICON = {
+  home: '<path d="M3 11l9-8 9 8M5 10v10h14V10"/>', games: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', teams: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M16 5a3 3 0 010 6M21 20c0-2.6-1.4-4.6-3.5-5.4"/>',
+  awards: '<path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3M12 14v4M8 20h8"/>', more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>' };
+var TABS = [["home", "Home"], ["games", "Games"], ["teams", "Teams"], ["awards", "Awards"], ["more", "More"]];
+
+function gameRow(g) {
+  var fin = g.result, fav = g.home >= 0.5 ? g.h.abbr : g.a.abbr;
+  var mid = fin ? '<span class="pct" style="font-size:18px">' + fin.ag + ' – ' + fin.hg + '</span>' : '<span class="s t">' + esc(when(g.start)) + '</span>';
+  var foot = fin ? ((g.home >= 0.5) === fin.homeWon ? '<span class="ok">Picked right</span>' : '<span class="s">Missed</span>') : '<span class="s">' + esc(fav) + ' favoured</span>';
+  return '<div class="row chev" data-go="game:' + g.id + '" style="display:block;padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' + badge(g.a.abbr) + mid + badge(g.h.abbr) + '</div>' +
+    '<div class="bar" style="margin:10px 0 6px"><i class="a" style="width:' + (100 - g.home * 100) + '%"></i><i class="b" style="width:' + g.home * 100 + '%"></i></div><div style="display:flex;justify-content:space-between;font-size:13px"><b>' + pct(1 - g.home) + '</b>' + foot + '<b>' + pct(g.home) + '</b></div></div>';
+}
+function upcoming() { return D.games.filter(function (g) { return g.state !== "OFF" && g.state !== "FINAL"; }); }
+
+var S = {
+  home: function () {
+    var up = upcoming().slice(0, 8), hart = D.awards.voted.hart[0], odds = D.app.teams.slice().sort(function (a, b) { return b.odds.cup - a.odds.cup; }).slice(0, 5);
+    return '<h1>LineCombos</h1><h2 style="margin-top:0">Next games</h2><div class="strip">' + up.map(function (g) {
+      var fav = g.home >= 0.5 ? g.h.abbr : g.a.abbr, p = Math.max(g.home, 1 - g.home);
+      return '<div class="chip" data-go="game:' + g.id + '"><div style="display:flex;gap:6px;align-items:center">' + badge(g.a.abbr, 28) + '<span class="s">at</span>' + badge(g.h.abbr, 28) + '</div><div class="s" style="margin-top:6px">' + esc(when(g.start)) + '</div><div class="t">' + esc(fav) + ' ' + pct(p) + '</div></div>';
+    }).join("") + '</div>' +
+      '<h2>Award race</h2>' + card(row(mug(hart.id, hart.team) + '<div class="grow"><div class="s">Hart Trophy front-runner</div><div class="t">' + esc(hart.name) + '</div><div class="s">' + esc(hart.team) + ' · ' + esc(hart.line) + '</div></div><div class="pct acc">' + pct(hart.share) + '</div>', "award:hart")) +
+      '<h2>Stanley Cup odds</h2>' + card(odds.map(function (t) { return row(badge(t.abbrev, 30) + '<div class="grow t">' + esc(t.common) + '</div><div class="pct">' + pct(t.odds.cup) + '</div>', "team:" + t.abbrev); }).join("")) +
+      '<h2>Latest moves</h2>' + card(D.app.moves.slice(0, 4).map(function (m) { return row(badge(m.team, 30) + '<div class="grow"><div class="ell">' + esc(m.text) + '</div><div class="s">' + esc(m.kind) + ' · ' + esc(m.date) + '</div></div>', "moves"); }).join("")) +
+      '<h2>Injury report</h2>' + card(D.app.injuries.slice(0, 4).map(function (i) { return row(mug(i.id, i.team) + '<div class="grow"><div class="t">' + esc(i.name) + '</div><div class="s">' + esc(i.team) + ' · ' + esc(i.status) + (i.body ? ' · ' + esc(i.body) : '') + '</div></div>', "injuries"); }).join(""));
+  },
+  games: function () {
+    var by = {}; D.games.forEach(function (g) { (by[g.date] = by[g.date] || []).push(g); });
+    return '<h1>Games</h1>' + Object.keys(by).sort().map(function (d) { return '<h2>' + esc(day(d)) + '</h2>' + card(by[d].map(gameRow).join("")); }).join("") + '<div class="note">Win chances come from the site model: expected goals, goalies, lineups and rest. It is right about 6 in 10 games, and about 8 in 10 of its most confident picks.</div>';
+  },
+  game: function (id) {
+    var g = D.games.filter(function (x) { return x.id == id; })[0]; if (!g) return '<div class="empty">Game not found</div>';
+    var side = function (s, p) { return '<div style="text-align:center;flex:1">' + badge(s.abbr, 56) + '<div class="t" style="margin-top:6px">' + esc(s.abbr) + '</div><div class="s">' + (s.goalie && s.goalie.name ? esc(s.goalie.name) + '<br><span class="' + (s.goalie.status === "confirmed" ? "ok" : "") + '">' + esc(s.goalie.status) + '</span>' : "Goalie TBD") + '</div><div class="pct" style="font-size:26px;margin-top:6px">' + pct(p) + '</div></div>'; };
+    var top = (g.top || []).map(function (t) { return '<div class="row flat"><div class="grow t">' + g.a.abbr + ' ' + t.a + ' – ' + t.h + ' ' + g.h.abbr + '</div><div class="pct">' + pct(t.p) + '</div></div>'; }).join("");
+    var sc = function (s) { return (s.scorers || []).map(function (p) { return '<div class="row flat" style="padding:8px 14px"><div class="grow">' + esc(p.name) + ' <span class="s">' + esc(s.abbr) + ' · ' + esc(p.pos) + '</span></div><div class="pct">' + pct(p.p) + '</div></div>'; }).join(""); };
+    return '<h1 style="font-size:24px">' + esc(g.a.abbr) + ' at ' + esc(g.h.abbr) + '</h1><div class="s" style="margin:-8px 0 12px">' + esc(day(g.date)) + ' · ' + esc(when(g.start)) + '</div>' +
+      card('<div style="display:flex;padding:16px 8px;gap:8px">' + side(g.a, 1 - g.home) + side(g.h, g.home) + '</div><div style="padding:0 16px 16px"><div class="bar"><i class="a" style="width:' + (100 - g.home * 100) + '%"></i><i class="b" style="width:' + g.home * 100 + '%"></i></div></div>') +
+      '<h2>Expected goals</h2><div class="kv"><div><b>' + g.la.toFixed(2) + '</b><span class="s">' + esc(g.a.abbr) + '</span></div><div><b>' + (g.over55 != null ? pct(g.over55) : "–") + '</b><span class="s">Over 5.5</span></div><div><b>' + g.lh.toFixed(2) + '</b><span class="s">' + esc(g.h.abbr) + '</span></div></div>' +
+      (top ? '<h2>Most likely scores</h2>' + card(top) : "") + (sc(g.a) || sc(g.h) ? '<h2>Likely goal scorers</h2>' + card(sc(g.a) + sc(g.h)) : "") +
+      (g.result ? '<div class="note">Final: ' + g.a.abbr + ' ' + g.result.ag + ', ' + g.h.abbr + ' ' + g.result.hg + '. The model gave the winner ' + pct(g.result.homeWon ? g.home : 1 - g.home) + ' before the game.</div>' : "");
+  },
+  teams: function () {
+    var by = {}; D.app.teams.forEach(function (t) { (by[t.conf + " · " + t.div] = by[t.conf + " · " + t.div] || []).push(t); });
+    return '<h1>Teams</h1>' + Object.keys(by).sort().map(function (k) { return '<h2>' + esc(k) + '</h2>' + card(by[k].sort(function (a, b) { return b.pts - a.pts; }).map(function (t) { return row(badge(t.abbrev) + '<div class="grow"><div class="t">' + esc(t.name) + '</div><div class="s">' + t.w + '-' + t.l + '-' + t.otl + ' · ' + t.pts + ' pts</div></div>', "team:" + t.abbrev); }).join("")); }).join("");
+  },
+  team: function (a) {
+    var t = TM[a]; if (!t) return '<div class="empty">Team not found</div>';
+    var nxt = t.next ? '<div class="row flat"><div class="grow"><div class="s">Next game</div><div class="t">' + (t.next.home ? "vs " : "at ") + esc(t.next.opp) + '</div></div><div class="s">' + esc(when(t.next.start)) + (t.next.b2b ? " · back-to-back" : "") + '</div></div>' : "";
+    var lst = t.last ? '<div class="row flat"><div class="grow"><div class="s">Last game</div><div class="t">' + (t.last.home ? "vs " : "at ") + esc(t.last.opp) + '</div></div><div class="t ' + (t.last.result === "W" ? "ok" : "bad") + '">' + esc(t.last.result) + ' ' + esc(t.last.score) + '</div></div>' : "";
+    var ln = function (title, list, n) { return list.length ? '<div class="lines"><div class="l">' + title + '</div>' + list.map(function (l, i) { return l.map(function (p) { return '<div class="ell">' + esc(p.n) + '</div>'; }).join("") + (n === 2 ? "<div></div>" : ""); }).join("") + '</div>' : ""; };
+    var inj = D.app.injuries.filter(function (i) { return i.team === a; }), mv = D.app.moves.filter(function (m) { return m.team === a; }).slice(0, 5), nw = D.app.news.filter(function (n) { return n.team === a; }).slice(0, 4);
+    return '<div style="display:flex;align-items:center;gap:14px;margin:4px 0 14px">' + badge(a, 64) + '<div><h1 style="font-size:26px;margin:0">' + esc(t.name) + '</h1><div class="s">' + esc(t.div) + ' · #' + t.rank + ' in the league</div></div></div>' +
+      '<div class="kv"><div><b>' + t.w + '-' + t.l + '-' + t.otl + '</b><span class="s">Record</span></div><div><b>' + t.pts + '</b><span class="s">Points</span></div><div><b>' + esc(t.l10) + '</b><span class="s">Last 10</span></div></div>' +
+      '<h2>Schedule</h2>' + card(nxt + lst) +
+      '<h2>Lines (last game)</h2><div class="card">' + ln("FORWARDS", t.lines, 3) + ln("DEFENCE", t.pairs, 2) + (t.goalie ? '<div class="lines"><div class="l">GOALIE · ' + esc(t.goalie.reason) + '</div><div>' + esc(t.goalie.n) + '</div></div>' : "") + '</div>' +
+      '<h2>Odds</h2><div class="kv"><div><b>' + pct(t.odds.playoffs) + '</b><span class="s">Playoffs</span></div><div><b>' + pct(t.odds.div) + '</b><span class="s">Division</span></div><div><b>' + pct(t.odds.cup) + '</b><span class="s">Cup</span></div></div>' +
+      (inj.length ? '<h2>Injuries</h2>' + card(inj.map(function (i) { return row(mug(i.id, i.team) + '<div class="grow"><div class="t">' + esc(i.name) + '</div><div class="s">' + esc(i.status) + (i.body ? ' · ' + esc(i.body) : '') + '</div></div>', ""); }).join("")) : "") +
+      (mv.length ? '<h2>Trades, signings and suspensions</h2>' + card(mv.map(function (m) { return row('<div class="grow"><div>' + esc(m.text) + '</div><div class="s">' + esc(m.kind) + ' · ' + esc(m.date) + '</div></div>', ""); }).join("")) : "") +
+      (nw.length ? '<h2>News</h2>' + card(nw.map(function (n) { return row('<div class="grow"><div>' + esc(n.text) + '</div><div class="s">' + esc(n.author) + ' · ' + ago(n.at) + '</div></div>', ""); }).join("")) : "");
+  },
+  awards: function () {
+    var A = D.awards, v = [["hart", "Hart Trophy"], ["vezina", "Vezina Trophy"], ["norris", "Norris Trophy"], ["calder", "Calder Trophy"], ["selke", "Selke Trophy"], ["lindsay", "Ted Lindsay Award"], ["byng", "Lady Byng Trophy"], ["adams", "Jack Adams Award"]];
+    var r = [["artRoss", "Art Ross · points"], ["richard", "Richard · goals"], ["presidents", "Presidents' Trophy"], ["jennings", "Fewest goals against"]];
+    var lead = function (c, t, share, k) { return row(mug(c.id, c.team) + '<div class="grow"><div class="s">' + t + '</div><div class="t">' + esc(c.name || c.team) + '</div><div class="s">' + esc(c.team) + (c.pos ? ' · ' + esc(c.pos) : '') + '</div></div><div class="pct ' + (share ? "acc" : "") + '">' + (share ? pct(c.share) : c.value) + '</div>', "award:" + k); };
+    return '<h1>Award race</h1><div class="note" style="margin-top:-8px">Voted awards are model estimates, not the real vote. Stat races are exact.</div><h2>Voted awards</h2>' + card(v.map(function (x) { return lead(A.voted[x[0]][0], x[1], true, x[0]); }).join("")) +
+      '<h2>Stat races</h2>' + card(r.map(function (x) { return lead(A.races[x[0]][0], x[1], false, x[0]); }).join("")) + '<h2>If the season ended today</h2>' + card(row('<div class="grow t">First All-Star Team</div>', "allstar:allStar") + row('<div class="grow t">All-Rookie Team</div>', "allstar:allRookie"));
+  },
+  award: function (k) {
+    var A = D.awards, list = A.voted[k] || A.races[k], shares = !!A.voted[k];
+    return '<h1 style="font-size:26px">' + esc(k.replace(/([A-Z])/g, " $1").replace(/^./, function (c) { return c.toUpperCase(); })) + '</h1>' + card(list.map(function (c, i) {
+      return row('<div class="s" style="width:14px">' + (i + 1) + '</div>' + mug(c.id, c.team) + '<div class="grow"><div class="t">' + esc(c.name || c.team) + '</div><div class="s">' + esc(c.line || "") + '</div>' + (shares ? '<div class="sbar" style="margin-top:6px"><i style="width:' + Math.max(3, c.share * 100) + '%"></i></div>' : "") + '</div><div class="pct">' + (shares ? pct(c.share) : c.value) + '</div>', "");
+    }).join(""));
+  },
+  allstar: function (k) {
+    return '<h1 style="font-size:26px">' + (k === "allStar" ? "First All-Star Team" : "All-Rookie Team") + '</h1>' + card(D.awards.teams[k].map(function (s) { var c = s[1]; return row('<div class="tag" style="width:34px;text-align:center">' + esc(s[0]) + '</div>' + mug(c.id, c.team) + '<div class="grow"><div class="t">' + esc(c.name) + '</div><div class="s">' + esc(c.line) + '</div></div>', ""); }).join(""));
+  },
+  more: function () {
+    var items = [["standings", "Standings", "By division, conference or league"], ["cup", "Stanley Cup odds", "Every team's chances"], ["goalies", "Starting goalies", "Confirmed and likely, tonight"], ["injuries", "Injuries", D.app.injuries.length + " players out"], ["moves", "Trades, signings and suspensions", "This season's wire"], ["news", "News", "Beat reporters and updates"], ["leaders", "League leaders", "Points, goals, assists"], ["draft", "Mock draft", "2027 consensus top 32"], ["wjc", "World Juniors", "Gold medal odds"]];
+    return '<h1>More</h1>' + card(items.map(function (i) { return row('<div class="grow"><div class="t">' + i[1] + '</div><div class="s">' + i[2] + '</div></div>', i[0]); }).join("")) + '<div class="note">Built ' + esc(new Date(D.app.builtAt).toLocaleString()) + '. Pull the site data any time; this prototype reads the same files the website does.</div>';
+  },
+  standings: function () {
+    var mode = D._st || "div", by = {};
+    D.app.teams.forEach(function (t) { var k = mode === "div" ? t.div : mode === "conf" ? t.conf : "NHL"; (by[k] = by[k] || []).push(t); });
+    return '<h1>Standings</h1><div class="seg">' + [["div", "Division"], ["conf", "Conference"], ["lg", "League"]].map(function (m) { return '<button data-st="' + m[0] + '" class="' + (mode === m[0] ? "on" : "") + '">' + m[1] + '</button>'; }).join("") + '</div>' +
+      Object.keys(by).sort().map(function (k) { return '<h2>' + esc(k) + '</h2>' + card(by[k].sort(function (a, b) { return b.pts - a.pts || a.gp - b.gp; }).map(function (t, i) { return row('<div class="s" style="width:16px">' + (i + 1) + '</div>' + badge(t.abbrev, 30) + '<div class="grow t ell">' + esc(t.name) + '</div><div class="s">' + t.w + '-' + t.l + '-' + t.otl + '</div><div class="pct" style="width:30px;text-align:right">' + t.pts + '</div>', "team:" + t.abbrev); }).join("")); }).join("");
+  },
+  cup: function () {
+    var l = D.app.teams.slice().sort(function (a, b) { return b.odds.cup - a.odds.cup; }), mx = l[0].odds.cup;
+    return '<h1>Cup odds</h1><div class="note" style="margin-top:-8px">10,000 simulations of the rest of the season and playoffs.</div>' + card(l.map(function (t, i) { return row('<div class="s" style="width:18px">' + (i + 1) + '</div>' + badge(t.abbrev, 30) + '<div class="grow"><div class="t">' + esc(t.common) + '</div><div class="sbar" style="margin-top:5px"><i style="width:' + t.odds.cup / mx * 100 + '%"></i></div></div><div class="pct">' + pct(t.odds.cup) + '</div>', "team:" + t.abbrev); }).join(""));
+  },
+  goalies: function () {
+    var g = upcoming().slice(0, 12), s = function (x) { return x.goalie && x.goalie.name ? '<div class="grow"><div class="s">' + esc(x.abbr) + '</div><div class="t ell">' + esc(x.goalie.name) + '</div><div class="s ' + (x.goalie.status === "confirmed" ? "ok" : "") + '">' + esc(x.goalie.status) + (x.goalie.sv ? ' · .' + String(Math.round(x.goalie.sv * 1000)) : '') + '</div></div>' : '<div class="grow"><div class="s">' + esc(x.abbr) + '</div><div class="s">TBD</div></div>'; };
+    return '<h1>Starting goalies</h1>' + g.map(function (x) { return '<div class="card" style="margin-bottom:10px"><div class="row flat">' + s(x.a) + '<div class="s">at</div>' + s(x.h) + '</div></div>'; }).join("");
+  },
+  injuries: function () {
+    return '<h1>Injuries</h1>' + card(D.app.injuries.map(function (i) { return row(mug(i.id, i.team) + '<div class="grow"><div class="t">' + esc(i.name) + ' <span class="s">' + esc(i.pos) + '</span></div><div class="s">' + esc(i.team) + ' · ' + esc(i.status) + (i.body ? ' · ' + esc(i.body) : '') + (i.ret ? ' · back ~' + esc(i.ret) : '') + '</div>' + (i.note && i.note.length > 8 ? '<div class="s ell" style="margin-top:2px">' + esc(i.note) + '</div>' : '') + '</div>', ""); }).join(""));
+  },
+  moves: function () {
+    var K = { trade: "warn", sign: "ok", suspension: "bad", fine: "bad" };
+    return '<h1>Moves</h1>' + (D.app.discipline.length ? '<h2>Discipline</h2>' + card(D.app.discipline.slice(0, 4).map(function (d) { return row(badge(d.team, 30) + '<div class="grow"><div>' + esc(d.title) + '</div><div class="s">' + esc(d.date) + '</div></div>', ""); }).join("")) : "") +
+      '<h2>Transactions</h2>' + card(D.app.moves.map(function (m) { return row(badge(m.team, 30) + '<div class="grow"><div>' + esc(m.text) + '</div><div class="s"><span class="' + (K[m.kind] || "") + '">' + esc(m.kind) + '</span> · ' + esc(m.date) + '</div></div>', ""); }).join(""));
+  },
+  news: function () {
+    return '<h1>News</h1>' + card(D.app.news.map(function (n) { return row(badge(n.team, 30) + '<div class="grow"><div>' + esc(n.text) + '</div><div class="s">' + esc(n.author) + ' · ' + ago(n.at) + '</div></div>', ""); }).join(""));
+  },
+  leaders: function () {
+    var L = D.app.leaders, k = D._lk || "points";
+    return '<h1>Leaders</h1><div class="seg">' + [["points", "Points"], ["goals", "Goals"], ["assists", "Assists"]].map(function (m) { return '<button data-lk="' + m[0] + '" class="' + (k === m[0] ? "on" : "") + '">' + m[1] + '</button>'; }).join("") + '</div>' + card((L[k] || []).map(function (p, i) { return row('<div class="s" style="width:16px">' + (i + 1) + '</div>' + mug(p.id, p.team) + '<div class="grow"><div class="t">' + esc(p.n) + '</div><div class="s">' + esc(p.team) + '</div></div><div class="pct">' + p.v + '</div>', ""); }).join(""));
+  },
+  draft: function () {
+    return '<h1>Mock draft</h1><div class="note" style="margin-top:-8px">Consensus of public rankings and mock drafts for the 2027 class.</div>' + card(D.app.mockDraft.map(function (p) { return row('<div class="pct acc" style="width:26px">' + p.rank + '</div><div class="grow"><div class="t">' + esc(p.name) + '</div><div class="s">' + esc(p.club) + '</div></div><div class="tag">' + esc(p.pos) + '</div>', ""); }).join(""));
+  },
+  wjc: function () {
+    var mx = D.app.wjc[0].gold;
+    return '<h1>World Juniors</h1><div class="note" style="margin-top:-8px">Gold medal odds from the site forecast.</div>' + card(D.app.wjc.map(function (t) { return row('<div class="grow"><div class="t">' + esc(t.code) + ' <span class="s">Group ' + esc(t.group) + '</span></div><div class="sbar" style="margin-top:5px"><i style="width:' + t.gold / mx * 100 + '%"></i></div></div><div class="pct">' + pct(t.gold) + '</div>', ""); }).join(""));
+  }
+};
+var TITLE = { home: "", games: "", teams: "", awards: "", more: "" };
+function render() {
+  var cur = stack[stack.length - 1], parts = cur.split(":"), name = parts[0], arg = parts[1];
+  var v = document.getElementById("view");
+  v.innerHTML = S[name](arg); v.scrollTop = 0;
+  document.getElementById("nav").innerHTML = stack.length > 1 ? '<button id="back"><svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg> Back</button>' : "";
+  document.getElementById("tabs").innerHTML = TABS.map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (t[0] === tab ? "on" : "") + '"><svg viewBox="0 0 24 24">' + ICON[t[0]] + '</svg>' + t[1] + '</button>'; }).join("");
+}
+function go(s) { stack.push(s); render(); }
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-go],[data-tab],[data-st],[data-lk],#back"); if (!el) return;
+  if (el.id === "back") { stack.pop(); render(); }
+  else if (el.dataset.tab) { tab = el.dataset.tab; stack = [tab]; render(); }
+  else if (el.dataset.st) { D._st = el.dataset.st; render(); }
+  else if (el.dataset.lk) { D._lk = el.dataset.lk; render(); }
+  else go(el.dataset.go);
+});
+Promise.all([load("predictions"), load("awards"), load("app")]).then(function (r) {
+  D.games = Object.keys(r[0].games).map(function (k) { return r[0].games[k]; }).sort(function (a, b) { return (a.start || "").localeCompare(b.start || "") || a.id - b.id; });
+  D.awards = r[1]; D.app = r[2]; D.app.teams.forEach(function (t) { TM[t.abbrev] = t; });
+  stack = ["home"]; render();
+}).catch(function (e) { document.getElementById("view").innerHTML = '<div class="empty">Couldn\'t load the data. Check your connection.</div>'; });
+setInterval(function () { var d = new Date(); document.getElementById("clock").textContent = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }, 15000);
+</script>
+</body>
+</html>
