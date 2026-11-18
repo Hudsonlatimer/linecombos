@@ -32,8 +32,10 @@
       const order = (g) => (LIVE.has(g.gameState) ? 0 : FINAL.has(g.gameState) ? 2 : 1);
       games.sort((a, b) => order(a) - order(b) || a.startTimeUTC.localeCompare(b.startTimeUTC));
       const n = games.filter((g) => LIVE.has(g.gameState)).length;
+      const keepLeft = bar.querySelector(".lb-scroll")?.scrollLeft ?? 0; // a refresh shouldn't snap the strip back to the start
       bar.innerHTML = `<div class="wrap lb-in"><span class="lb-lbl">${n ? `<span class="live-dot">${n} live</span>` : "Today"}</span><div class="lb-scroll">${games.map(chip).join("")}</div></div>`;
       bar.hidden = false;
+      const sc = bar.querySelector(".lb-scroll"); if (sc) sc.scrollLeft = keepLeft;
       window.LC?.swapLogos?.();
     } catch {}
   }

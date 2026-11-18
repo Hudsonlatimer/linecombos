@@ -1166,3 +1166,14 @@ a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(
 /* Nav: wrap onto a second row instead of scrolling off-screen and getting cut off */
 .nav { flex-wrap: wrap; overflow: visible; row-gap: 4px; }
 .nav a { flex: none; }
+
+/* Horizontal strips: arrows and drag */
+.hs-host { position: relative; min-width: 0; width: 100%; }
+.lb-scroll + .hs-arrow, .lb-in > .hs-host { flex: 1; min-width: 0; }
+.hs-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line-2, var(--line)); background: var(--panel); color: var(--ink); font-size: 20px; line-height: 1; display: grid; place-items: center; padding: 0 0 2px; cursor: pointer; box-shadow: var(--shadow); }
+.hs-arrow:hover { border-color: var(--accent); color: var(--accent); }
+.hs-arrow[hidden] { display: none; }
+.hs-l { left: 2px; } .hs-r { right: 2px; }
+.score-strip.hs-host, .hs-host > .score-strip { cursor: grab; } .hs-drag { cursor: grabbing !important; scroll-snap-type: none !important; user-select: none; }
+.hs-drag * { pointer-events: none; }
+@media (hover: none) { .hs-arrow { display: none; } }

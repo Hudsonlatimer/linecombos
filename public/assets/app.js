@@ -245,3 +245,52 @@
     tick(); setInterval(tick, 30000);
   });
 })();
+
+/* Horizontal strips (score bar, home games, wire): wheel scrolls sideways, drag to scroll, and arrow buttons when there is more to see. */
+(() => {
+  const SEL = ".lb-scroll, .score-strip, .wire-strip";
+  const mark = "data-hs";
+  function enhance(el) {
+    if (el.hasAttribute(mark)) return;
+    el.setAttribute(mark, "1");
+    // Wrap the strip so the arrows sit on it, not on whatever else shares its parent.
+    const host = document.createElement("div");
+    host.className = "hs-host";
+    el.replaceWith(host);
+    host.appendChild(el);
+    const mk = (dir) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = `hs-arrow hs-${dir}`; b.setAttribute("aria-label", dir === "l" ? "Scroll left" : "Scroll right");
+      b.innerHTML = dir === "l" ? "&#8249;" : "&#8250;";
+      b.addEventListener("click", () => el.scrollBy({ left: (dir === "l" ? -1 : 1) * Math.max(160, el.clientWidth * 0.7), behavior: "smooth" }));
+      host.appendChild(b);
+      return b;
+    };
+    const L = mk("l"), R = mk("r");
+    const sync = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      L.hidden = el.scrollLeft < 4;
+      R.hidden = max < 4 || el.scrollLeft > max - 4;
+    };
+    el.addEventListener("scroll", sync, { passive: true });
+    new ResizeObserver(sync).observe(el);
+    new MutationObserver(sync).observe(el, { childList: true });
+    sync();
+    // Mouse wheel: turn up/down into sideways while the pointer is over the strip (only when it can scroll sideways).
+    el.addEventListener("wheel", (e) => {
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY) || el.scrollWidth <= el.clientWidth) return;
+      const before = el.scrollLeft;
+      el.scrollLeft += e.deltaY;
+      if (el.scrollLeft !== before) e.preventDefault();
+    }, { passive: false });
+    // Drag with the mouse; a drag doesn't also click the game under it.
+    let down = null, moved = false;
+    el.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && e.button === 0) { down = { x: e.clientX, left: el.scrollLeft }; moved = false; } });
+    addEventListener("pointermove", (e) => { if (!down) return; const dx = e.clientX - down.x; if (Math.abs(dx) > 5) { moved = true; el.classList.add("hs-drag"); } if (moved) el.scrollLeft = down.left - dx; });
+    addEventListener("pointerup", () => { if (down) { down = null; setTimeout(() => el.classList.remove("hs-drag"), 0); } });
+    el.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  }
+  const scan = () => document.querySelectorAll(SEL).forEach(enhance);
+  scan();
+  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+})();
