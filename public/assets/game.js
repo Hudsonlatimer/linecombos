@@ -200,12 +200,27 @@
   async function liveFromNhl() {
     core ??= await import("/assets/core/game.mjs");
     const j = (u) => fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 10000), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-    const [box, pbp, sh] = await Promise.all([j(`/live/box/${id}/`), j(`/live/pbp/${id}/`), j(`/live/shifts/${id}/`)]);
-    if (!box || ["FUT", "PRE"].includes(box.gameState)) return null;
+    let [box, pbp, sh] = await Promise.all([j(`/live/box/${id}/`), j(`/live/pbp/${id}/`), j(`/live/shifts/${id}/`)]);
+    // Without the play-by-play the score would show but every goal, shot and period would silently go missing, so ask again,
+    // and if it still isn't there keep whatever is on screen instead of drawing a half-empty game.
+    if (box && !pbp) pbp = await j(`/live/pbp/${id}/`);
+    if (!box || !pbp || ["FUT", "PRE"].includes(box.gameState)) return null;
     return core.gameJson({ box, pbp, shifts: sh?.data ?? [] });
   }
 
+  // The page may have been built before puck drop, so its saved state can say FUT for a game that is on now.
+  const startMs = Date.parse(document.querySelector("[data-wp]")?.dataset.start ?? "") || 0;
+  const maybeLive = () => LIVE.has(root.dataset.state) || (!!startMs && Date.now() > startMs - 3e5 && !FINAL.has(root.dataset.state));
+  let tries = 0;
   async function refresh() {
+    const had = !!G;
+    await refreshOnce();
+    // Nothing to show yet (the page was built before this game started): try again quickly a few times, don't wait for the slow poll.
+    if (!G && maybeLive() && tries++ < 6) setTimeout(refresh, 2500 * Math.min(tries, 4));
+    if (!G && tries >= 6) { const w = document.getElementById("gc-wait"); if (w) w.textContent = "Couldn't load the live game yet. It will keep trying."; }
+    void had;
+  }
+  async function refreshOnce() {
     if (!liveApi) {
       try { const n = await liveFromNhl(); if (n) { if (G?.updated && n.updated === G.updated) return; G = n; render(); return; } } catch (e) { console.warn("live build failed", e); }
     }
@@ -216,6 +231,7 @@
     } catch {}
   }
 
+  if (!G && maybeLive()) { const b = document.getElementById("gc-body"); if (b) b.insertAdjacentHTML("afterbegin", '<p class="muted" id="gc-wait">Loading the live game: goals, lines and shots…</p>'); }
   render();
   const state = G?.state ?? root.dataset.state;
   if (!FINAL.has(state)) {
