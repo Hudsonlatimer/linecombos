@@ -1208,3 +1208,7 @@ a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(
 .mt-game.is-live { background: color-mix(in srgb, var(--live, #e5484d) 12%, var(--panel)); } .mt-game:hover { text-decoration: none; }
 .mt-sc { font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; } .mt-sc i { font-style: normal; color: var(--muted); padding: 0 3px; } .mt-st { margin-left: auto; color: var(--muted); font-size: 12px; }
 .mt-empty { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--panel); border: 1px dashed var(--line-2, var(--line)); border-radius: 14px; padding: 12px 16px; } .mt-empty span { color: var(--muted); font-size: 13px; flex: 1; min-width: 200px; }
+
+/* ---------- Live standings ---------- */
+.tbl td.flash { animation: st-flash 2.4s ease-out; }
+@keyframes st-flash { from { background: color-mix(in srgb, var(--accent) 28%, transparent); } }

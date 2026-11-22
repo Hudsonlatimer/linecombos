@@ -354,10 +354,10 @@ export function newsPage(ctx) {
 // ---------- Standings ----------
 export function standingsPage(ctx) {
   const all = Object.values(ctx.T);
-  const row = (t, i, mark = "") => `<tr${mark ? ` class="${mark}"` : ""}><td class="n">${i}</td><td><a class="team-cell" href="${teamUrl(t)}">${logo(t, 22)}<span class="full">${esc(t.name)}</span><span class="abbr">${esc(t.abbrev)}</span></a></td>
+  const row = (t, i, mark = "") => `<tr data-team="${esc(t.abbrev)}"${mark ?` class="${mark}"` : ""}><td class="n">${i}</td><td><a class="team-cell" href="${teamUrl(t)}">${logo(t, 22)}<span class="full">${esc(t.name)}</span><span class="abbr">${esc(t.abbrev)}</span></a></td>
     <td class="n">${t.gp}</td><td class="n">${t.w}</td><td class="n">${t.l}</td><td class="n">${t.otl}</td><td class="n"><b>${t.pts}</b></td><td class="n">${pct(t.ptsPct)}</td><td class="n">${t.rw}</td><td class="n">${t.gf}</td><td class="n">${t.ga}</td><td class="n ${t.diff > 0 ? "up" : t.diff < 0 ? "down" : ""}">${signed(t.diff)}</td><td class="n">${esc(t.l10)}</td><td class="n">${esc(t.streak)}</td></tr>`;
   const head = `<thead><tr><th class="n">#</th><th>Team</th><th class="n">GP</th><th class="n">W</th><th class="n">L</th><th class="n">OTL</th><th class="n">PTS</th><th class="n">P%</th><th class="n">RW</th><th class="n">GF</th><th class="n">GA</th><th class="n">DIFF</th><th class="n">L10</th><th class="n">STRK</th></tr></thead>`;
-  const table = (ts, marks = () => "") => `<div class="table-wrap"><table class="tbl sortable">${head}<tbody>${ts.map((t, i) => row(t, i + 1, marks(t, i))).join("")}</tbody></table></div>`;
+  const table = (ts, marks = () => "", seq = "") => `<div class="table-wrap"><table class="tbl sortable"${seq ? ` data-seq="${seq}"` : ""}>${head}<tbody>${ts.map((t, i) => row(t, i + 1, marks(t, i))).join("")}</tbody></table></div>`;
   const divs = {};
   for (const t of all) (divs[t.div] ??= []).push(t);
   const confs = {};
@@ -370,10 +370,11 @@ export function standingsPage(ctx) {
   }).join("");
   const body = `<h1>NHL standings</h1>
   <div class="tabs" role="tablist"><button class="tab on" data-tab="div">Division</button><button class="tab" data-tab="wc">Wild card</button><button class="tab" data-tab="lg">League</button></div>
-  <div class="tab-panel" data-panel="div">${Object.entries(divs).sort().map(([d, ts]) => `<section class="card"><h2>${esc(d)}</h2>${table(ts.sort((a, b) => a.divSeq - b.divSeq))}</section>`).join("")}</div>
+  <div class="tab-panel" data-panel="div">${Object.entries(divs).sort().map(([d, ts]) => `<section class="card"><h2>${esc(d)}</h2>${table(ts.sort((a, b) => a.divSeq - b.divSeq), undefined, "divisionSequence")}</section>`).join("")}</div>
   <div class="tab-panel" data-panel="wc" hidden>${wildcard}</div>
-  <div class="tab-panel" data-panel="lg" hidden><section class="card">${table([...all].sort((a, b) => a.leagueSeq - b.leagueSeq))}</section></div>`;
-  return page({ site: ctx.site, title: "NHL standings", description: "NHL standings by division, wild card and league.", path: "/standings/", active: "/standings/", body });
+  <div class="tab-panel" data-panel="lg" hidden><section class="card">${table([...all].sort((a, b) => a.leagueSeq - b.leagueSeq), undefined, "leagueSequence")}</section></div>
+  <p class="src-note" id="st-live">Numbers update from the NHL while you have this page open.</p>`;
+  return page({ site: ctx.site, title: "NHL standings", description: "NHL standings by division, wild card and league.", path: "/standings/", active: "/standings/", body, scripts: ["/assets/standings.js"] });
 }
 
 // ---------- Schedule ----------

@@ -359,9 +359,9 @@ await write("vercel.json", JSON.stringify({
     { source: "/live/player/:id/", destination: "https://api-web.nhle.com/v1/player/:id/landing" },
     { source: "/live/box/:id/", destination: "https://api-web.nhle.com/v1/gamecenter/:id/boxscore" },
     { source: "/live/shifts/:id/", destination: "https://api.nhle.com/stats/rest/en/shiftcharts?cayenneExp=gameId=:id" },
-    { source: "/live/scorenow/", destination: "https://api-web.nhle.com/v1/score/now" },
-    { source: "/live/standings/", destination: "https://api-web.nhle.com/v1/standings/now" },
-    { source: "/live/club/:abbr/", destination: "https://api-web.nhle.com/v1/club-stats/:abbr/now" },
+    // Dated destinations only: the NHL's "now" endpoints redirect, and browsers block that cross-site.
+    { source: "/live/standings/:date/", destination: "https://api-web.nhle.com/v1/standings/:date" },
+    { source: "/live/club/:abbr/", destination: `https://api-web.nhle.com/v1/club-stats/:abbr/${league.seasonId}/2` },
     { source: "/live/skater/:report/", destination: "https://api.nhle.com/stats/rest/en/skater/:report" },
     { source: "/live/goalie/:report/", destination: "https://api.nhle.com/stats/rest/en/goalie/:report" },
   ],
