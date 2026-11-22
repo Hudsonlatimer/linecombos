@@ -1177,3 +1177,34 @@ a.pill:hover, a.pill:focus-visible { background: var(--accent-soft); color: var(
 .score-strip.hs-host, .hs-host > .score-strip { cursor: grab; } .hs-drag { cursor: grabbing !important; scroll-snap-type: none !important; user-select: none; }
 .hs-drag * { pointer-events: none; }
 @media (hover: none) { .hs-arrow { display: none; } }
+
+/* ---------- Live layer: favourites, alerts, My teams ---------- */
+.fav-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer; vertical-align: middle; transition: color .15s, border-color .15s, background .15s, transform .15s; }
+.fav-btn svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.fav-btn:hover { color: var(--accent); border-color: var(--accent); }
+.fav-btn.on { color: #f5b400; border-color: color-mix(in srgb, #f5b400 55%, var(--line)); background: color-mix(in srgb, #f5b400 14%, var(--panel)); }
+.fav-btn.on svg { fill: currentColor; }
+.fav-btn:active { transform: scale(.9); }
+.fav-hero { margin-left: 8px; width: 38px; height: 38px; }
+.team-tile { position: relative; } .fav-tile { position: absolute; top: 8px; left: 8px; z-index: 2; width: 28px; height: 28px; }
+.fav-tile svg { width: 15px; height: 15px; }
+.is-fav { box-shadow: 0 0 0 1px color-mix(in srgb, #f5b400 60%, transparent) inset; }
+#lc-bell { position: relative; } .bell-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--live, #e5484d); box-shadow: 0 0 0 2px var(--panel); }
+#lc-bell[data-mode="all"] .bell-dot { background: var(--accent); }
+#lc-toasts { position: fixed; z-index: 90; right: max(14px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; width: min(380px, calc(100vw - 28px)); pointer-events: none; }
+.lc-toast { pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line-2, var(--line)); box-shadow: 0 10px 30px rgba(0,0,0,.28); color: var(--ink); text-decoration: none; animation: lc-in .25s ease-out; position: relative; }
+.lc-toast:hover { text-decoration: none; border-color: var(--accent); }
+.lc-toast img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--soft); flex: none; }
+.lc-tx { display: flex; flex-direction: column; min-width: 0; flex: 1; } .lc-tx b { font-size: 14px; } .lc-tx span { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+.lc-goal { border-left: 4px solid var(--live, #e5484d); } .lc-final { border-left: 4px solid var(--muted); } .lc-start { border-left: 4px solid var(--accent); } .lc-info { border-left: 4px solid var(--accent); }
+.lc-x { border: 0; background: none; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px; flex: none; }
+@keyframes lc-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lc-toast { animation: none; } }
+.my-teams { margin: 0 0 18px; } .mt-h { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 8px; font-size: 15px; } .mt-h .more { font-size: 12px; font-weight: 500; }
+.mt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.mt-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+.mt-top { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; } .mt-top:hover { text-decoration: none; } .mt-top b { display: block; } .mt-top small { color: var(--muted); font-size: 12px; }
+.mt-game { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink); background: var(--soft); border-radius: 10px; padding: 7px 10px; text-decoration: none; }
+.mt-game.is-live { background: color-mix(in srgb, var(--live, #e5484d) 12%, var(--panel)); } .mt-game:hover { text-decoration: none; }
+.mt-sc { font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; } .mt-sc i { font-style: normal; color: var(--muted); padding: 0 3px; } .mt-st { margin-left: auto; color: var(--muted); font-size: 12px; }
+.mt-empty { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--panel); border: 1px dashed var(--line-2, var(--line)); border-radius: 14px; padding: 12px 16px; } .mt-empty span { color: var(--muted); font-size: 13px; flex: 1; min-width: 200px; }

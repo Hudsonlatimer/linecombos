@@ -287,7 +287,7 @@ export function teamPage(ctx, t) {
   ${t.accent ? `<style>:root{--team:${t.accent}}</style>` : ""}
   <section class="team-head"${t.accent ? ` style="--team:${attr(t.accent)}"` : ""}>
     <div class="th-logo">${logo(t, 72)}</div>
-    <div class="th-main"><h1>${esc(t.name)}</h1>
+    <div class="th-main"><h1>${esc(t.name)} <span class="fav-slot" data-team="${attr(t.abbrev)}"></span></h1>
       <p class="muted">${esc(t.record)} · ${t.pts} pts · ${esc(t.div)} #${t.divSeq} · L10 ${esc(t.l10)}${t.streak ? ` · ${esc(t.streak)}` : ""}</p>
       ${nextG ? `<p class="next">Next: ${nextG.home ? "vs" : "@"} <b>${esc(nextG.opp)}</b> · ${["LIVE", "CRIT"].includes(nextG.state) ? '<span class="live-dot">Live now</span>' : `${esc(fmtDate(nextG.date))} ${localTime(nextG.startUTC)}`} ${nextG.b2b ? pill("Back-to-back", "warn") : ""}</p>` : ""}
     </div>
