@@ -27,10 +27,14 @@ export const STAGES = {
 export const stage = (key, extra = "") => `<span class="stage stage-${key}" title="${attr(STAGES[key]?.tip ?? "")}">${esc(STAGES[key]?.label ?? key)}${extra ? ` <span class="stage-x">${esc(extra)}</span>` : ""}</span>`;
 export const pill = (text, cls = "") => `<span class="pill ${cls}">${esc(text)}</span>`;
 
+// Main links stay in the bar; the rest sit under "More" so the bar never overflows.
 const NAV = [
-  ["/", "Home"], ["/nhl/", "Lineups"], ["/goalies/", "Goalies"], ["/injuries/", "Injuries"], ["/news/", "News"], ["/moves/", "Moves"], ["/standings/", "Standings"], ["/predictions/", "Predictions"], ["/cup/", "Cup odds"],
-  ["/schedule/", "Schedule"], ["/stats/", "Stats"], ["/awards/", "Awards"], ["/records/", "Records"], ["/prospects/", "Mock draft"], ["/wjc/", "World Juniors"],
+  ["/", "Home"], ["/scores/", "Scores"], ["/nhl/", "Lineups"], ["/goalies/", "Goalies"], ["/standings/", "Standings"], ["/predictions/", "Predictions"], ["/stats/", "Stats"], ["/news/", "News"],
 ];
+const NAV_MORE = [
+  ["/injuries/", "Injuries"], ["/moves/", "Trades & moves"], ["/cup/", "Cup odds"], ["/schedule/", "Schedule"], ["/awards/", "Awards"], ["/records/", "Records"], ["/prospects/", "Mock draft"], ["/wjc/", "World Juniors"],
+];
+const navLink = (active) => ([href, label]) => `<a href="${href}"${active === href ? ' aria-current="page"' : ""}${href === "/wjc/" || href === "/scores/" ? ' class="nav-hot"' : ""}>${label}</a>`;
 
 // Cache-busting version for /assets: changes on every build.
 const V = (site) => site.builtAt.replace(/\D/g, "").slice(2, 12);
@@ -51,7 +55,8 @@ export function page({ site, title, description, path, body, active, scripts = [
 <meta property="og:type" content="website">
 <meta property="og:url" content="${attr(canonical)}">
 <meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#070b12">
+<meta name="theme-color" content="#f4f6fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#07090e" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -60,7 +65,7 @@ export function page({ site, title, description, path, body, active, scripts = [
 <meta name="apple-mobile-web-app-title" content="LineCombos">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css?v=${V(site)}">
 <script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
 ${head}
@@ -78,7 +83,9 @@ ${head}
     <button class="icon-btn menu-btn" id="menu" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg></button>
   </div>
   <nav class="wrap nav" id="nav" aria-label="Main">
-    ${NAV.map(([href, label]) => `<a href="${href}"${active === href ? ' aria-current="page"' : ""}${href === "/wjc/" ? ' class="nav-hot"' : ""}>${label}</a>`).join("")}
+    ${NAV.map(navLink(active)).join("")}
+    <details class="nav-more"><summary${NAV_MORE.some(([href]) => href === active) ? ' class="on"' : ""}>More<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+      <div class="nav-more-menu">${NAV_MORE.map(navLink(active)).join("")}</div></details>
   </nav>
 </header>
 <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Search" hidden>

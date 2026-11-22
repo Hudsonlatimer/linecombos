@@ -30,7 +30,11 @@
   $("#menu")?.addEventListener("click", (e) => {
     const nav = $("#nav"); nav.classList.toggle("open");
     e.currentTarget.setAttribute("aria-expanded", nav.classList.contains("open"));
+    const more = $(".nav-more"); if (more) more.open = nav.classList.contains("open"); // the phone menu lists everything
   });
+  // "More" dropdown: close on outside click or Escape
+  document.addEventListener("click", (e) => { const m = $(".nav-more"); if (m?.open && !$("#nav").classList.contains("open") && !m.contains(e.target)) m.open = false; });
+  document.addEventListener("keydown", (e) => { const m = $(".nav-more"); if (e.key === "Escape" && m?.open && !$("#nav").classList.contains("open")) { m.open = false; m.querySelector("summary").focus(); } });
 
   // Local times
   const fmtTime = (d) => d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -214,10 +218,19 @@
       });
       $$(".wire-day", feed).forEach((day) => { day.hidden = ![...$$(".post", day)].some((p) => !p.hidden); });
     };
-    $$(".chip", f).forEach((c) => c.addEventListener("click", () => {
-      type = c.dataset.type; $$(".chip", f).forEach((x) => x.classList.toggle("on", x === c)); apply();
+    // Long feeds ship their newest items only; older ones load on demand (and before any filter, so it sees everything).
+    let more = null;
+    const loadMore = () => (more ??= (async () => {
+      const url = feed.dataset.more; if (!url) return;
+      const btn = $(`[data-more-for="#${feed.id}"]`); if (btn) { btn.disabled = true; btn.textContent = "Loading…"; }
+      try { const r = await fetch(url); if (r.ok) { feed.insertAdjacentHTML("beforeend", await r.text()); btn?.remove(); window.LC?.swapLogos?.(); paintTimes(); } else if (btn) { btn.disabled = false; btn.textContent = "Try again"; more = null; } }
+      catch { if (btn) { btn.disabled = false; btn.textContent = "Try again"; } more = null; }
+    })());
+    $(`[data-more-for="#${feed.id}"]`)?.addEventListener("click", () => loadMore().then(apply));
+    $$(".chip", f).forEach((c) => c.addEventListener("click", async () => {
+      type = c.dataset.type; $$(".chip", f).forEach((x) => x.classList.toggle("on", x === c)); apply(); await loadMore(); apply();
     }));
-    $(".team-filter", f)?.addEventListener("change", (e) => { team = e.target.value; apply(); });
+    $(".team-filter", f)?.addEventListener("change", async (e) => { team = e.target.value; apply(); await loadMore(); apply(); });
     apply();
   });
 
