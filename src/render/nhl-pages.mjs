@@ -347,8 +347,14 @@ export function newsPage(ctx) {
     <div class="chips">${["all", "lines", "goalie", "injury", "roster", "news"].map((k, i) => `<button class="chip${i === 0 ? " on" : ""}" data-type="${k}">${{ all: "All", lines: "Lines", goalie: "Goalies", injury: "Injuries", roster: "Roster moves", news: "Other news" }[k]}</button>`).join("")}</div>
     <select class="team-filter" aria-label="Filter by team"><option value="">All teams</option>${teams.map((t) => `<option value="${t.abbrev}">${esc(t.name)}</option>`).join("")}</select>
   </div>
-  <div id="feed" class="feed">${posts.map((p) => newsItem(ctx, p)).join("") || `<p class="empty">No posts yet. Add sources in config/sources.json.</p>`}</div>`;
+  <div id="feed" class="feed"${posts.length > NEWS_FIRST ? ` data-more="/news/older.html"` : ""}>${posts.slice(0, NEWS_FIRST).map((p) => newsItem(ctx, p)).join("") || `<p class="empty">No posts yet. Add sources in config/sources.json.</p>`}</div>
+  ${posts.length > NEWS_FIRST ? `<p class="load-more"><button class="btn ghost" type="button" data-more-for="#feed">Show ${(posts.length - NEWS_FIRST).toLocaleString("en-US")} older posts</button></p>` : ""}`;
   return page({ site: ctx.site, title: "Lineup news", description: "NHL line rushes, goalie confirmations, injuries and roster moves, sorted by team.", path: "/news/", active: "/news/", body });
+}
+// The news page ships the newest posts; the rest are a fragment fetched on demand (the full page was over 1 MB).
+const NEWS_FIRST = 150;
+export function newsOlder(ctx) {
+  return ctx.posts.filter((p) => p.parsed.type !== "other").slice(NEWS_FIRST).map((p) => newsItem(ctx, p)).join("");
 }
 
 // ---------- Standings ----------

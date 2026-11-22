@@ -31,6 +31,7 @@ import { loadAwards } from "./lib/awards.mjs";
 import { loadCoaches } from "./lib/coaches.mjs";
 import { appData } from "./lib/appdata.mjs";
 import { awardsPage } from "./render/awards-pages.mjs";
+import { scoresPage } from "./render/scores-page.mjs";
 import { teamStatsPage } from "./render/teamstats-pages.mjs";
 
 const t0 = Date.now();
@@ -285,7 +286,9 @@ await put("/nhl/", P.teamsIndex(ctx));
 for (const t of Object.values(T)) await put(`/nhl/${t.slug}/`, P.teamPage(ctx, t));
 await put("/goalies/", P.goaliesPage(ctx));
 await put("/news/", P.newsPage(ctx));
+await write("news/older.html", P.newsOlder(ctx));
 await put("/standings/", P.standingsPage(ctx));
+await put("/scores/", scoresPage(ctx));
 await put("/schedule/", P.schedulePage(ctx));
 await put("/stats/", P.statsPage(ctx));
 await put("/stats/teams/", teamStatsPage(ctx));
@@ -293,6 +296,7 @@ await put("/awards/", awardsPage(ctx));
 await write("data/app.json", JSON.stringify(appData(ctx)));
 if (awardsData) await write("data/awards.json", JSON.stringify(awardsData));
 await put("/records/", X.recordsPage(ctx));
+for (const [a, html] of Object.entries(X.franchiseFragments(ctx))) await write(`records/fr/${a}.html`, html);
 await write("player/index.html", X.viewerPage(ctx));
 // The mock draft replaces the old prospects page at /prospects/ (the old page is only a fallback if the public lists are missing).
 await put("/prospects/", dc?.publicLists ? mockDraftPage(ctx) : P.prospectsPage(ctx));

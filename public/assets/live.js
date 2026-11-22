@@ -141,19 +141,20 @@
 
   const header = document.querySelector("header.top"), strip = document.querySelector(".score-strip");
   let bar = null, lastRender = "";
-  if (header && !strip) { bar = document.createElement("div"); bar.className = "live-bar"; bar.hidden = true; bar.setAttribute("aria-label", "Live scores"); header.after(bar); }
+  // The scores page is its own scoreboard, so it gets no bar.
+  if (header && !strip && document.body.dataset.path !== "/scores/") { bar = document.createElement("div"); bar.className = "live-bar"; bar.hidden = true; bar.setAttribute("aria-label", "Live scores"); header.after(bar); }
   function paint() {
     const list = sorted(), n = list.filter((g) => LIVE.has(g.gameState)).length;
     document.title = document.title.replace(/^\(\d+ live\) /, "");
     if (n) document.title = `(${n} live) ${document.title}`;
     if (strip) {
-      const html = list.map(ssGame).join("");
+      const html = list.map(ssGame).join("") + `<a class="ss-game ss-all" href="/scores/"><b>Full scoreboard</b><span>Goals, shots, win odds →</span></a>`;
       if (html !== lastRender) { const left = strip.scrollLeft; strip.innerHTML = html; strip.scrollLeft = left; lastRender = html; window.LC?.swapLogos?.(); }
       return;
     }
     if (!bar) return;
     if (!list.length) { bar.hidden = true; return; }
-    const html = `<span class="lb-lbl">${n ? `<span class="live-dot">${n} live</span>` : "Today"}</span><div class="lb-scroll">${list.map(chip).join("")}</div>`;
+    const html = `<span class="lb-lbl">${n ? `<span class="live-dot">${n} live</span>` : "Today"}</span><div class="lb-scroll">${list.map(chip).join("")}<a class="lb-game lb-all" href="/scores/">All scores →</a></div>`;
     if (html === lastRender) return;
     const keep = bar.querySelector(".lb-scroll")?.scrollLeft ?? 0; // a refresh shouldn't snap the strip back to the start
     bar.innerHTML = `<div class="wrap lb-in">${html}</div>`; bar.hidden = false;
@@ -176,7 +177,24 @@
       ingest(list);
     } catch {}
   }
-  function ingest(list) { games = list; detect(list); paint(); renderMine(); }
+  // Score bump: any team whose score went up since the last poll gets a brief flash in the strip / bar.
+  let lastScores = new Map();
+  function bumps() {
+    for (const g of games) for (const side of ["awayTeam", "homeTeam"]) {
+      const k = `${g.id}-${side}`, v = g[side].score ?? 0, was = lastScores.get(k);
+      if (was != null && v > was) {
+        const el = document.querySelector(`a.ss-game[href="/game/${g.id}/"], a.lb-game[href="/game/${g.id}/"]`);
+        const em = el?.querySelectorAll(".ss-team em, .lb-t em")[side === "awayTeam" ? 0 : 1];
+        if (el) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+        if (em) em.classList.add("bump");
+      }
+      lastScores.set(k, v);
+    }
+  }
+  function ingest(list) {
+    games = list; detect(list); paint(); bumps(); renderMine();
+    try { dispatchEvent(new CustomEvent("lc:scores", { detail: list })); } catch {}
+  }
   LC.live = { ingest, games: () => games, poll };
 
   // ---------- "My teams" panel on the home page ----------

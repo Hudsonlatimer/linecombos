@@ -519,6 +519,7 @@ export function homePage2(ctx) {
   }
   const sideWire = seasonWire.filter((m) => ["trade", "sign", "suspension", "fine", "waivers"].includes(m.kind)).slice(0, 5);
   const tiles = [
+    ["/scores/", "Live scores", "Every game: goals, shots, win odds", "s"],
     ["/goalies/", "Starting goalies", `${games.length * 2} starters tracked`, "g"],
     ["/injuries/", "Injuries", `${ctx.injuries.length} players out`, "i"],
     ["/predictions/", "Predictions", "Win chances for every game, live", "c"],
@@ -529,6 +530,7 @@ export function homePage2(ctx) {
     ["/prospects/", "Mock draft", "2027 picks & consensus", "p"],
   ];
   const ICON = {
+    s: '<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 5v14M7 10v4M17 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
     g: '<path d="M4 4h16v10a8 8 0 0 1-16 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8h8" stroke="currentColor" stroke-width="2"/>',
     i: '<path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="currentColor"/>',
     c: '<path d="M6 3h12v4a6 6 0 0 1-12 0zM9 17h6l1 4H8z M12 13v4" fill="none" stroke="currentColor" stroke-width="2"/>',
@@ -579,6 +581,14 @@ export function leaderList(ctx, list, k, n = 10, { mugs = true } = {}) {
     return `<li${i < 3 ? ` class="podium p${i + 1}"` : ""}><span class="rb-rank">${i + 1}</span>${mugs ? `<img class="rb-shot" src="${MUG(p.id)}" alt="" width="34" height="34" loading="lazy" onerror="this.onerror=null;this.src='https://assets.nhle.com/mugs/nhl/default-skater.png'">` : ""}<span class="rb-name">${link}${ctx.profiles[p.id]?.yrs ? `<small>${esc(ctx.profiles[p.id].yrs)}</small>` : ""}</span><span class="rb-bar"><span style="width:${((p[k] / max) * 100).toFixed(1)}%"></span></span><b class="rb-val">${p[k].toLocaleString("en-US")}</b></li>`;
   }).join("")}</ol>`;
 }
+const franchiseBook = (ctx, t, f, board) => `<h2 class="section-h">${logo(t, 28)} ${esc(t.name)} record book</h2>${board(f.skaters, REC_CATS.sk.slice(0, 4), 10, { mugs: true })}${board(f.goalies, REC_CATS.g, 10)}`;
+const recBoard = (ctx) => (list, cats, n, opts) => `<div class="rec-grid">${cats.map(([k, label]) => `<section class="card"><h2>${label}</h2>${leaderList(ctx, list, k, n, opts)}</section>`).join("")}</div>`;
+/** { ABBR: html } — one record-book fragment per franchise, served at /records/fr/ABBR.html. */
+export function franchiseFragments(ctx) {
+  const out = {};
+  for (const t of Object.values(ctx.T)) { const f = ctx.records.franchise[t.abbrev]; if (f) out[t.abbrev] = franchiseBook(ctx, t, f, recBoard(ctx)); }
+  return out;
+}
 export function recordsPage(ctx) {
   const { allSk, allG, franchise } = ctx.records;
   const activeIds = new Set([...ctx.stats.skaters, ...ctx.stats.goalies].map((x) => x.playerId));
@@ -590,10 +600,24 @@ export function recordsPage(ctx) {
   <div class="tab-panel" data-panel="all"><h2 class="section-h">Skaters</h2>${board(allSk, REC_CATS.sk, 15)}<h2 class="section-h">Goalies</h2>${board(allG, REC_CATS.g, 15)}</div>
   <div class="tab-panel" data-panel="active" hidden><h2 class="section-h">Active skaters</h2>${board(allSk.filter((p) => activeIds.has(p.id)), REC_CATS.sk, 15)}<h2 class="section-h">Active goalies</h2>${board(allG.filter((p) => activeIds.has(p.id)), REC_CATS.g, 15)}</div>
   <div class="tab-panel" data-panel="fr" hidden>
-    <div class="filters"><select class="team-jump" aria-label="Choose a franchise" onchange="document.querySelectorAll('.fr-panel').forEach(function(p){p.hidden=p.dataset.t!==this.value},this);location.hash='fr-'+this.value">${teams.map((t) => `<option value="${t.abbrev}">${esc(t.name)}</option>`).join("")}</select></div>
-    ${teams.map((t, i) => { const f = franchise[t.abbrev]; return f ? `<div class="fr-panel" data-t="${t.abbrev}" id="fr-${t.abbrev}"${i ? " hidden" : ""}><h2 class="section-h">${logo(t, 28)} ${esc(t.name)} record book</h2>${board(f.skaters, REC_CATS.sk.slice(0, 4), 10, { mugs: true })}${board(f.goalies, REC_CATS.g, 10)}</div>` : ""; }).join("")}
+    <div class="filters"><select class="team-jump" id="fr-pick" aria-label="Choose a franchise">${teams.map((t) => `<option value="${t.abbrev}">${esc(t.name)}</option>`).join("")}</select></div>
+    <div id="fr-book">${(() => { const t = teams[0], f = franchise[t.abbrev]; return f ? franchiseBook(ctx, t, f, board) : ""; })()}</div>
   </div>
-  <script>addEventListener("DOMContentLoaded",function(){var m=location.hash.match(/^#fr-([A-Z]{3})$/);if(!m)return;var b=document.querySelector('[data-tab="fr"]');b&&b.click();var s=document.querySelector('.tab-panel[data-panel="fr"] select');if(s){s.value=m[1];s.onchange();}});</script>
+  <script>
+  // Each franchise's record book is its own small file (all 32 inline made this page over 1 MB).
+  addEventListener("DOMContentLoaded", function () {
+    var s = document.getElementById("fr-pick"), box = document.getElementById("fr-book"), cache = {};
+    function show(a) {
+      location.hash = "fr-" + a;
+      if (cache[a]) { box.innerHTML = cache[a]; window.LC && LC.swapLogos && LC.swapLogos(); return; }
+      box.style.opacity = ".5";
+      fetch("/records/fr/" + a + ".html").then(function (r) { return r.ok ? r.text() : ""; }).then(function (h) { if (h) { cache[a] = h; box.innerHTML = h; window.LC && LC.swapLogos && LC.swapLogos(); } box.style.opacity = ""; });
+    }
+    s.addEventListener("change", function () { show(s.value); });
+    var m = location.hash.match(/^#fr-([A-Z]{3})$/);
+    if (m) { var b = document.querySelector('[data-tab="fr"]'); b && b.click(); s.value = m[1]; show(m[1]); }
+  });
+  </script>
   <p class="muted small">Source: NHL stats API, regular-season totals. Franchise totals include a team's earlier cities (Quebec for Colorado, Hartford for Carolina, and so on).</p>`;
   return page({ site: ctx.site, title: "NHL records: all-time, active and franchise leaders", description: "All-time NHL leaders in points, goals, assists, games, wins and shutouts, active leaders, and the record book for all 32 franchises.", path: "/records/", active: "/stats/", body });
 }

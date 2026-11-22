@@ -15,6 +15,7 @@ http.createServer(async (req, res) => {
     const m = url.pathname.match(r.re);
     if (!m) continue;
     let dest = r.dest; r.names.forEach((n, i) => (dest = dest.replace(`:${n}`, m[i + 1])));
+    if (url.search) dest += (dest.includes("?") ? "&" : "?") + url.search.slice(1); // Vercel passes the query string through
     try { const up = await fetch(dest, { headers: { "User-Agent": "linecombos-dev" } }); res.writeHead(up.status, { "content-type": up.headers.get("content-type") ?? "application/json", "cache-control": "no-store" }); res.end(Buffer.from(await up.arrayBuffer())); }
     catch (e) { res.writeHead(502); res.end(String(e)); }
     return;
