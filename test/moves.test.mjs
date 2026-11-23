@@ -12,6 +12,12 @@ test("trade sentences split into the two sides", () => {
   assert.equal(tradeKey(wright), tradeKey(tradeShape("Traded RW Matthew Wood to Seattle for C Shane Wright.")));
   assert.equal(tradeKey(helle), tradeKey(tradeShape("Acquired Fs Dawson Mercer from New Jersey in exchange for G Connor Hellebuyck.")));
   assert.equal(tradeShape("Recalled F Sam O'Reilly from Syracuse (AHL)."), null);
+  // "in a trade with X in exchange for:" (the Larkin deal)
+  const larkin = tradeShape("Acquired F Dylan Larkin, 2027 third-round pick, 2028 second-round pick in a trade with Detroit in exchange for: C Kirby Dach, C Michael Hage, G Sam Montembeault, 2027 first-round pick and a 2029 first-round selection.");
+  assert.equal(larkin.other, "Detroit");
+  assert.match(larkin.gets, /^F Dylan Larkin, 2027 third-round pick/);
+  assert.match(larkin.sends, /^C Kirby Dach/);
+  assert.ok(tradeKey(larkin).includes("|"));
 });
 
 test("a transaction blurb becomes one classified move per sentence", () => {

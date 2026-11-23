@@ -80,10 +80,11 @@ export function txPieces(t) {
  */
 export function tradeShape(text) {
   const clean = String(text ?? "").replace(/\.\s*$/, "").trim();
-  const tail = "(?: in exchange for | for )";
-  let m = clean.match(new RegExp(`^traded (.+?) to (?:the )?(.+?)${tail}(.+)$`, "i"));
+  // "for", "in exchange for", "in exchange for:" ; the other club via "to", "from" or "in a trade with"
+  const tail = "(?:,? in exchange for:? |,? for:? )";
+  let m = clean.match(new RegExp(`^traded (.+?) (?:to|in a trade with) (?:the )?(.+?)${tail}(.+)$`, "i"));
   if (m) return { sends: m[1].trim(), other: m[2].trim(), gets: m[3].trim() };
-  m = clean.match(new RegExp(`^acquired (.+?) from (?:the )?(.+?)${tail}(.+)$`, "i"));
+  m = clean.match(new RegExp(`^acquired (.+?) (?:from|in a trade with) (?:the )?(.+?)${tail}(.+)$`, "i"));
   if (m) return { gets: m[1].trim(), other: m[2].trim(), sends: m[3].trim() };
   return null;
 }

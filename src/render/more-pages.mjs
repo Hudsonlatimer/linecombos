@@ -133,8 +133,10 @@ function wireItems(ctx) {
 /** Latest deals, with player-for-player trades ahead of pick-only swaps. */
 function featureTrades(items) {
   const recent = uniqueTrades(items.filter((m) => m.kind === "trade")).slice(0, 8);
+  // Newest first: yesterday's blockbuster must lead even if we could only read one side of it.
+  // Deals we could split into both sides win ties on the same day.
   const both = (m) => (m.key ?? "").includes("|");
-  return [...recent].sort((a, b) => Number(both(b)) - Number(both(a)) || b.date.localeCompare(a.date)).slice(0, 4);
+  return [...recent].sort((a, b) => b.date.localeCompare(a.date) || Number(both(b)) - Number(both(a))).slice(0, 4);
 }
 function uniqueTrades(items) {
   const kept = [];
