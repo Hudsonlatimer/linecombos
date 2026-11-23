@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      chain:
+        description: Queued by the previous build (keeps the site rebuilding on a steady clock)
+        required: false
+        default: "false"
   schedule:
     # GitHub drops many scheduled runs, so ask often; the gap check below keeps deploys under Vercel's 100 a day.
     - cron: "*/6 15-23,0-6 * * *"
@@ -15,16 +20,19 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write # lets each build queue the next one
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Note the start time
+        run: echo "STARTED=$(date +%s)" >> "$GITHUB_ENV"
       - name: Skip scheduled runs that come right after a deploy
         id: gap
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.chain }}" = "true" ]; then
             built=$(curl -s "https://linecombos.vercel.app/version.json?t=$RANDOM" | sed -n 's/.*"builtAt":"\([^"]*\)".*/\1/p')
             if [ -n "$built" ]; then
               age=$(( $(date +%s) - $(date -d "$built" +%s) ))
@@ -73,3 +81,18 @@ jobs:
           if [ -z "$VERCEL_TOKEN" ]; then echo "::error::The VERCEL_TOKEN secret is empty. Add it under Settings > Secrets and variables > Actions > Repository secrets, named exactly VERCEL_TOKEN."; exit 1; fi
           printf '.env*\n.gitignore\n_headers\n' > .vercelignore
           npx --yes vercel@62 deploy --prod --yes --archive=tgz --token "$VERCEL_TOKEN"
+      # GitHub only runs the cron schedule above every few hours in practice, so each build queues the next one itself
+      # (workflow_dispatch is the one event the built-in token may start). Every 15 minutes from 15:00 to 07:00 UTC
+      # (North American game hours), every 30 minutes otherwise: about 80 deploys a day, under Vercel's 100.
+      # The concurrency group allows one build running and one waiting, so extra chains cancel each other out;
+      # the cron schedule restarts the chain if it ever stops.
+      - name: Queue the next build
+        if: ${{ !cancelled() }} # cancelling a run stops the chain (the cron schedule restarts it later)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          h=$((10#$(date -u +%H)))
+          if [ $h -ge 15 ] || [ $h -lt 7 ]; then every=900; else every=1800; fi
+          wait=$(( every - ($(date +%s) - ${STARTED:-$(date +%s)}) ))
+          if [ $wait -gt 0 ]; then echo "next build in $wait s"; sleep $wait; fi
+          gh workflow run build.yml --repo "$GITHUB_REPOSITORY" --ref main -f chain=true
