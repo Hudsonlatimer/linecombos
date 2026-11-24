@@ -127,7 +127,12 @@ for (const [abbr, r] of Object.entries(goalieRep)) {
 log(`Goalies: ${Object.values(goalieRep).filter((r) => r.status === "confirmed").length} confirmed, ${Object.values(goalieRep).filter((r) => r.status === "likely").length} likely`);
 // Lines: Daily Faceoff's latest combinations per team, each credited to the reporter/team post it came from.
 // "Reported" when posted after the team's last game (i.e. for the next one); older ones still show, as Projected.
-const dfo = await dfoLines(league.teams, people);
+const split = (full, last) => ({ first: full.slice(0, Math.max(0, full.length - last.length)).trim(), last });
+const statPeople = [
+  ...(stats.skaters ?? []).map((p) => ({ id: p.playerId, ...split(p.skaterFullName, p.lastName), pos: p.positionCode })),
+  ...(stats.goalies ?? []).map((p) => ({ id: p.playerId, ...split(p.goalieFullName, p.lastName), pos: "G" })),
+];
+const dfo = await dfoLines(league.teams, people, statPeople);
 for (const [abbr, d] of Object.entries(dfo)) {
   if (!reported[abbr] || d.lines.length < 3) continue;
   const lastNight = T[abbr]?.last ? Date.parse(`${T[abbr].last.date}T12:00:00Z`) + 18 * 3600e3 : 0;

@@ -26,12 +26,15 @@
   const card = (pid) => {
     const p = G.players[pid];
     if (!p) return `<div class="up-card"><img class="up-shot" src="${DEFAULT_SHOT}" alt="" width="52" height="52"><span class="up-name">?</span></div>`;
-    const pm = p.pm ?? 0;
     return `<a class="up-card${p.g ? " scored" : ""}" href="/players/${pid}/">
       <img class="up-shot" src="${esc(shot(pid))}" alt="" width="52" height="52" loading="lazy" onerror="this.onerror=null;this.src='${DEFAULT_SHOT}'">
       <span class="up-name"><i>${esc(p.num)}</i>${esc(p.name)}</span>
-      <span class="up-stats" title="This game: goals, assists, points, plus/minus"><span><b>${p.g}</b>G</span><span><b>${p.a}</b>A</span><span><b>${p.pts}</b>P</span><span class="${pm > 0 ? "up" : pm < 0 ? "down" : ""}"><b>${signed(pm)}</b></span></span></a>`;
+      ${gameStats(p)}</a>`;
   };
+  // During a game, line cards show this game's goals, assists, points and ice time (season stats are for pregame).
+  function gameStats(p) {
+    return `<span class="up-stats" title="This game: goals, assists, points, time on ice"><span><b>${p?.g ?? 0}</b>G</span><span><b>${p?.a ?? 0}</b>A</span><span><b>${p?.pts ?? 0}</b>P</span><span><b>${esc(p?.toi ?? "0:00")}</b></span></span>`;
+  }
 
   function comboBlock(list, labels, side) {
     if (!list?.length) return `<p class="empty">No data yet.</p>`;
@@ -93,7 +96,20 @@
 
   function teamLines(side) {
     const t = G[side], L = G.lines?.[side];
-    if (!L) return `<section class="card"><h2>${esc(t.name)}</h2><p class="empty">Shift data isn't posted yet. It usually appears within the first period.</p></section>`;
+    if (!L) {
+      // No shift data yet: show the expected lineup (reported or projected lines) until the NHL posts it.
+      const pre = document.getElementById(`gc-pre-${side}`)?.innerHTML.trim();
+      if (pre) {
+        const box = document.createElement("div");
+        box.innerHTML = pre;
+        for (const c of box.querySelectorAll(".up-card[data-pid]")) {
+          const st = c.querySelector(".up-stats"), p = G.players[c.dataset.pid];
+          if (st && p) st.outerHTML = gameStats(p);
+        }
+        return box.innerHTML.replace("</h2>", `</h2><p class="muted small">Expected lineup. Live lines from shift data replace this once the NHL posts them, usually during the 1st period.</p>`);
+      }
+      return `<section class="card"><h2>${esc(t.name)}</h2><p class="empty">Shift data isn't posted yet. It usually appears within the first period.</p></section>`;
+    }
     return `<section class="card"${COLORS[side] ? ` style="--team:${esc(COLORS[side])}"` : ""}><h2><img class="logo" src="${esc(t.logo)}" data-dark="${esc(t.darkLogo)}" width="22" height="22" alt=""> ${esc(t.name)} <span class="stage stage-${FINAL.has(G.state) ? "actual" : "live"}">${FINAL.has(G.state) ? "Actual" : "Live"}</span></h2>
       <h3>Forward lines · 5v5 ${mmss(L.toi.es)}</h3>${comboBlock(L.lines, ["L1", "L2", "L3", "L4"], side)}
       <h3>Defence pairs</h3>${comboBlock(L.pairs, ["D1", "D2", "D3"], side)}
@@ -130,7 +146,8 @@
   // Box score columns: [label, value getter, display]. Click a header to sort; each column's game leader is highlighted.
   const BOX = [
     ["G", (p) => p.g], ["A", (p) => p.a], ["P", (p) => p.pts], ["SOG", (p) => p.sog], ["+/-", (p) => p.pm, (v) => (v > 0 ? `+${v}` : `${v}`)],
-    ["HIT", (p) => p.hits], ["BLK", (p) => p.blk ?? 0], ["FO%", (p) => (p.fo != null && p.fo > 0 ? p.fo : null), (v) => (v == null ? "—" : `${Math.round(v * 100)}`)],
+    ["HIT", (p) => p.hits], ["BLK", (p) => p.blk ?? 0], ["FO", (p) => (p.fot ? p.fow + p.fot / 1000 : null), (v, p) => (p.fot ? `${p.fow}/${p.fot}` : "—")],
+    ["FO%", (p) => (p.fot ? p.fow / p.fot : p.fo != null && p.fo > 0 ? p.fo : null), (v) => (v == null ? "—" : `${Math.round(v * 100)}`)],
     ["TOI", (p) => { const [m, x] = String(p.toi ?? "0:0").split(":").map(Number); return m * 60 + x; }, (v, p) => esc(p.toi)],
   ];
   const sortBy = { away: { col: 2, dir: -1 }, home: { col: 2, dir: -1 } };
@@ -198,7 +215,9 @@
   // Without a worker, build the game JSON in the browser from the NHL feeds (proxied at /live/), with the same code the build uses.
   let core = null;
   async function liveFromNhl() {
-    core ??= await import("/assets/core/game.mjs");
+    // Same version tag as this script, so a new deploy never pairs with a cached old copy.
+    const v = document.querySelector('script[src*="/assets/game.js"]')?.src.match(/[?&]v=([^&]+)/)?.[1] ?? Date.now();
+    core ??= await import(`/assets/core/game.mjs?v=${v}`);
     const j = (u) => fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 10000), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     let [box, pbp, sh] = await Promise.all([j(`/live/box/${id}/`), j(`/live/pbp/${id}/`), j(`/live/shifts/${id}/`)]);
     // Without the play-by-play the score would show but every goal, shot and period would silently go missing, so ask again,

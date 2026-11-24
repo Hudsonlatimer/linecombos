@@ -25,6 +25,14 @@ export function gameJson({ box, pbp, shifts }) {
     }
   }
 
+  // Faceoffs won and taken, from the play-by-play (the box score only gives a percentage).
+  for (const pl of pbp?.plays ?? []) {
+    if (pl.typeDescKey !== "faceoff") continue;
+    const w = players[pl.details?.winningPlayerId], l = players[pl.details?.losingPlayerId];
+    if (w) { w.fow = (w.fow ?? 0) + 1; w.fot = (w.fot ?? 0) + 1; }
+    if (l) { l.fow ??= 0; l.fot = (l.fot ?? 0) + 1; }
+  }
+
   // Shots for the rink map: away attacks left, home attacks right.
   const shots = [];
   const periods = {};

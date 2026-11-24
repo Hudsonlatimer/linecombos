@@ -12,7 +12,22 @@ export const stats = { network: 0, cached: 0, failed: 0 };
  * get(url, { ttl }) — ttl in seconds. Infinity = cache forever (finished games).
  * 0 = always fetch (live data). Returns parsed JSON, or null on a 404.
  */
-export async function get(url, { ttl = 0, text = false } = {}) {
+export async function get(url, opts = {}) {
+  // The stats API ignores limit=-1 and returns at most 100 rows; fetch every page instead.
+  if (/api\.nhle\.com\/stats\/rest\//.test(url) && /[?&]limit=-1(&|$)/.test(url) && !opts.text) {
+    const page = (start) => getOne(url.replace(/([?&])limit=-1/, `$1limit=100&start=${start}`), opts);
+    const first = await page(0);
+    if (!first?.data) return first;
+    const total = first.total ?? first.data.length;
+    const starts = [];
+    for (let s = 100; s < total; s += 100) starts.push(s);
+    const rest = await pool(starts, 6, page);
+    return { ...first, data: [...first.data, ...rest.flatMap((r) => r?.data ?? [])] };
+  }
+  return getOne(url, opts);
+}
+
+async function getOne(url, { ttl = 0, text = false } = {}) {
   if (!made) { await fs.mkdir(CACHE, { recursive: true }); made = true; }
   const file = path.join(CACHE, url.replace(/^https?:\/\//, "").replace(/[^a-z0-9]+/gi, "_").slice(-180) + (text ? ".txt" : ".json"));
   if (ttl > 0 && !FRESH) {

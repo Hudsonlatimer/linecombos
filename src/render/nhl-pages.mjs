@@ -30,7 +30,7 @@ export function onIce(c) {
 const DEFAULT_SHOT = "https://assets.nhle.com/mugs/nhl/default-skater.png";
 
 /** One player tile in a line: headshot, number, name and a stat line. */
-export function playerCard({ id, name, num, shot, stats, href, cls = "", statTip = "This season: goals, assists, points, plus/minus" }) {
+export function playerCard({ id, name, num, shot, stats, href, cls = "", statTip = "This season: games played, goals, assists, points, plus/minus" }) {
   const statLine = stats ? `<span class="up-stats"${statTip ? ` title="${attr(statTip)}"` : ""}>${stats.map(([k, v, c]) => `<span${c ? ` class="${c}"` : ""}><b>${esc(v)}</b>${k}</span>`).join("")}</span>` : "";
   const tag = href ? "a" : "div";
   return `<${tag} class="up-card ${cls}"${href ? ` href="${attr(href)}"` : ""} data-pid="${attr(id)}">
@@ -41,7 +41,7 @@ export function playerCard({ id, name, num, shot, stats, href, cls = "", statTip
 const seasonStats = (ctx, id) => {
   ctx._sk ??= Object.fromEntries((ctx.stats?.skaters ?? []).map((s) => [s.playerId, s]));
   const s = ctx._sk[id];
-  return s ? [["G", s.goals], ["A", s.assists], ["P", s.points], ["", signed(s.plusMinus), s.plusMinus > 0 ? "up" : s.plusMinus < 0 ? "down" : ""]] : [["G", 0], ["A", 0], ["P", 0], ["", "0"]];
+  return s ? [["GP", s.gamesPlayed], ["G", s.goals], ["A", s.assists], ["P", s.points], ["", signed(s.plusMinus), s.plusMinus > 0 ? "up" : s.plusMinus < 0 ? "down" : ""]] : [["GP", 0], ["G", 0], ["A", 0], ["P", 0], ["", "0"]];
 };
 
 export function comboRows(ctx, combos, labels, players, { flags = [], newIds = [] } = {}) {
@@ -54,8 +54,10 @@ export function comboRows(ctx, combos, labels, players, { flags = [], newIds = [
       <div class="unit-players n${c.ids.length}">${c.ids.map((id) => {
         if (String(id).startsWith("name:")) { const [nm, num] = String(id).slice(5).split("|"); return playerCard({ id: "", name: nm, num }); } // from a source, not in our NHL data
         const p = players?.[id] ?? ctx.people[id], prof = ctx.people[id] ?? ctx.profiles?.[id];
-        const name = p?.name ?? (p ? `${p.first?.[0] ?? ""}. ${p.last}` : "?");
-        return playerCard({ id, name, num: p?.num ?? prof?.num, shot: prof?.headshot, stats: seasonStats(ctx, id), href: anyPlayerUrl(ctx, id), cls: newIds.includes(id) ? "is-new" : "" });
+        ctx._sk ??= Object.fromEntries((ctx.stats?.skaters ?? []).map((s) => [s.playerId, s]));
+        const full = prof?.first && prof?.last ? `${prof.first} ${prof.last}` : prof?.name ?? ctx._sk[id]?.skaterFullName;
+        const name = p?.name ?? (p ? `${p.first?.[0] ?? ""}. ${p.last}` : full ? full.replace(/^(\S)\S*\s+/, "$1. ") : "?");
+        return playerCard({ id, name, num: p?.num ?? prof?.num, shot: prof?.headshot ?? `https://assets.nhle.com/mugs/nhl/latest/${id}.png`, stats: seasonStats(ctx, id), href: anyPlayerUrl(ctx, id), cls: newIds.includes(id) ? "is-new" : "" });
       }).join("")}</div>
       <div class="meta">${flags[i] ? pill("New combo", "new") : ""}${c.shared ? pill("Double-shift", "muted") : ""}${onIce(c)}</div>
     </div>`).join("");
@@ -525,6 +527,7 @@ export function gamePage(ctx, g, snapshot) {
     </section>
     ${gamePredictCard(ctx, g)}
     <div id="gc-body">${snapshot ? "" : `<div class="pre-grid">${pre(A, g.awayTeam.abbrev)}${pre(H, g.homeTeam.abbrev)}</div>`}</div>
+    <template id="gc-pre-away">${pre(A, g.awayTeam.abbrev)}</template><template id="gc-pre-home">${pre(H, g.homeTeam.abbrev)}</template>
   </div>`;
   return page({ site: ctx.site, title: `${title}: lines, shot map, live stats`, description: `${title} on ${g.gameDate ?? ""}: lineups, live lines from shift data, shot map and box score.`, path: `/game/${g.id}/`, active: "/schedule/", body, scripts: ["/assets/game.js", "/assets/predict.js#module"], json: { snapshot, colors: { away: A?.accent ?? null, home: H?.accent ?? null } } });
 }

@@ -12,8 +12,10 @@ const nextData = (html) => {
 };
 
 /** Map a Daily Faceoff player name to an NHL id: same team first, then anyone (recent trades), by full name then last name. */
-function matcher(people) {
+function matcher(people, extra = []) {
   const all = Object.values(people).filter((p) => p.first && p.last);
+  // Players who've played this season but sit on no roster (suspended, just traded): full-name match only.
+  const others = extra.filter((p) => p.first && p.last && !people[p.id]);
   const full = (p) => normName(`${p.first} ${p.last}`);
   return (name, team, goalie) => {
     const n = normName(name), last = n.split(" ").slice(1).join(" "), tail = n.split(" ").at(-1);
@@ -23,7 +25,7 @@ function matcher(people) {
       const hit = ps.find((p) => full(p) === n) ?? ps.find((p) => normName(p.last) === last && pos(p)) ?? (ps === pools[0] ? ps.find((p) => normName(p.last) === tail && pos(p)) : null);
       if (hit) return hit.id;
     }
-    return null;
+    return others.find((p) => full(p) === n && (goalie ? p.pos === "G" : p.pos !== "G"))?.id ?? null;
   };
 }
 
@@ -40,8 +42,8 @@ function source(c, viaUrl) {
 }
 
 /** → { [abbrev]: { lines, pairs, pp, pk, goalies, author, url, createdAt, via, viaUrl, unmatched } } */
-export async function dfoLines(teams, people) {
-  const idOf = matcher(people);
+export async function dfoLines(teams, people, extra = []) {
+  const idOf = matcher(people, extra);
   const out = {};
   await pool(teams, 4, async (t) => {
     const viaUrl = `${BASE}/${t.slug}/line-combinations`;
