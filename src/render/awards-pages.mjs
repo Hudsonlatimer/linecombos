@@ -21,7 +21,7 @@ function raceCard(ctx, r, list) {
     const t = ctx.T[c.team];
     return `<tr><td class="n muted">${i + 1}</td><td>${isTeam ? `<a class="team-cell" href="/nhl/${t?.slug ?? ""}/">${logo(t, 20)}<b>${esc(t?.common ?? c.team)}</b></a>` : `<a href="${attr(anyPlayerUrl(ctx, c.id, c.name))}"><b>${esc(c.name)}</b></a> <span class="muted small">${logo(t, 14)} ${esc(c.team)}</span>`}</td><td class="n"><b>${esc(c.value)}</b></td><td class="n muted">${esc(c.pace)} ${esc(r.paceUnit)}</td><td class="muted small">${esc(c.line)}</td></tr>`;
   }).join("");
-  return `<section class="card" id="${r.k}"><h2>${esc(r.name)} <span class="muted small">${esc(r.sub)}</span></h2><div class="table-wrap"><table class="tbl compact"><thead><tr><th class="n">#</th><th>${isTeam ? "Team" : "Player"}</th><th class="n">${esc(r.unit)}</th><th class="n">82-game pace</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  return `<section class="card" id="${r.k}"><h2>${esc(r.name)} <span class="muted small">${esc(r.sub)}</span></h2><div class="table-wrap"><table class="tbl compact"><thead><tr><th class="n">#</th><th>${isTeam ? "Team" : "Player"}</th><th class="n">${esc(r.unit)}</th><th class="n">84-game pace</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 
 function teamCard(ctx, title, note, slots) {

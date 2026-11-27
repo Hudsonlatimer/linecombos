@@ -94,14 +94,14 @@ export function awardRaces({ skaters, goalies, teams, coaches = {}, lastSeason =
   // ---- stat races (exact) ----
   const best = (rows, cmp, n = 5) => rows.slice().sort(cmp).slice(0, n);
   const artRoss = best(skaters, (a, b) => b.points - a.points || b.goals - a.goals || a.gamesPlayed - b.gamesPlayed)
-    .map((s) => ({ id: s.playerId, name: skName(s), team: lastTeam(s.teamAbbrevs), pos: s.positionCode, value: s.points, pace: Math.round((s.points / s.gamesPlayed) * 82), line: `${s.gamesPlayed} GP · ${s.goals} G · ${s.assists} A` }));
+    .map((s) => ({ id: s.playerId, name: skName(s), team: lastTeam(s.teamAbbrevs), pos: s.positionCode, value: s.points, pace: Math.round((s.points / s.gamesPlayed) * 84), line: `${s.gamesPlayed} GP · ${s.goals} G · ${s.assists} A` }));
   const richard = best(skaters, (a, b) => b.goals - a.goals || a.gamesPlayed - b.gamesPlayed || b.shots - a.shots)
-    .map((s) => ({ id: s.playerId, name: skName(s), team: lastTeam(s.teamAbbrevs), pos: s.positionCode, value: s.goals, pace: Math.round((s.goals / s.gamesPlayed) * 82), line: `${s.gamesPlayed} GP · ${s.shots} shots · ${((s.shootingPct ?? 0) * 100).toFixed(1)} SH%` }));
+    .map((s) => ({ id: s.playerId, name: skName(s), team: lastTeam(s.teamAbbrevs), pos: s.positionCode, value: s.goals, pace: Math.round((s.goals / s.gamesPlayed) * 84), line: `${s.gamesPlayed} GP · ${s.shots} shots · ${((s.shootingPct ?? 0) * 100).toFixed(1)} SH%` }));
   const tl = Object.entries(teams).map(([abbrev, t]) => ({ abbrev, ...t }));
   const presidents = tl.slice().sort((a, b) => b.ptsPct - a.ptsPct || b.pts - a.pts || b.rw - a.rw).slice(0, 5)
-    .map((t) => ({ team: t.abbrev, value: t.pts, pace: Math.round(t.ptsPct * 164), line: `${t.gp} GP · ${(t.ptsPct * 100).toFixed(1)}% of points` }));
+    .map((t) => ({ team: t.abbrev, value: t.pts, pace: Math.round(t.ptsPct * 168), line: `${t.gp} GP · ${(t.ptsPct * 100).toFixed(1)}% of points` }));
   const jennings = tl.filter((t) => t.gp > 0).slice().sort((a, b) => a.ga / a.gp - b.ga / b.gp).slice(0, 5)
-    .map((t) => ({ team: t.abbrev, value: +(t.ga / t.gp).toFixed(2), pace: Math.round((t.ga / t.gp) * 82), line: `${t.ga} goals against in ${t.gp} GP` }));
+    .map((t) => ({ team: t.abbrev, value: +(t.ga / t.gp).toFixed(2), pace: Math.round((t.ga / t.gp) * 84), line: `${t.ga} goals against in ${t.gp} GP` }));
 
   // Jack Adams: the coach whose team is doing best, and best compared with last season. A coach hired mid-season is left out
   // (credit for the record is shared), and so is any team with no coach on file.

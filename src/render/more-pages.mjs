@@ -487,7 +487,7 @@ export function cupPage(ctx) {
       <div id="bracket" class="bracket"><p class="empty">Loading bracket…</p></div></section>
   </div><aside class="side">
     <section class="card"><h2>How it works</h2><ol class="prose small">
-      <li><b>Rate every team.</b> Goals for and against per game, blended with last season (regressed 60% to average) so 15 games don't overrule 82. The blend shifts toward this season as games are played.</li>
+      <li><b>Rate every team.</b> Goals for and against per game, blended with last season (regressed 60% to average) so 15 games don't overrule 84. The blend shifts toward this season as games are played.</li>
       <li><b>Allow for doubt.</b> Each simulated season nudges every rating up or down a little, because nobody knows a team's true strength.</li>
       <li><b>Play the games.</b> Goals for each team are drawn from that matchup's expected scoring, with home ice worth about 4.5%. Ties go to overtime or a shootout.</li>
       <li><b>Seed and play the playoffs.</b> Top three per division plus two wild cards, best-of-seven with 2-2-1-1-1 home ice.</li>

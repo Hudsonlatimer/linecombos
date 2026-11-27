@@ -32,7 +32,7 @@ test("a 4-game heater cannot lead Hart or Byng, and rookies are separated", () =
 test("stat races use the NHL tiebreakers and pace", () => {
   const R = awardRaces({ skaters: [...skaters, sk(7, "Tie Fewer", "AAA", "C", 10, 12, 18)], goalies, teams });
   assert.equal(R.races.artRoss[0].name, "Tie Fewer"); // 30 points in fewer games wins the tie
-  assert.equal(R.races.artRoss[0].pace, Math.round((30 / 10) * 82));
+  assert.equal(R.races.artRoss[0].pace, Math.round((30 / 10) * 84));
   assert.equal(R.races.presidents[0].team, "AAA");
   assert.equal(R.races.jennings[0].team, "AAA");
 });
