@@ -74,6 +74,7 @@ export function newsItem(ctx, p, { compact = false } = {}) {
       <span class="post-by">${esc(p.author)} <span class="muted">· ${p.src === "x" ? "X" : "Bluesky"}</span></span>
       <span class="post-time">${ago(p.createdAt)}</span></div>
     <p class="post-text">${esc(text).replace(/\n/g, "<br>")}</p>
+    ${p.img && !compact ? `<a class="post-img" href="${attr(p.url)}" rel="nofollow noopener" target="_blank"><img src="${attr(p.img)}" alt="${attr(p.alt ?? "")}" loading="lazy" decoding="async"></a>` : ""}
     ${linesBlock}
     ${p.url ? `<a class="post-link" href="${attr(p.url)}" rel="nofollow noopener" target="_blank">View source post →</a>` : ""}
   </article>`;

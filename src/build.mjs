@@ -267,7 +267,9 @@ log("Roster stats: advanced skater and goalie reports");
 const rosterStatsData = await rosterStats(league.seasonId);
 const coachData = await loadCoaches(league, schedules);
 const awardsData = await loadAwards(league, rosterStatsData, coachData);
-const ctx = { coachData, awards: awardsData, rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
+const stories = await nhl.nhlStories().catch(() => []);
+log(`Stories: ${stories.length} NHL.com articles`);
+const ctx = { stories, coachData, awards: awardsData, rosterStats: rosterStatsData, teamStats: teamStatsData, draftClass: dc, records, capTeams: cw.teams, site, league, T, rosters, stats, leaders, draft, wjc, people, posts, reported, injuries, injByTeam, injById, scratches, tx, txByTeam, discipline, cup, preds, profiles };
 
 // ---------- pages ----------
 log("Rendering");

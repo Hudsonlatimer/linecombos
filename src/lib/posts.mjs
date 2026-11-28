@@ -23,8 +23,22 @@ async function fromBluesky(src) {
     text: p.record?.text ?? "",
     url: `https://bsky.app/profile/${p.author.handle}/post/${p.uri.split("/").pop()}`,
     createdAt: p.record?.createdAt ?? p.indexedAt,
-    link: p.embed?.external?.uri ?? null,
+    link: p.embed?.external?.uri ?? p.embed?.media?.external?.uri ?? null,
+    ...media(p.embed),
+    likes: p.likeCount ?? 0, reposts: (p.repostCount ?? 0) + (p.quoteCount ?? 0), replies: p.replyCount ?? 0,
   }));
+}
+
+/** First picture a post carries: an attached photo, a video still, or a link card's thumbnail (+ the card's title). */
+function media(e) {
+  if (!e) return {};
+  const m = e.media ?? e; // recordWithMedia wraps the media
+  const img = m.images?.[0];
+  if (img) return { img: img.fullsize ?? img.thumb, alt: img.alt || null, ratio: img.aspectRatio ? +(img.aspectRatio.width / img.aspectRatio.height).toFixed(3) : null };
+  if (m.thumbnail) return { img: m.thumbnail, video: true, ratio: m.aspectRatio ? +(m.aspectRatio.width / m.aspectRatio.height).toFixed(3) : null };
+  if (m.external?.thumb) return { img: m.external.thumb, linkTitle: m.external.title || null, linkDesc: m.external.description || null };
+  if (m.external?.title) return { linkTitle: m.external.title, linkDesc: m.external.description || null };
+  return {};
 }
 
 async function fromX(cfg) {
@@ -64,7 +78,8 @@ export async function ingest({ players, teamAliases }) {
   const store = await readJson(STORE, []);
   const byId = new Map(store.map((p) => [p.id, p]));
   const now = new Date().toISOString();
-  for (const p of fresh) if (!byId.has(p.id)) byId.set(p.id, { ...p, fetchedAt: now });
+  // New posts are added; ones we already have get their like/repost counts and media refreshed (that's how "trending" moves).
+  for (const p of fresh) byId.set(p.id, byId.has(p.id) ? { ...byId.get(p.id), ...p, fetchedAt: byId.get(p.id).fetchedAt } : { ...p, fetchedAt: now });
 
   const cutoff = Date.now() - (cfg.keepDays ?? 14) * 864e5;
   const idx = buildIndex(players, teamAliases);

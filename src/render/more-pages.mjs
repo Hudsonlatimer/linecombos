@@ -1,5 +1,5 @@
 // Player profiles, injuries & scratches, transactions, Stanley Cup predictor, and the homepage.
-import { esc, attr, mmss, pct, signed, fmtDate, localTime, stage, pill, page } from "./html.mjs";
+import { esc, attr, mmss, pct, signed, fmtDate, localTime, stage, pill, page, ago } from "./html.mjs";
 import { logo, pname, onIce, homeCards, newsItem, anyPlayerUrl } from "./nhl-pages.mjs";
 import { TX_LABEL, normName, txPieces, tradeShape, tradeKey, gamesIn } from "../lib/moves.mjs";
 import { fmtMoney, contractForSigning } from "../lib/contracts.mjs";
@@ -498,6 +498,48 @@ export function cupPage(ctx) {
 }
 
 // ---------- homepage ----------
+// ---------- Front-page news: NHL.com stories with photos + what's taking off on hockey social ----------
+const KIND_LABEL = { recap: "Recap", feature: "Story" };
+const clip = (t, n) => (t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : t);
+/** Posts people are sharing most: likes plus reposts (worth more), fading with age, from the last two days. */
+export function trendingPosts(ctx, n = 6) {
+  const now = Date.parse(ctx.site.builtAt);
+  return ctx.posts
+    .filter((p) => p.src === "bluesky" && now - Date.parse(p.createdAt) < 48 * 3600e3 && (p.likes ?? 0) + (p.reposts ?? 0) > 0)
+    .map((p) => ({ p, score: ((p.likes ?? 0) + 3 * (p.reposts ?? 0) + 2 * (p.replies ?? 0)) / Math.pow(1 + (now - Date.parse(p.createdAt)) / 3600e3 / 12, 0.8) }))
+    .sort((a, b) => b.score - a.score).slice(0, n).map((x) => x.p);
+}
+function storyCard(ctx, s, big = false) {
+  const tl = s.teams.map((a) => ctx.T[a]).filter(Boolean).slice(0, 2);
+  return `<a class="story${big ? " story-lead" : ""}" href="${attr(s.url)}" target="_blank" rel="noopener">
+    ${s.img ? `<span class="story-img"><img src="${attr(big ? s.imgBig : s.img)}" alt="" loading="${big ? "eager" : "lazy"}" decoding="async"></span>` : ""}
+    <span class="story-body"><span class="story-meta"><span class="pill ${s.kind === "recap" ? "muted" : "info"}">${KIND_LABEL[s.kind] ?? "Story"}</span>${tl.map((t) => logo(t, 18)).join("")}<span class="muted">NHL.com · ${ago(s.date)}</span></span>
+    <b class="story-title">${esc(s.title)}</b>${s.summary && big ? `<span class="story-sum">${esc(clip(s.summary, 220))}</span>` : ""}</span></a>`;
+}
+function buzzCard(ctx, p) {
+  const t = ctx.T[p.parsed?.team];
+  const fmtN = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K` : `${n}`);
+  return `<a class="buzz" href="${attr(p.url)}" target="_blank" rel="nofollow noopener">
+    ${p.img ? `<span class="buzz-img${p.video ? " is-video" : ""}"><img src="${attr(p.img)}" alt="${attr(p.alt ?? "")}" loading="lazy" decoding="async"></span>` : ""}
+    <span class="buzz-head">${t ? logo(t, 18) : ""}<b>${esc(p.author)}</b><span class="muted">${ago(p.createdAt)}</span></span>
+    <span class="buzz-text">${esc(clip(p.linkTitle && !p.text ? p.linkTitle : p.text, p.img ? 160 : 260))}</span>
+    <span class="buzz-stats"><span title="Likes">♥ ${fmtN(p.likes ?? 0)}</span><span title="Reposts and quotes">⟳ ${fmtN(p.reposts ?? 0)}</span><span title="Replies">💬 ${fmtN(p.replies ?? 0)}</span></span></a>`;
+}
+export function frontNews(ctx) {
+  const stories = ctx.stories ?? [];
+  const buzz = trendingPosts(ctx, 6);
+  if (!stories.length && !buzz.length) return "";
+  // Lead with the newest feature (a real story, not a recap) from the last day, else the newest article.
+  const dayAgo = Date.parse(ctx.site.builtAt) - 24 * 3600e3;
+  const lead = stories.find((s) => s.kind === "feature" && s.img && Date.parse(s.date) > dayAgo) ?? stories.find((s) => s.img) ?? stories[0];
+  const rest = stories.filter((s) => s !== lead).slice(0, 6);
+  return `<section class="front-news">
+    ${lead ? `<div class="fn-top">${storyCard(ctx, lead, true)}<div class="fn-list">${rest.slice(0, 4).map((s) => storyCard(ctx, s)).join("")}</div></div>` : ""}
+    ${buzz.length ? `<h2 class="section-h">Trending in hockey <span class="muted small">most shared posts, last 48 hours</span></h2><div class="buzz-grid">${buzz.map((p) => buzzCard(ctx, p)).join("")}</div>` : ""}
+    ${rest.length > 4 ? `<div class="fn-more">${rest.slice(4).map((s) => storyCard(ctx, s)).join("")}<a class="more" href="/news/">All news →</a></div>` : ""}
+  </section>`;
+}
+
 export function homePage2(ctx) {
   const { league, T } = ctx;
   const { games, dayLabel, cards } = homeCards(ctx);
@@ -543,6 +585,7 @@ export function homePage2(ctx) {
   const body = `
   ${strip ? `<div class="score-strip" aria-label="Today's scores">${strip}</div>` : ""}
   ${stripItems.length ? `<div class="wire-strip" aria-label="Latest trades, signings and suspensions">${stripItems.map((m) => stripBit(ctx, m)).join("")}<a class="wire-bit wire-more" href="/moves/">Full wire</a></div>` : ""}
+  ${frontNews(ctx)}
   <section class="home-hero">
     <div class="hh-main">
       <p class="eyebrow">${esc(fmtDate(league.today, { weekday: "long", month: "long", day: "numeric" }))}</p>

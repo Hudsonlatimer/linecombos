@@ -273,3 +273,21 @@ export async function franchiseLeaders(teams) {
     }];
   }));
 }
+
+/** NHL.com's own articles (newest first): headline, summary, photo and link. Game previews are left out. */
+export async function nhlStories(limit = 40) {
+  const j = await get(`https://forge-dapi.d3.nhle.com/v2/content/en-us/stories?tags.slug=nhl-created&$limit=${limit}`, { ttl: 600 });
+  return (j?.items ?? []).map((x) => {
+    const slugs = (x.tags ?? []).map((t) => t.slug);
+    const title = String(x.headline || x.title || "").trim();
+    const kind = /game-?recap|recap/i.test(x.slug) || slugs.includes("game-recap") ? "recap" : /game-?preview|preview/i.test(x.slug) ? "preview" : "feature";
+    const teams = (x.tags ?? []).filter((t) => t.externalSourceName === "team" || /^[A-Z]{3}$/.test(t.extraData?.abbreviation ?? "")).map((t) => t.extraData?.abbreviation).filter(Boolean);
+    const tpl = x.thumbnail?.templateUrl;
+    return {
+      id: x._entityId, title, summary: String(x.summary ?? "").trim(), date: x.contentDate,
+      url: `https://www.nhl.com/news/${x.slug}`, kind, teams,
+      img: tpl ? tpl.replace("{formatInstructions}", "t_ratio16_9-size40") : null,
+      imgBig: tpl ? tpl.replace("{formatInstructions}", "t_ratio16_9-size60") : null,
+    };
+  }).filter((s) => s.title && s.kind !== "preview");
+}
