@@ -294,6 +294,7 @@ for (const t of Object.values(T)) await put(`/nhl/${t.slug}/`, P.teamPage(ctx, t
 await put("/goalies/", P.goaliesPage(ctx));
 await put("/news/", P.newsPage(ctx));
 await write("news/older.html", P.newsOlder(ctx));
+await write("news/read/index.html", X.readerPage(ctx));
 await put("/standings/", P.standingsPage(ctx));
 await put("/scores/", scoresPage(ctx));
 await put("/schedule/", P.schedulePage(ctx));

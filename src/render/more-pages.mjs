@@ -509,9 +509,11 @@ export function trendingPosts(ctx, n = 6) {
     .map((p) => ({ p, score: ((p.likes ?? 0) + 3 * (p.reposts ?? 0) + 2 * (p.replies ?? 0)) / Math.pow(1 + (now - Date.parse(p.createdAt)) / 3600e3 / 12, 0.8) }))
     .sort((a, b) => b.score - a.score).slice(0, n).map((x) => x.p);
 }
+/** Our reader page for an NHL.com story (falls back to NHL.com if the URL isn't a /news/ slug). */
+export const readerUrl = (s) => { const slug = s.url.split("/news/")[1]; return slug && /^[a-z0-9-]+$/.test(slug) ? `/news/read/?a=${slug}` : s.url; };
 function storyCard(ctx, s, big = false) {
   const tl = s.teams.map((a) => ctx.T[a]).filter(Boolean).slice(0, 2);
-  return `<a class="story${big ? " story-lead" : ""}" href="${attr(s.url)}" target="_blank" rel="noopener">
+  return `<a class="story${big ? " story-lead" : ""}" href="${attr(readerUrl(s))}">
     ${s.img ? `<span class="story-img"><img src="${attr(big ? s.imgBig : s.img)}" alt="" loading="${big ? "eager" : "lazy"}" decoding="async"></span>` : ""}
     <span class="story-body"><span class="story-meta"><span class="pill ${s.kind === "recap" ? "muted" : "info"}">${KIND_LABEL[s.kind] ?? "Story"}</span>${tl.map((t) => logo(t, 18)).join("")}<span class="muted">NHL.com · ${ago(s.date)}</span></span>
     <b class="story-title">${esc(s.title)}</b>${s.summary && big ? `<span class="story-sum">${esc(clip(s.summary, 220))}</span>` : ""}</span></a>`;
@@ -671,4 +673,39 @@ export function recordsPage(ctx) {
 export function viewerPage(ctx) {
   const body = `<div id="pv" data-live-api="${attr(ctx.site.liveApi ?? "")}"><section class="hero"><div><h1>Loading player…</h1></div></section></div>`;
   return page({ site: ctx.site, title: "Player", description: "Player profile, bio and career stats.", path: "/player/", active: "/nhl/", body, scripts: ["/assets/player.js"] });
+}
+
+// ---------- News reader: NHL.com articles shown inside the site (their page in a frame, never a copy) ----------
+export function readerPage(ctx) {
+  const slim = (ctx.stories ?? []).map((s) => {
+    const slug = s.url.split("/news/")[1];
+    const tl = s.teams.map((a) => ctx.T[a]).filter(Boolean).slice(0, 2);
+    return slug && { slug, title: s.title, kind: KIND_LABEL[s.kind] ?? "Story", logos: tl.map((t) => logo(t, 20)).join(""), date: s.date };
+  }).filter(Boolean);
+  const body = `<div class="reader">
+  <div class="reader-bar">
+    <a class="reader-back" href="/" onclick="if(history.length>1&&document.referrer.startsWith(location.origin)){history.back();return false}">← Back</a>
+    <span class="reader-title" id="rd-title">NHL.com story</span>
+    <a class="reader-out" id="rd-out" href="https://www.nhl.com/news/" target="_blank" rel="noopener">Open on NHL.com ↗</a>
+  </div>
+  <iframe id="rd-frame" class="reader-frame" title="NHL.com article" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  <p class="reader-none" id="rd-none" hidden>That story isn't available. <a href="/news/">Back to news →</a></p>
+</div>
+<script type="application/json" id="rd-data">${JSON.stringify(slim).replace(/</g, "\u003c")}</script>
+<script>
+(() => {
+  const slug = new URLSearchParams(location.search).get("a") || "";
+  const frame = document.getElementById("rd-frame");
+  if (!/^[a-z0-9-]{3,200}$/.test(slug)) { frame.remove(); document.getElementById("rd-none").hidden = false; return; }
+  const url = "https://www.nhl.com/news/" + slug;
+  const s = JSON.parse(document.getElementById("rd-data").textContent).find((x) => x.slug === slug);
+  const t = document.getElementById("rd-title");
+  if (s) { t.innerHTML = '<span class="pill info">' + s.kind + "</span>" + s.logos + "<b></b>"; t.querySelector("b").textContent = s.title; document.title = s.title + " · LineCombos"; }
+  document.getElementById("rd-out").href = url;
+  frame.src = url;
+  const fit = () => { frame.style.height = Math.max(420, innerHeight - frame.getBoundingClientRect().top - scrollY) + "px"; };
+  fit(); addEventListener("resize", fit);
+})();
+</script>`;
+  return page({ site: ctx.site, title: "News", description: "NHL.com stories on LineCombos", path: "/news/read/", body, active: "news" });
 }

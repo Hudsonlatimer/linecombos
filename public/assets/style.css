@@ -1495,3 +1495,15 @@ a.card:hover { text-decoration: none; border-color: var(--line-2); }
   .fn-top { grid-template-columns: 1fr; }
   .fn-list .story-img { flex-basis: 108px; }
 }
+
+/* News reader: NHL.com article framed under a slim bar */
+.reader { padding: 0; }
+.reader-bar { display: flex; align-items: center; gap: 12px; padding: 0 0 12px; min-width: 0; }
+.reader-frame { border-radius: 12px; }
+.reader-back, .reader-out { flex: none; font-weight: 600; font-size: 14px; white-space: nowrap; }
+.reader-title { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.reader-title b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reader-title .pill { flex: none; }
+.reader-frame { display: block; width: 100%; border: 0; border-top: 1px solid var(--line, rgba(127,127,127,.25)); background: #fff; }
+.reader-none { padding: 40px 0; }
+@media (max-width: 600px) { .reader-title .pill, .reader-title img { display: none; } .reader-bar { gap: 10px; } .reader-title { font-size: 14px; } }
